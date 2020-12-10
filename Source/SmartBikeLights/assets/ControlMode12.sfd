@@ -1,0 +1,213 @@
+SplineFontDB: 3.2
+FontName: RobotoMono-SemiBold
+FullName: Roboto Mono SemiBold
+FamilyName: Roboto Mono SemiBold
+Weight: Demi
+Copyright: Copyright 2015 The Roboto Mono Project Authors (https://github.com/googlefonts/robotomono)
+Version: 3.000
+ItalicAngle: 0
+UnderlinePosition: -200
+UnderlineWidth: 100
+Ascent: 1638
+Descent: 410
+InvalidEm: 0
+sfntRevision: 0x00030000
+LayerCount: 2
+Layer: 0 1 "Back" 1
+Layer: 1 1 "Fore" 0
+XUID: [1021 821 541848759 21274]
+StyleMap: 0x0040
+FSType: 0
+OS2Version: 4
+OS2_WeightWidthSlopeOnly: 0
+OS2_UseTypoMetrics: 0
+CreationTime: 1221222574
+ModificationTime: 1605036799
+PfmFamily: 81
+TTFWeight: 600
+TTFWidth: 5
+LineGap: 0
+VLineGap: 0
+Panose: 0 0 0 9 0 0 0 0 0 0
+OS2TypoAscent: 2146
+OS2TypoAOffset: 0
+OS2TypoDescent: -555
+OS2TypoDOffset: 0
+OS2TypoLinegap: 0
+OS2WinAscent: 2146
+OS2WinAOffset: 0
+OS2WinDescent: 555
+OS2WinDOffset: 0
+HheadAscent: 2146
+HheadAOffset: 0
+HheadDescent: -555
+HheadDOffset: 0
+OS2SubXSize: 1434
+OS2SubYSize: 1331
+OS2SubXOff: 0
+OS2SubYOff: 287
+OS2SupXSize: 1434
+OS2SupYSize: 1331
+OS2SupXOff: 0
+OS2SupYOff: 977
+OS2StrikeYSize: 102
+OS2StrikeYPos: 512
+OS2CapHeight: 1456
+OS2XHeight: 1082
+OS2Vendor: 'GOOG'
+OS2CodePages: 2000019f.4f010000
+OS2UnicodeRanges: e00002ff.1000205b.00000020.00000000
+Lookup: 1 0 0 "'smcp' Lowercase to Small Capitals lookup 0" { "'smcp' Lowercase to Small Capitals lookup 0 subtable"  } ['smcp' ('DFLT' <'dflt' > 'cyrl' <'dflt' > 'grek' <'dflt' > 'latn' <'dflt' > ) ]
+DEI: 91125
+TtTable: prep
+PUSHW_1
+ 511
+SCANCTRL
+PUSHB_1
+ 4
+SCANTYPE
+EndTTInstrs
+ShortTable: maxp 16
+  1
+  0
+  999
+  177
+  22
+  135
+  5
+  1
+  0
+  0
+  0
+  0
+  0
+  0
+  3
+  1
+EndShort
+LangName: 1033 "" "" "Regular" "3.000;GOOG;RobotoMono-SemiBold" "" "Version 3.000" "" "Roboto Mono is a trademark of Google." "" "Google" "" "Google.com" "Christian Robertson" "Licensed under the Apache License, Version 2.0" "http://www.apache.org/licenses/LICENSE-2.0" "" "Roboto Mono" "SemiBold"
+GaspTable: 1 65535 15 1
+Encoding: UnicodeBmp
+UnicodeInterp: none
+NameList: AGL For New Fonts
+DisplaySize: -48
+AntiAlias: 1
+FitToEm: 0
+WinInfo: 0 38 16
+BeginChars: 65663 3
+
+StartChar: M
+Encoding: 77 77 0
+Width: 985
+Flags: W
+LayerCount: 2
+Fore
+SplineSet
+324 1456 m 1,0,-1
+ 483 871 l 1,1,-1
+ 661 1456 l 1,2,-1
+ 985 1456 l 1,3,-1
+ 985 0 l 1,4,-1
+ 743 0 l 1,5,-1
+ 743 462 l 1,6,-1
+ 756 1128 l 1,7,-1
+ 548 464 l 1,8,-1
+ 416 464 l 1,9,-1
+ 229 1102 l 1,10,-1
+ 242 462 l 1,11,-1
+ 242 0 l 1,12,-1
+ 0 0 l 1,13,-1
+ 0 1456 l 1,14,-1
+ 324 1456 l 1,0,-1
+EndSplineSet
+Validated: 513
+Substitution2: "'smcp' Lowercase to Small Capitals lookup 0 subtable" M.smcp
+EndChar
+
+StartChar: N
+Encoding: 78 78 1
+Width: 963
+Flags: W
+LayerCount: 2
+Fore
+SplineSet
+963 0 m 1,0,-1
+ 702 0 l 1,1,-1
+ 264 970 l 1,2,-1
+ 263 0 l 1,3,-1
+ 0 0 l 1,4,-1
+ 0 1456 l 1,5,-1
+ 263 1456 l 1,6,-1
+ 699 489 l 1,7,-1
+ 701 1456 l 1,8,-1
+ 963 1456 l 1,9,-1
+ 963 0 l 1,0,-1
+EndSplineSet
+Validated: 513
+Substitution2: "'smcp' Lowercase to Small Capitals lookup 0 subtable" N.smcp
+EndChar
+
+StartChar: S
+Encoding: 83 83 2
+Width: 1062
+Flags: W
+LayerCount: 2
+Fore
+SplineSet
+802 377 m 0,0,1
+ 802 422 802 422 785 458.5 c 128,-1,2
+ 768 495 768 495 733 526 c 0,3,4
+ 697 555 697 555 643.5 579 c 128,-1,5
+ 590 603 590 603 517 623 c 0,6,7
+ 405 654 405 654 316 698.5 c 128,-1,8
+ 227 743 227 743 168 798 c 0,9,10
+ 108 853 108 853 76 921.5 c 128,-1,11
+ 44 990 44 990 44 1073 c 0,12,13
+ 44 1165 44 1165 83.5 1240 c 128,-1,14
+ 123 1315 123 1315 192 1367 c 0,15,16
+ 260 1420 260 1420 352 1448 c 128,-1,17
+ 444 1476 444 1476 549 1476 c 0,18,19
+ 659 1476 659 1476 752.5 1443.5 c 128,-1,20
+ 846 1411 846 1411 914 1352 c 256,21,22
+ 982 1293 982 1293 1020.5 1211 c 128,-1,23
+ 1059 1129 1059 1129 1059 1031 c 1,24,-1
+ 803 1031 l 1,25,26
+ 800 1083 800 1083 782.5 1126 c 128,-1,27
+ 765 1169 765 1169 734 1200 c 0,28,29
+ 701 1231 701 1231 654 1248.5 c 128,-1,30
+ 607 1266 607 1266 545 1266 c 0,31,32
+ 490 1266 490 1266 445 1252 c 128,-1,33
+ 400 1238 400 1238 368 1213 c 0,34,35
+ 336 1187 336 1187 319 1151.5 c 128,-1,36
+ 302 1116 302 1116 302 1073 c 0,37,38
+ 302 1027 302 1027 324.5 991.5 c 128,-1,39
+ 347 956 347 956 388 930 c 0,40,41
+ 429 902 429 902 484.5 880.5 c 128,-1,42
+ 540 859 540 859 605 841 c 0,43,44
+ 682 819 682 819 752.5 788 c 128,-1,45
+ 823 757 823 757 882 714 c 0,46,47
+ 964 653 964 653 1013 570.5 c 128,-1,48
+ 1062 488 1062 488 1062 379 c 0,49,50
+ 1062 283 1062 283 1022.5 209 c 128,-1,51
+ 983 135 983 135 914 84 c 0,52,53
+ 846 33 846 33 753.5 7 c 128,-1,54
+ 661 -19 661 -19 555 -19 c 0,55,56
+ 447 -19 447 -19 342 14 c 128,-1,57
+ 237 47 237 47 159 110 c 0,58,59
+ 86 171 86 171 43.5 253.5 c 128,-1,60
+ 1 336 1 336 0 445 c 1,61,-1
+ 258 445 l 1,62,63
+ 261 379 261 379 283.5 331 c 128,-1,64
+ 306 283 306 283 345 251 c 0,65,66
+ 384 220 384 220 437.5 205 c 128,-1,67
+ 491 190 491 190 555 190 c 0,68,69
+ 611 190 611 190 656 203 c 128,-1,70
+ 701 216 701 216 734 240 c 0,71,72
+ 766 264 766 264 784 299 c 128,-1,73
+ 802 334 802 334 802 377 c 0,0,1
+EndSplineSet
+Validated: 513
+Substitution2: "'smcp' Lowercase to Small Capitals lookup 0 subtable" S.smcp
+EndChar
+EndChars
+EndSplineFont

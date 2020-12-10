@@ -1,0 +1,23 @@
+<strings>
+    <string id="AppName">Smart Bike Lights</string>
+    <string id="LC">Lights Configuration</string>
+    <string id="AC">Activity color</string>
+    <string id="RL">Record lights mode</string>
+
+    <string id="Red">Red</string>
+    <string id="DarkRed">Dark Red</string>
+    <string id="Orange">Orange</string>
+    <string id="Yellow">Yellow</string>
+    <string id="Green">Green</string>
+    <string id="DarkGreen">Dark Green</string>
+    <string id="Blue">Blue</string>
+    <string id="DarkBlue">Dark Blue</string>
+    <string id="Purple">Purple</string>
+    <string id="Pink">Pink</string>
+
+    <string id="Mode">Mode</string>
+    <string id="HeadlightMode">Headlight mode</string>
+    <string id="TaillightMode">Taillight mode</string>
+</strings>
+
+

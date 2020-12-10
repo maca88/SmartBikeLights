@@ -1,0 +1,15 @@
+project.manifest = manifest.xml
+# excludeBase=deviceNetwork
+excludeBase=testNetwork
+
+# maps default
+base.excludeAnnotations = $(excludeBase);nonTouchScreen;noPolygons
+
+# Non touch screen devices with 32KB memory
+edge130.excludeAnnotations = $(excludeBase);touchScreen;polygons
+edge130plus.excludeAnnotations = $(excludeBase);touchScreen;polygons
+edge_520.excludeAnnotations = $(excludeBase);touchScreen;polygons
+
+# Non touch screen devices with more than 32KB memory
+edge520plus.excludeAnnotations = $(excludeBase);touchScreen;noPolygons
+edge530.excludeAnnotations = $(excludeBase);touchScreen;noPolygons

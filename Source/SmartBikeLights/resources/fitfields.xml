@@ -1,0 +1,20 @@
+<resources>
+	<fitContributions>
+		<fitField id="0"
+				  displayInChart="true"
+				  sortOrder="0"
+				  precision="0"
+				  chartTitle="@Strings.HeadlightMode"
+				  dataLabel="@Strings.HeadlightMode"
+				  unitLabel="@Strings.Mode"
+				  fillColor="#00FF00" />
+		<fitField id="2"
+				  displayInChart="true"
+				  sortOrder="1"
+				  precision="0"
+				  chartTitle="@Strings.TaillightMode"
+				  dataLabel="@Strings.TaillightMode"
+				  unitLabel="@Strings.Mode"
+				  fillColor="#FFFF00" />
+	</fitContributions>
+</resources>

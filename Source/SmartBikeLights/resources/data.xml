@@ -1,0 +1,9 @@
+<resources>
+<!-- Format [[:colorScreen:, :titleFont:, :titleFontTopPadding:]
+        :colorScreen: = true / false
+        :titleFont: = 0-8
+        :titleFontTopPadding: = Number
+    -->
+    <jsonData id="Settings">[true, 2, 0]</jsonData>
+    <jsonData id="FontTopPaddings">[0]</jsonData>
+</resources>
