@@ -88,7 +88,11 @@ class TestBikeLight extends AntPlus.BikeLight {
             return _batteryStatus;
         }
 
-        _batteryStatus.batteryStatus  = (_batteryStatus.batteryStatus % 5) + 1;
-        return _batteryStatus;
+        _batteryStatus.batteryStatus = (_batteryStatus.batteryStatus % 6) + 1;
+        if (_batteryStatus.batteryStatus == 1) {
+            _listener.onBikeLightUpdate(self);
+        }
+
+        return _batteryStatus.batteryStatus == 6 ? null /* Simulate a disconnect */ : _batteryStatus;
     }
 }
