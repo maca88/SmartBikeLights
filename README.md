@@ -75,6 +75,7 @@ Smart Bike Lights is a [data field](https://developer.garmin.com/connect-iq/conn
 - Speed
 - Light battery state
 - GPS accuracy
+- Timer state
 - Position (only for devices with more that 32KB memory)
 
 ## Error codes

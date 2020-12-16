@@ -9,6 +9,7 @@ import BatteryFilter from '../filters/BatteryFilter';
 import NumberFilter from '../filters/NumberFilter';
 import SpeedFilter from '../filters/SpeedFilter';
 import GpsAccuracyFilter from '../filters/GpsAccuracyFilter';
+import TimerStateFilter from '../filters/TimerStateFilter';
 import TimespanFilter from '../filters/TimespanFilter';
 import PositionFilter from '../filters/PositionFilter';
 import { AppContext } from '../AppContext';
@@ -50,6 +51,7 @@ export default observer(({ filters, filterTypes }) => {
               : filter.type === 'A' ? <NumberFilter label="% per second" filter={filter} />
               : filter.type === 'C' ? <SpeedFilter filter={filter} />
               : filter.type === 'G' ? <GpsAccuracyFilter filter={filter} />
+              : filter.type === 'H' ? <TimerStateFilter filter={filter} />
               : null
             }
           </Grid>

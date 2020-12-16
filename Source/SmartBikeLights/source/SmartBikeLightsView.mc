@@ -967,6 +967,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
             : filterType == 'A' ? _acceleration
             : filterType == 'B' ? lightIdentifier != null ? getLightBatteryStatus(lightIdentifier) : null
             : filterType == 'G' ? (activityInfo.currentLocationAccuracy == null ? 0 : activityInfo.currentLocationAccuracy)
+            : filterType == 'H' ? activityInfo.timerState
             : null;
         if (value == null) {
             return false;

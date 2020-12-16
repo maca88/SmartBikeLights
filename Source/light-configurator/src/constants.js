@@ -28,7 +28,8 @@ export const filterList = [
   { id: 'C', name: 'Speed' },
   { id: 'E', name: 'Timespan' },
   { id: 'F', name: 'Position' },
-  { id: 'G', name: 'GPS accuracy' }
+  { id: 'G', name: 'GPS accuracy' },
+  { id: 'H', name: 'Timer state' }
 ];
 
 map = {};
@@ -83,6 +84,13 @@ export const gpsAccuracyList = [
   'Poor',
   'Ok',
   'Good'
+];
+
+export const timerStateList = [
+  'NR', // Not recording
+  'ST', // Recording stopped
+  'PA', // Recording paused
+  'RE'  // Recording
 ];
 
 const lightModes = [
