@@ -305,12 +305,25 @@ export default class Configuration {
 
   isValid() {
     return this.globalFilterGroups.every(g => g.isValid()) && (
-        (this.headlight !== null && this.headlightDefaultMode !== null && this.headlightFilterGroups.every(g => g.isValid())) ||
-        (this.taillight !== null && this.taillightDefaultMode !== null && this.taillightFilterGroups.every(g => g.isValid()))
-      ) && 
+        (this.headlight !== null || this.taillight !== null) &&
+        this.islightValid(this.headlight, this.headlightFilterGroups, this.headlightDefaultMode) &&
+        this.islightValid(this.taillight, this.taillightFilterGroups, this.taillightDefaultMode)
+      ) &&
       (this.headlightPanel == null || this.headlightPanel.isValid()) &&
       (this.taillightPanel == null || this.taillightPanel.isValid()) &&
       this.device;
+  }
+
+  islightValid(light, lightFilterGroups, lightDefaultMode) {
+    if (light === null) {
+      return true;
+    }
+
+    return lightFilterGroups.every(g => g.isValid()) &&
+          (
+            (!lightFilterGroups.length && !this.globalFilterGroups.length) ||
+            lightDefaultMode !== null
+          );
   }
 
   getConfigurationValue() {

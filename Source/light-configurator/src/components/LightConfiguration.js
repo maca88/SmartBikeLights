@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default observer(({
-  className, headerClassName, device, lightType, lightList, lightFilterGroups, setLight, light,
+  className, headerClassName, device, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
   setLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel }) => {
   const classes = useStyles();
   const [modes, setModes] = React.useState(getModes(light, lightList));
@@ -72,7 +72,12 @@ export default observer(({
             modes
             ?
             <Grid item xs={12} sm={4}>
-              <AppSelect required items={modes} label="Default mode" setter={setDefaultMode} value={defaultMode} />
+              <AppSelect
+                  required={globalFilterGroups.length || lightFilterGroups.length ? true : false}
+                  items={modes}
+                  label="Default mode"
+                  setter={setDefaultMode}
+                  value={defaultMode} />
             </Grid>
             : null
           }

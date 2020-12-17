@@ -26,16 +26,9 @@ class SmartBikeLightsApp extends Application.AppBase {
         _view = new SmartBikeLightsView();
     }
 
-    // onStart() is called on application start up
-    function onStart(state) {
-    }
-
-    // onStop() is called when your application is exiting
-    function onStop(state) {
-    }
-
     function onSettingsChanged() {
         _view.onSettingsChanged();
+        _view.onShow(); // Reinitialize lights
     }
 
     // Return the initial view of your application here

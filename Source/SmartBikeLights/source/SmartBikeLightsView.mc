@@ -44,7 +44,8 @@ const controlModes = [
 const networkModes = [
     "INDV", /* LIGHT_NETWORK_MODE_INDIVIDUAL */
     "AUTO", /* LIGHT_NETWORK_MODE_AUTO */
-    "HIVI"  /* LIGHT_NETWORK_MODE_HIGH_VIS */
+    "HIVI", /* LIGHT_NETWORK_MODE_HIGH_VIS */
+    "TRAIL"
 ];
 
 class SmartBikeLightsView extends WatchUi.DataField {
@@ -64,7 +65,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
     // 1. BikeLight instance
     // 2. Light text (S>)
     // 3. Light mode
-    // 4. An integer that represents headlight modes
+    // 4. An integer that represents light modes
     // 5. Light control mode:  0 SMART, 1 NETWORK, 2 MANUAL
     // 6. Header text (AUTO/HIVIS/SPEED)
     // 7. Fit field
@@ -181,9 +182,9 @@ class SmartBikeLightsView extends WatchUi.DataField {
 
     // onShow() is called when this View is brought to the foreground
     function onShow() {
-        // In case the user modifies the network mode or light mode outside the datafield by using the built-in Garmin lights menu,
-        // the LightNetwork and BikeLight will not be updated (LightNetwork.getNetworkMode, BikeLight.mode). The only way to update
-        // them is to create a new LightNetwork.
+        // In case the user modifies the network mode outside the data field by using the built-in Garmin lights menu,
+        // the LightNetwork mode will not be updated (LightNetwork.getNetworkMode). The only way to update it is to
+        // create a new LightNetwork.
         releaseLights();
         _lightNetwork = null; // Release light network
         setupNetwork();
@@ -198,24 +199,6 @@ class SmartBikeLightsView extends WatchUi.DataField {
 
         if (_initializedLights == 0 || _errorCode != null) {
             return null;
-        }
-
-        var networkMode = _lightNetwork.getNetworkMode();
-        if (networkMode != _networkMode) {
-            if (_networkMode != null) {
-                // When the network mode is changed, the overrides set by setMode method are cleared.
-                setNetworkMode(0, networkMode);
-                if (_initializedLights > 1) {
-                    setNetworkMode(7, networkMode);
-                }
-
-                // As here we do not know whether the user prior onUpdate method call already overrode the light modes,
-                // restore them again to make sure that we have the correct mode shown
-                _lightNetwork.restoreHeadlightsNetworkModeControl();
-                _lightNetwork.restoreTaillightsNetworkModeControl();
-            }
-
-            _networkMode = networkMode;
         }
 
         _acceleration = _lastSpeed != null && _lastSpeed > 0 && activityInfo.currentSpeed > 0
@@ -235,7 +218,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
         var titleResult = _titleResult;
         var globalFilterTitle = null;
         for (var i = 0; i < size; i += 7) {
-            if (lightsData[i + 4] != 0 /* SMART */) {
+            if (lightsData[i + 4] != 0 /* SMART */ || lightsData[i + 2] < 0 /* Disconnected */) {
                 continue;
             }
 
@@ -260,9 +243,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
                 titleResult,
                 light.identifier);
             var title = titleResult[0] != null ? titleResult[0] : globalFilterTitle;
-            if (!setLightMode(i, lightMode, title) && lightsData[i + 5] != title) {
-                lightsData[i + 5] = title;
-            }
+            setLightMode(i, lightMode, title);
         }
 
         _lastSpeed = activityInfo.currentSpeed;
@@ -299,6 +280,11 @@ class SmartBikeLightsView extends WatchUi.DataField {
     function onNetworkStateUpdate(networkState) {
         _networkState = networkState;
         if (_initializedLights > 0 && networkState != 2 /* LIGHT_NETWORK_STATE_FORMED */) {
+            // Set the mode to disconnected in order to be recorded in case lights recording is enabled
+            updateLightTextAndMode(0, _lightsData[0], -1);
+            if (_initializedLights > 1) {
+                updateLightTextAndMode(7, _lightsData[7], -1);
+            }
             // We have to reinitialize in case the light network is dropped after its formation
             releaseLights();
             return;
@@ -307,6 +293,15 @@ class SmartBikeLightsView extends WatchUi.DataField {
         if (_initializedLights > 0 || networkState != 2 /* LIGHT_NETWORK_STATE_FORMED */) {
             return;
         }
+
+        var networkMode = _lightNetwork.getNetworkMode();
+        if (networkMode == null) {
+            networkMode = 3; // TRAIL
+        }
+
+        // In case the user changes the network mode outside the application, set the default to network control mode
+        var newNetworkMode = _networkMode != null && networkMode != _networkMode ? networkMode : null;
+        _networkMode = networkMode;
 
         // Initialize lights
         var lights = _lightNetwork.getBikeLights();
@@ -317,7 +312,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
             var lightType = light.type;
             var capableModes = light.getCapableModes();
             var filters = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightFilters : _taillightFilters;
-            var controlMode = getLightData("CM", lightType, filters != null ? 0 /* SMART */ : 1 /* NETWORK */);
+            var controlMode = getLightData("CM", lightType, filters != null && newNetworkMode == null ? 0 /* SMART */ : 1 /* NETWORK */);
             var lightMode = getInitialLightMode(light, controlMode);
             var lightModeIndex = capableModes.indexOf(lightMode);
             if (lightModeIndex < 0) {
@@ -342,28 +337,25 @@ class SmartBikeLightsView extends WatchUi.DataField {
                 var field = createField(
                     lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? "headlight_mode" : "taillight_mode",
                     lightType, // Id
-                    2 /*DATA_TYPE_UINT8 */,
+                    1 /*DATA_TYPE_SINT8 */,
                     {
                         :mesgType=> 20 /* Fit.MESG_TYPE_RECORD */
                     }
                 );
 
                 lightsData[dataIndex + 6] = field;
-                field.setData(lightMode); // Set initial mode
             }
 
-            var lightModes = lightsData[dataIndex + 3]; // Set when parsing lights configuration
-            var lightText = getLightText(lightType, lightMode, lightModes);
             lightsData[dataIndex] = light;
-            lightsData[dataIndex + 1] = lightText;
-            lightsData[dataIndex + 2] = lightMode;
+            lightsData[dataIndex + 2] = null; // Force to update light text in case light modes were changed
+            updateLightTextAndMode(dataIndex, light, lightMode);
             lightsData[dataIndex + 4] = controlMode;
             // In case of SMART or MANUAL control mode, we have to set the light mode in order to prevent the network mode
             // from changing it.
             if (controlMode != 1 /* NETWORK */) {
                 light.setMode(lightMode);
             } else {
-                setNetworkMode(dataIndex, _lightNetwork.getNetworkMode());
+                setNetworkMode(dataIndex, lightType, _networkMode);
             }
 
             // Allow the initialization to complete even if the modes are invalid, so that the user
@@ -375,19 +367,29 @@ class SmartBikeLightsView extends WatchUi.DataField {
     }
 
     function updateLight(light, mode) {
-        var lightsData = _lightsData;
         var dataIndex = _initializedLights == 1 || light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? 0 : 7;
-        lightsData[dataIndex] = light;
-        if (mode == lightsData[dataIndex + 2]) {
-            return;
+        _lightsData[dataIndex] = light;
+        if (updateLightTextAndMode(dataIndex, light, mode)) {
+            // Change done outside the data field
+            if (_lightsData[dataIndex + 2] >= 0 && _lightsData[dataIndex + 4] != 1 /* NETWORK */) {
+                onExternalLightModeChange(dataIndex, light, mode);
+            }
         }
+    }
 
-        lightsData[dataIndex + 1] = getLightText(light.type, mode, lightsData[dataIndex + 3]);
-        lightsData[dataIndex + 2] = mode;
-        var fitField = lightsData[dataIndex + 6];
-        if (fitField != null) {
-            fitField.setData(mode);
-        }
+    (:touchScreen)
+    private function onExternalLightModeChange(dataIndex, light, mode) {
+        setLightAndControlMode(dataIndex, light.type, mode, _lightsData[dataIndex + 4] != 2 ? 2 /* MANUAL */ : null);
+    }
+
+    (:nonTouchScreen)
+    private function onExternalLightModeChange(dataIndex, light, mode) {
+        _lightsData[dataIndex + 4] = 2; /* MANUAL */
+        _lightsData[dataIndex + 5] = null;
+        // In case the light mode was changed with the Garmin lights menu, set the
+        // next control mode to be network so that when the data field will be again displayed,
+        // the smart mode won't reset the light mode.
+        setLightData("CM", light.type, 1 /* NETWORK */);
     }
 
     (:touchScreen)
@@ -448,12 +450,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
     private function setLightAndControlMode(dataIndex, lightType, newMode, newControlMode) {
         var controlMode = _lightsData[dataIndex + 4];
         if (newControlMode == 1 /* NETWORK */) {
-            setNetworkMode(dataIndex, _networkMode);
-            if (lightType == 0 /* LIGHT_TYPE_HEADLIGHT */) {
-                _lightNetwork.restoreHeadlightsNetworkModeControl();
-            } else {
-                _lightNetwork.restoreTaillightsNetworkModeControl();
-            }
+            setNetworkMode(dataIndex, lightType, _networkMode);
         } else if ((controlMode == 2 /* MANUAL */ && newControlMode == null) || newControlMode == 2 /* MANUAL */) {
             setLightData("MM", lightType, newMode);
             setLightMode(dataIndex, newMode, null);
@@ -506,7 +503,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
 
     (:testNetwork)
     private function setupNetwork() {
-        _lightNetwork = new TestLightNetwork(_lightNetworkListener);
+        _lightNetwork = new TestNetwork.TestLightNetwork(self, _lightNetworkListener);
     }
 
     (:deviceNetwork)
@@ -792,16 +789,25 @@ class SmartBikeLightsView extends WatchUi.DataField {
     }
 
     private function setLightMode(index, mode, title) {
+        _lightsData[index + 5] = title;
+        var light = _lightsData[index];
+        if (updateLightTextAndMode(index, light, mode)) {
+            light.setMode(mode);
+        }
+    }
+
+    private function updateLightTextAndMode(dataIndex, light, mode) {
         var lightsData = _lightsData;
-        lightsData[index + 5] = title;
-        if (lightsData[index + 2] == mode) {
+        if (lightsData[dataIndex + 2] == mode) {
             return false;
         }
 
-        var light = lightsData[index];
-        lightsData[index + 1] = getLightText(light.type, mode, lightsData[index + 3]);
-        lightsData[index + 2] = mode;
-        light.setMode(mode);
+        lightsData[dataIndex + 1] = getLightText(light.type, mode, lightsData[dataIndex + 3]);
+        lightsData[dataIndex + 2] = mode;
+        var fitField = lightsData[dataIndex + 6];
+        if (fitField != null) {
+            fitField.setData(mode);
+        }
 
         return true;
     }
@@ -837,19 +843,29 @@ class SmartBikeLightsView extends WatchUi.DataField {
 
     (:nonTouchScreen)
     private function getLightData(id, lightType, defaultValue) {
-        return defaultValue;
+        var key = id + lightType;
+        var value = Application.Storage.getValue(key);
+        if (value != null) {
+            Application.Storage.deleteValue(key);
+        }
+
+        return value != null ? value : defaultValue;
     }
 
-    (:touchScreen)
     private function setLightData(id, lightType, value) {
         Application.Storage.setValue(id + lightType, value);
     }
 
-    private function setNetworkMode(index, networkMode) {
-        _lightsData[index + 4] = 1 /*NETWORK */;
+    private function setNetworkMode(index, lightType, networkMode) {
         _lightsData[index + 5] = networkMode != null && networkMode < $.networkModes.size()
             ? $.networkModes[networkMode]
-            : "TRAIL";
+            : null;
+
+        if (lightType == 0 /* LIGHT_TYPE_HEADLIGHT */) {
+            _lightNetwork.restoreHeadlightsNetworkModeControl();
+        } else {
+            _lightNetwork.restoreTaillightsNetworkModeControl();
+        }
     }
 
     private function getLightText(lightType, mode, lightModes) {
