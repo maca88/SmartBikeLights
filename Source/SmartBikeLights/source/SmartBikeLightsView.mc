@@ -48,6 +48,8 @@ const networkModes = [
     "TRAIL"
 ];
 
+const taillightIndex = 10;
+
 class SmartBikeLightsView extends WatchUi.DataField {
 
     // Fonts
@@ -70,7 +72,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
     // 6. Header text (AUTO/HIVIS/SPEED)
     // 7. Fit field
     // In case of two lights the first one will always be a headlight
-    private var _lightsData = new [14];
+    private var _lightsData = new [20];
 
     private var _errorCode;
 
@@ -154,11 +156,11 @@ class SmartBikeLightsView extends WatchUi.DataField {
 
             var headlightModes = configuration[1]; // Headlight modes
             if (!validateLightModes(lightsData[0], headlightModes == null ? _taillightFilters : _headlightFilters) ||
-                !validateLightModes(lightsData[7], _taillightFilters)) {
+                !validateLightModes(lightsData[taillightIndex], _taillightFilters)) {
                 return;
             }
 
-            var index = headlightModes == null ? 3 : 10;
+            var index = headlightModes == null ? 3 : taillightIndex + 3;
             lightsData[3] = headlightModes;
             lightsData[index] = configuration[3]; // Taillight modes
         } catch (e instanceof Lang.Exception) {
@@ -214,10 +216,19 @@ class SmartBikeLightsView extends WatchUi.DataField {
 
         var globalFilterResult = null;
         var lightsData = _lightsData;
-        var size = _initializedLights * 7;
+        var size = _initializedLights * taillightIndex;
         var titleResult = _titleResult;
         var globalFilterTitle = null;
-        for (var i = 0; i < size; i += 7) {
+        for (var i = 0; i < size; i += taillightIndex) {
+            if (lightsData[i + 7] /* Next mode */ != null) {
+                lightsData[i + 9]--;
+                if (lightsData[i + 9] > 0) {
+                    continue;
+                }
+
+                lightsData[i + 7] = null;
+            }
+
             if (lightsData[i + 4] != 0 /* SMART */ || lightsData[i + 2] < 0 /* Disconnected */) {
                 continue;
             }
@@ -283,8 +294,9 @@ class SmartBikeLightsView extends WatchUi.DataField {
             // Set the mode to disconnected in order to be recorded in case lights recording is enabled
             updateLightTextAndMode(0, _lightsData[0], -1);
             if (_initializedLights > 1) {
-                updateLightTextAndMode(7, _lightsData[7], -1);
+                updateLightTextAndMode(taillightIndex, _lightsData[taillightIndex], -1);
             }
+
             // We have to reinitialize in case the light network is dropped after its formation
             releaseLights();
             return;
@@ -292,6 +304,10 @@ class SmartBikeLightsView extends WatchUi.DataField {
 
         if (_initializedLights > 0 || networkState != 2 /* LIGHT_NETWORK_STATE_FORMED */) {
             return;
+        }
+
+        if (_errorCode == 1 && _errorCode == 2) {
+            _errorCode = null;
         }
 
         var networkMode = _lightNetwork.getNetworkMode();
@@ -309,10 +325,19 @@ class SmartBikeLightsView extends WatchUi.DataField {
         var recordLightModes = Properties.getValue("RL");
         for (var i = 0; i < lights.size(); i++) {
             var light = lights[i];
+            if (light == null) {
+                _errorCode = 1;
+                return;
+            }
+
             var lightType = light.type;
             var capableModes = light.getCapableModes();
             var filters = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightFilters : _taillightFilters;
-            var controlMode = getLightData("CM", lightType, filters != null && newNetworkMode == null ? 0 /* SMART */ : 1 /* NETWORK */);
+            if (newNetworkMode != null) {
+                setLightData("CM", lightType, 1 /* NETWORK */);
+            }
+
+            var controlMode = getLightData("CM", lightType, filters != null ? 0 /* SMART */ : 1 /* NETWORK */);
             var lightMode = getInitialLightMode(light, controlMode);
             var lightModeIndex = capableModes.indexOf(lightMode);
             if (lightModeIndex < 0) {
@@ -321,7 +346,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
             }
 
             var dataIndex = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ || lights.size() == 1 ? 0
-                : lightType == 2 ? 7
+                : lightType == 2 ? taillightIndex
                 : -1;
             if (dataIndex < 0) {
                 _errorCode = 1;
@@ -353,7 +378,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
             // In case of SMART or MANUAL control mode, we have to set the light mode in order to prevent the network mode
             // from changing it.
             if (controlMode != 1 /* NETWORK */) {
-                light.setMode(lightMode);
+                setLightMode(dataIndex, lightMode, null);
             } else {
                 setNetworkMode(dataIndex, lightType, _networkMode);
             }
@@ -361,19 +386,29 @@ class SmartBikeLightsView extends WatchUi.DataField {
             // Allow the initialization to complete even if the modes are invalid, so that the user
             // is able to correct them by modifying the light configuration
             validateLightModes(light, lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightFilters : _taillightFilters);
-
-            _initializedLights++;
         }
+
+        _initializedLights = lights.size();
     }
 
     function updateLight(light, mode) {
-        var dataIndex = _initializedLights == 1 || light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? 0 : 7;
-        _lightsData[dataIndex] = light;
-        if (updateLightTextAndMode(dataIndex, light, mode)) {
+        if (_initializedLights == 0) {
+            return;
+        }
+
+        var dataIndex = _initializedLights == 1 || light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? 0 : taillightIndex;
+        var lightsData = _lightsData;
+        lightsData[dataIndex] = light;
+        var nextMode = lightsData[dataIndex + 7];
+        // Update title
+        lightsData[dataIndex + 5] = nextMode == mode ? lightsData[dataIndex + 8]
+            : lightsData[dataIndex + 4] == 1 /* NETWORK */ ? lightsData[dataIndex + 5]
+            : null;
+        lightsData[dataIndex + 7] = null;
+        lightsData[dataIndex + 8] = null;
+        if (updateLightTextAndMode(dataIndex, light, mode) && nextMode != mode && lightsData[dataIndex + 4] != 1 /* NETWORK */) {
             // Change done outside the data field
-            if (_lightsData[dataIndex + 2] >= 0 && _lightsData[dataIndex + 4] != 1 /* NETWORK */) {
-                onExternalLightModeChange(dataIndex, light, mode);
-            }
+            onExternalLightModeChange(dataIndex, light, mode);
         }
     }
 
@@ -401,10 +436,10 @@ class SmartBikeLightsView extends WatchUi.DataField {
         // Find which light was tapped
         var dataIndex = _initializedLights == 1 || (_fieldWidth / 2) > location[0]
             ? 0 /* Headlight index */
-            : 7; /* Taillight index */
+            : taillightIndex; /* Taillight index */
         var lightsData = _lightsData;
         var light = lightsData[dataIndex];
-        if (getLightBatteryStatus(light) > 5) {
+        if (getLightBatteryStatus(dataIndex, light) > 5) {
             return false; // Battery is disconnected
         }
 
@@ -443,7 +478,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
     private function releaseLights() {
         _initializedLights = 0;
         _lightsData[0] = null;
-        _lightsData[7] = null;
+        _lightsData[taillightIndex] = null;
     }
 
     (:touchScreen)
@@ -543,7 +578,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
         }
 
         drawLightPanel(dc, 0, _headlightPanel, width, height, fgColor, bgColor);
-        drawLightPanel(dc, 7, _taillightPanel, width, height, fgColor, bgColor);
+        drawLightPanel(dc, taillightIndex, _taillightPanel, width, height, fgColor, bgColor);
     }
 
     (:touchScreen)
@@ -557,10 +592,11 @@ class SmartBikeLightsView extends WatchUi.DataField {
             var mode = capableModes[i];
             var totalButtons = mode == 0 /* Off */ ? 2 : 1; // Number of buttons;
             data[dataIndex] = totalButtons; // Total buttons in the group
-            data[dataIndex + 1] = mode; // Light mode
-            data[dataIndex + 2] = mode == 0 ? "Off" : mode.toString(); // Mode name
+            data[dataIndex + 1] = mode == 0 ? -1 : mode; // Light mode
+            data[dataIndex + 2] = mode == 0 ? null : mode.toString(); // Mode name
             if (mode == 0 /* Off */) {
-                data[dataIndex + 9] = -1;
+                data[dataIndex + 9] = mode;
+                data[dataIndex + 10] = "Off";
             }
 
             dataIndex += 1 + (totalButtons * 8);
@@ -575,7 +611,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
             initializeLightPanel(dc, 0, 2, width, height);
         } else {
             initializeLightPanel(dc, 0, 1, width, height);
-            initializeLightPanel(dc, 7, 3, width, height);
+            initializeLightPanel(dc, taillightIndex, 3, width, height);
         }
 
         _panelInitialized = true;
@@ -673,9 +709,10 @@ class SmartBikeLightsView extends WatchUi.DataField {
         var light = lightsData[dataIndex];
         var controlMode = lightsData[dataIndex + 4];
         var lightMode = lightsData[dataIndex + 2];
+        var nextLightMode = lightsData[dataIndex + 7];
         var margin = 2;
         var buttonPadding = margin * 2;
-        var batteryStatus = getLightBatteryStatus(light);
+        var batteryStatus = getLightBatteryStatus(dataIndex, light);
         if (batteryStatus > 5) {
             return;
         }
@@ -698,12 +735,13 @@ class SmartBikeLightsView extends WatchUi.DataField {
                 var buttonWidth = panelData[buttonIndex + 6] - buttonPadding;
                 var buttonHeight = panelData[buttonIndex + 7] - buttonPadding;
                 var isSelected = lightMode == mode;
+                var isNext = nextLightMode == mode;
 
-                setTextColor(dc, isSelected ? _activityColor : bgColor);
+                setTextColor(dc, isSelected ? _activityColor : isNext ? fgColor : bgColor);
                 dc.fillRoundedRectangle(buttonX, buttonY, buttonWidth, buttonHeight, 8);
-                setTextColor(dc, fgColor);
+                setTextColor(dc, isNext ? bgColor : fgColor);
                 dc.drawRoundedRectangle(buttonX, buttonY, buttonWidth, buttonHeight, 8);
-                setTextColor(dc, isSelected ? 0xFFFFFF /* COLOR_WHITE */ : fgColor);
+                setTextColor(dc, isSelected ? 0xFFFFFF /* COLOR_WHITE */ : isNext ? bgColor : fgColor);
                 if (mode < 0) {
                     dc.drawText(titleX, titleParts[1], titleFont, $.controlModes[controlMode], 1 /* TEXT_JUSTIFY_CENTER */);
                 } else {
@@ -735,14 +773,14 @@ class SmartBikeLightsView extends WatchUi.DataField {
         dc.setPenWidth(_monochrome ? 1 : 2);
         dc.drawLine(width / 2, 0, width / 2, height);
         drawLight(0, 1, dc, width, fgColor, bgColor);
-        drawLight(7, 3, dc, width, fgColor, bgColor);
+        drawLight(taillightIndex, 3, dc, width, fgColor, bgColor);
     }
 
     private function drawLight(dataIndex, position, dc, width, fgColor, bgColor) {
         var lightsData = _lightsData;
         var lightX = Math.round(width * 0.25f * position);
         var light = lightsData[dataIndex];
-        var batteryStatus = getLightBatteryStatus(light);
+        var batteryStatus = getLightBatteryStatus(dataIndex, light);
         var lightText = lightsData[dataIndex + 1];
         var controlMode = lightsData[dataIndex + 4];
         var title = lightsData[dataIndex + 5];
@@ -788,12 +826,18 @@ class SmartBikeLightsView extends WatchUi.DataField {
         dc.setColor(_monochrome ? 0x000000 /* COLOR_BLACK */ : color, -1 /* COLOR_TRANSPARENT */);
     }
 
-    private function setLightMode(index, mode, title) {
-        _lightsData[index + 5] = title;
-        var light = _lightsData[index];
-        if (updateLightTextAndMode(index, light, mode)) {
-            light.setMode(mode);
+    private function setLightMode(dataIndex, mode, title) {
+        var lightsData = _lightsData;
+        if (lightsData[dataIndex + 2] == mode) {
+            lightsData[dataIndex + 5] = title;
+            return;
         }
+
+        var light = lightsData[dataIndex];
+        lightsData[dataIndex + 7] = mode; // Next mode
+        lightsData[dataIndex + 8] = title; // Next title
+        lightsData[dataIndex + 9] = 6; // Timeout for compute method
+        light.setMode(mode);
     }
 
     private function updateLightTextAndMode(dataIndex, light, mode) {
@@ -812,10 +856,10 @@ class SmartBikeLightsView extends WatchUi.DataField {
         return true;
     }
 
-    private function getLightBatteryStatus(light) {
+    private function getLightBatteryStatus(dataIndex, light) {
         var status = _lightNetwork.getBatteryStatus(light.identifier);
         if (status == null) { /* Disconnected */
-            updateLight(light, -1);
+            updateLightTextAndMode(dataIndex, light, -1);
             return 6;
         }
 
@@ -823,8 +867,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
     }
 
     private function getInitialLightMode(light, controlMode) {
-        return controlMode == 0 /* SMART */ ? 0 /* LIGHT_MODE_OFF */ // The mode will be calculated and set in the compute method
-            : controlMode == 1 /*NETWORK*/ ? light.mode
+        return controlMode <= 1 /*NETWORK*/ ? light.mode
             : getLightData("MM", light.type, 0 /* LIGHT_MODE_OFF */);
     }
 
