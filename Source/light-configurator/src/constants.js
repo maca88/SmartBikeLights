@@ -158,6 +158,13 @@ const bontragerFlareRtModes = [
   { id: 63, name: 'Night Flash' }
 ];
 
+const garminVariaRtl510 = [
+  { id: 0, name: 'Off' },
+  { id: 4, name: 'Steady Beam' },
+  { id: 7, name: 'Day Flash' },
+  { id: 6, name: 'Night Flash' }
+];
+
 export const taillightList = [
   {
     id: 1,
@@ -173,6 +180,21 @@ export const taillightList = [
         [bontragerFlareRtModes[3]],
         [bontragerFlareRtModes[4]],
         [bontragerFlareRtModes[5]]
+      ]
+    }
+  },
+  {
+    id: 2,
+    name: 'Garmin Varia RTL510',
+    modes: garminVariaRtl510,
+    lightModes: [0, 73404416], // 73404416
+    defaultLightPanel: {
+      shortName: 'Varia 510',
+      buttonGroups: [
+        [controlMode, garminVariaRtl510[0]],
+        [garminVariaRtl510[1]],
+        [garminVariaRtl510[2]],
+        [garminVariaRtl510[3]],
       ]
     }
   },
