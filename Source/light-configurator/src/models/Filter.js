@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 import { makeAutoObservable } from 'mobx';
-import { filterMap, batteryStateList, gpsAccuracyList, timespanTypeMap, speedUnitList, getBatteryOperator, getBatteryValue } from '../constants';
+import { filterMap, batteryStateList, gpsAccuracyList, timerStateList, timespanTypeMap, speedUnitList, getBatteryOperator, getBatteryValue } from '../constants';
 import addSeconds from 'date-fns/addSeconds';
 import startOfToday from 'date-fns/startOfToday';
 import format from 'date-fns/format';
@@ -129,6 +129,10 @@ export default class Filter {
         case 'G': // GPS Accuracy
           name += ((this.operator || '') + ' ');
           name += gpsAccuracyList[this.value];
+          break;
+        case 'H': // Timer state
+          name += ((this.operator || '') + ' ');
+          name += timerStateList[this.value];
           break;
         default:
           break;
