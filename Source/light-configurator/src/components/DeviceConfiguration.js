@@ -105,7 +105,7 @@ export default observer(({ configuration }) => {
           <CardContent>
             <Typography color="textPrimary" gutterBottom>
             When the lights are configured copy the below value and paste it in the Smart Light Bike application setting 'Lights Configuration' by using 
-            Garmin Connect Mobile. Do not use Garmin Express as it is limited to 256 characters.
+            Garmin Connect Mobile or Garmin Express.
             </Typography>
             {configuration.isValid() ?
             <React.Fragment>
