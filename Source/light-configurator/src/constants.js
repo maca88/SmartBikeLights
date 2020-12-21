@@ -120,6 +120,15 @@ const bontragerIonProRtModes = [
   { id: 62, name: 'Night Flash' }
 ];
 
+const garminVariaHl500 = [
+  { id: 0, name: 'Off' },
+  { id: 1, name: 'Overdrive' },
+  { id: 2, name: 'High' },
+  { id: 3, name: 'Medium' },
+  { id: 4, name: 'Low' },
+  { id: 7, name: 'Flash' }
+];
+
 export const controlMode = {id: -1, name: "Control mode"};
 
 export const headlightList = [
@@ -137,6 +146,40 @@ export const headlightList = [
         [bontragerIonProRtModes[3]],
         [bontragerIonProRtModes[4]],
         [bontragerIonProRtModes[5]]
+      ]
+    }
+  },
+  {
+    id: 2,
+    name: 'Bontrager ION 200 RT',
+    modes: bontragerIonProRtModes,
+    lightModes: [4587520, 196641], // 19703248369942561
+    defaultLightPanel: {
+      shortName: 'Ion 200 RT',
+      buttonGroups: [
+        [controlMode, bontragerIonProRtModes[0]],
+        [bontragerIonProRtModes[1]],
+        [bontragerIonProRtModes[2]],
+        [bontragerIonProRtModes[3]],
+        [bontragerIonProRtModes[4]],
+        [bontragerIonProRtModes[5]]
+      ]
+    }
+  },
+  {
+    id: 3,
+    name: 'Garmin Varia HL 500',
+    modes: garminVariaHl500,
+    lightModes: [0, 67121681], // 67121681
+    defaultLightPanel: {
+      shortName: 'Varia 500',
+      buttonGroups: [
+        [controlMode, garminVariaHl500[0]],
+        [garminVariaHl500[1]],
+        [garminVariaHl500[2]],
+        [garminVariaHl500[3]],
+        [garminVariaHl500[4]],
+        [garminVariaHl500[5]]
       ]
     }
   },
