@@ -59,6 +59,7 @@ Smart Bike Lights is a [data field](https://developer.garmin.com/connect-iq/conn
 - Bontrager Ion 200 RT
 - Bontrager Flare RT
 - Garmin Varia RTL510
+- Garmin Varia RTL515
 - Garmin Varia HL500
 
 **NOTE:** In case your ANT+ light is not on the list, please check the following garmin thread: https://forums.garmin.com/developer/connect-iq/f/showcase/248492/data-field-smart-bike-lights
