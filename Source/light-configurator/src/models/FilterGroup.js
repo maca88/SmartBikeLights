@@ -66,7 +66,7 @@ export default class FilterGroup {
     }
 
     if (lightModes && this.lightMode !== null) {
-      name += ' Light Mode: ' + lightModes.find(m => m.id === this.lightMode).name;
+      name += ' Light Mode: ' + lightModes.find(m => m.id === this.lightMode)?.name;
     }
 
     return name;
