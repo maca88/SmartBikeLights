@@ -41,4 +41,9 @@ class SmartBikeLightsApp extends Application.AppBase {
     function getInitialView() {
         return [_view, new SmartBikeLightsViewDelegate(_view)];
     }
+
+    (:settings)
+    function getSettingsView() {
+        return _view.getSettingsView();
+    }
 }

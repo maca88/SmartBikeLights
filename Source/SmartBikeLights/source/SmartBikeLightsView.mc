@@ -85,12 +85,13 @@ class SmartBikeLightsView extends WatchUi.DataField {
     private var _activityColor;
 
     // Pre-calculated positions
-    private var _isFullScreen;
-    private var _fieldWidth;
-    private var _batteryWidth;
+    (:rectangle) private var _isFullScreen;
+    (:rectangle) private var _fieldWidth;
+    private var _batteryWidth = 49;
     private var _batteryY;
     private var _lightY;
     private var _titleY;
+    private var _offsetX;
 
     // Parsed filters
     private var _globalFilters;
@@ -101,6 +102,11 @@ class SmartBikeLightsView extends WatchUi.DataField {
     (:touchScreen) private var _headlightPanel;
     (:touchScreen) private var _taillightPanel;
     (:touchScreen) private var _panelInitialized = false;
+
+    // Settings data
+    (:settings) var headlightSettings;
+    (:settings) var taillightSettings;
+    (:settings) var _settingsInitialized;
 
     // Fields used to evaluate filters
     private var _lastSpeed;
@@ -119,16 +125,24 @@ class SmartBikeLightsView extends WatchUi.DataField {
         _controlModeFont = getFont(:controlModeFont);
         _lightNetworkListener = new BikeLightNetworkListener(self);
 
-        var settings = WatchUi.loadResource(Rez.JsonData.Settings);
-        _monochrome = !settings[0];
-        _titleFont = settings[1];
-        _titleTopPadding = settings[2];
-
         // In order to avoid calling Gregorian.utcInfo every second, calcualate Unix Timestamp of today
         var now = Time.now();
         var time = Gregorian.utcInfo(now, Time.FORMAT_SHORT);
         _todayMoment = now.value() - ((time.hour * 3600) + (time.min * 60) + time.sec);
         onSettingsChanged();
+    }
+
+    (:settings)
+    function getSettingsView() {
+        if (_errorCode != null || _initializedLights == 0 || !initializeSettings() || !(WatchUi has :Menu2)) {
+            return null;
+        }
+
+        var menu = _initializedLights > 1
+            ? new Settings.LightsMenu(self)
+            : new Settings.LightMenu(headlightData[0].type, self);
+
+        return [menu, new Settings.MenuDelegate(menu)];
     }
 
     // Called from SmartBikeLightsApp.onSettingsChanged()
@@ -149,15 +163,10 @@ class SmartBikeLightsView extends WatchUi.DataField {
             _globalFilters = configuration[0];
             _headlightFilters = configuration[2];
             _taillightFilters = configuration[4];
-            if (self has :onTap) {
-                _panelInitialized = false;
-                _headlightPanel = configuration[5];
-                _taillightPanel = configuration[6];
-            }
+            setupLightButtons(configuration);
 
             var headlightModes = configuration[1]; // Headlight modes
-            if (!validateLightModes(headlightData[0], headlightModes == null ? _taillightFilters : _headlightFilters) ||
-                !validateLightModes(taillightData[0], _taillightFilters)) {
+            if (!validateLightModes(headlightData[0]) || !validateLightModes(taillightData[0])) {
                 return;
             }
 
@@ -171,17 +180,8 @@ class SmartBikeLightsView extends WatchUi.DataField {
 
     // Overrides DataField.onLayout
     function onLayout(dc) {
-        //System.println("onLayout"  + " w=" + dc.getWidth() + " h=" + dc.getHeight());
-        var height = dc.getHeight();
-        var width = dc.getWidth();
-        var deviceSettings = System.getDeviceSettings();
-        var padding = height - 55 < 0 ? 0 : 3;
-        _fieldWidth = width;
-        _isFullScreen = width == deviceSettings.screenWidth && height == deviceSettings.screenHeight;
-        _batteryWidth = dc.getTextWidthInPixels("B", _batteryFont);
-        _batteryY = height - 19 - padding;
-        _lightY = _batteryY - padding - 32 /* Lights font size */;
-        _titleY = (_lightY - dc.getFontHeight(_titleFont) - _titleTopPadding) >= 0 ? _titleTopPadding : null;
+        // Due to getObsurityFlags returning incorrect results here, we have to postpone the calculation to onUpdate method
+        _lightY = null; // Force to pre-calculate again
     }
 
     // onShow() is called when this View is brought to the foreground
@@ -277,14 +277,15 @@ class SmartBikeLightsView extends WatchUi.DataField {
 
         dc.setColor(fgColor, bgColor);
         dc.clear();
-
-        if (_errorCode != null) {
-            drawCenterText(dc, "Error " + _errorCode, fgColor, 4, width, height);
-            return;
+        if (_lightY == null) {
+            preCalculate(dc, width, height);
         }
 
-        if (_initializedLights == 0) {
-            drawCenterText(dc, "No network", fgColor, 2, width, height);
+        var text = _errorCode != null ? "Error " + _errorCode
+            : _initializedLights == 0 ? "No network"
+            : null;
+        if (text != null) {
+            drawCenterText(dc, text, fgColor, width, height);
             return;
         }
 
@@ -386,7 +387,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
 
             // Allow the initialization to complete even if the modes are invalid, so that the user
             // is able to correct them by modifying the light configuration
-            validateLightModes(light, lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightFilters : _taillightFilters);
+            validateLightModes(light);
         }
 
         _initializedLights = lights.size();
@@ -416,22 +417,6 @@ class SmartBikeLightsView extends WatchUi.DataField {
             // Change done outside the data field
             onExternalLightModeChange(lightData, mode);
         }
-    }
-
-    (:touchScreen)
-    private function onExternalLightModeChange(lightData, mode) {
-        //System.println("onExternalLightModeChange mode=" + mode + " lightType=" + lightData[0].type  + " timer=" + System.getTimer());
-        setLightAndControlMode(lightData, lightData[0].type, mode, lightData[4] != 2 ? 2 /* MANUAL */ : null);
-    }
-
-    (:nonTouchScreen)
-    private function onExternalLightModeChange(lightData, mode) {
-        lightData[4] = 2; /* MANUAL */
-        lightData[5] = null;
-        // In case the light mode was changed with the Garmin lights menu, set the
-        // next control mode to be network so that when the data field will be again displayed,
-        // the smart mode won't reset the light mode.
-        setLightData("CM", lightData[0].type, 1 /* NETWORK */);
     }
 
     (:touchScreen)
@@ -482,14 +467,8 @@ class SmartBikeLightsView extends WatchUi.DataField {
         return true;
     }
 
-    private function releaseLights() {
-        _initializedLights = 0;
-        headlightData[0] = null;
-        taillightData[0] = null;
-    }
-
-    (:touchScreen)
-    private function setLightAndControlMode(lightData, lightType, newMode, newControlMode) {
+    (:lightButtons)
+    function setLightAndControlMode(lightData, lightType, newMode, newControlMode) {
         var controlMode = lightData[4];
         if (newControlMode == 1 /* NETWORK */) {
             setNetworkMode(lightData, _networkMode);
@@ -502,6 +481,129 @@ class SmartBikeLightsView extends WatchUi.DataField {
             setLightData("CM", lightType, newControlMode);
             lightData[4] = newControlMode;
         }
+    }
+
+    (:rectangle)
+    private function preCalculate(dc, width, height) {
+        var deviceSettings = System.getDeviceSettings();
+        var padding = height - 55 < 0 ? 0 : 3;
+        var settings = WatchUi.loadResource(Rez.JsonData.Settings);
+        _monochrome = !settings[0];
+        _titleFont = settings[1];
+        _titleTopPadding = settings[2];
+        _offsetX = settings[3];
+        _fieldWidth = width;
+        _isFullScreen = width == deviceSettings.screenWidth && height == deviceSettings.screenHeight;
+        _batteryY = height - 19 - padding;
+        _lightY = _batteryY - padding - 32 /* Lights font size */;
+        _titleY = (_lightY - dc.getFontHeight(_titleFont) - _titleTopPadding) >= 0 ? _titleTopPadding : null;
+    }
+
+    (:round)
+    private function preCalculate(dc, width, height) {
+        var flags = getObscurityFlags();
+        var settings = WatchUi.loadResource(Rez.JsonData.Settings);
+        _monochrome = !settings[0];
+        _titleFont = settings[1];
+        _titleTopPadding = settings[2];
+        var titleHeight = dc.getFontHeight(_titleFont) + _titleTopPadding;
+        var lightHeight = height < 55 ? 35 : 55;
+        var totalHeight = lightHeight + titleHeight;
+        var includeTitle = height > 90 && width > 150;
+        totalHeight = includeTitle ? totalHeight : lightHeight;
+        var startY = (12800 >> flags) & 0x01 == 1 ? 2 /* From top */
+            : (200 >> flags) & 0x01 == 1 ? height - totalHeight /* From bottom */
+            : (height - totalHeight) / 2; /* From center */
+        _titleY = includeTitle ? startY : null;
+        _lightY = includeTitle ? _titleY + titleHeight : startY;
+        _batteryY = height < 55 ? null : _lightY + 35;
+        var offsetDirection = ((1415136409 >> (flags * 2)) & 0x03) - 1;
+        _offsetX = settings[3] * offsetDirection;
+    }
+
+    (:settings)
+    private function initializeSettings() {
+        if (_settingsInitialized) {
+            return true;
+        }
+
+        if (!validateSettingsLightModes(headlightData[0]) || !validateSettingsLightModes(taillightData[0])) {
+            return false;
+        }
+
+        if (headlightSettings == null && headlightData[0].type == 0 /* LIGHT_TYPE_HEADLIGHT */) {
+            headlightSettings = getDefaultLightSettings(headlightData[0]);
+        }
+
+        if (taillightSettings == null) {
+            var lightData = _initializedLights > 1 ? taillightData
+                : headlightData[0].type == 2 ? headlightData
+                : null;
+            taillightSettings = getDefaultLightSettings(lightData[0]);
+        }
+
+        _settingsInitialized = true;
+        return true;
+    }
+
+    (:settings)
+    private function getDefaultLightSettings(light) {
+        if (light == null) {
+            return null;
+        }
+
+        var modes = light.getCapableModes();
+        var data = new [2 * modes.size() + 1];
+        var dataIndex = 1;
+        data[0] = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? "Headlight" : "Taillight";
+        for (var i = 0; i < modes.size(); i++) {
+            var mode = modes[i];
+            data[dataIndex] = mode == 0 ? "Off" : mode.toString();
+            data[dataIndex + 1] = mode;
+            dataIndex += 2;
+        }
+
+        return data;
+    }
+
+    (:noLightButtons)
+    private function setupLightButtons(configuration) {
+    }
+
+    (:touchScreen)
+    private function setupLightButtons(configuration) {
+        _panelInitialized = false;
+        _headlightPanel = configuration[5];
+        _taillightPanel = configuration[6];
+    }
+
+    (:settings)
+    private function setupLightButtons(configuration) {
+        _settingsInitialized = false;
+        headlightSettings = configuration[5];
+        taillightSettings = configuration[6];
+    }
+
+    (:lightButtons)
+    private function onExternalLightModeChange(lightData, mode) {
+        //System.println("onExternalLightModeChange mode=" + mode + " lightType=" + lightData[0].type  + " timer=" + System.getTimer());
+        setLightAndControlMode(lightData, lightData[0].type, mode, lightData[4] != 2 ? 2 /* MANUAL */ : null);
+    }
+
+    (:noLightButtons)
+    private function onExternalLightModeChange(lightData, mode) {
+        lightData[4] = 2; /* MANUAL */
+        lightData[5] = null;
+        // In case the light mode was changed with the Garmin lights menu, set the
+        // next control mode to be network so that when the data field will be again displayed,
+        // the smart mode won't reset the light mode.
+        setLightData("CM", lightData[0].type, 1 /* NETWORK */);
+    }
+
+    private function releaseLights() {
+        _initializedLights = 0;
+        headlightData[0] = null;
+        taillightData[0] = null;
     }
 
     (:touchScreen)
@@ -545,7 +647,7 @@ class SmartBikeLightsView extends WatchUi.DataField {
 
     (:testNetwork)
     private function setupNetwork() {
-        _lightNetwork = new TestNetwork.TestLightNetwork(self, _lightNetworkListener);
+        _lightNetwork = new TestNetwork.TestLightNetwork(_lightNetworkListener);
     }
 
     (:deviceNetwork)
@@ -777,19 +879,17 @@ class SmartBikeLightsView extends WatchUi.DataField {
         // Draw separator
         setTextColor(dc, _activityColor);
         dc.setPenWidth(_monochrome ? 1 : 2);
-        dc.drawLine(width / 2, 0, width / 2, height);
+        dc.drawLine(width / 2 + _offsetX, 0, width / 2 + _offsetX, height);
         drawLight(headlightData, 1, dc, width, fgColor, bgColor);
         drawLight(taillightData, 3, dc, width, fgColor, bgColor);
     }
 
+    (:rectangle)
     private function drawLight(lightData, position, dc, width, fgColor, bgColor) {
         var lightX = Math.round(width * 0.25f * position);
-        var light = lightData[0];
         var batteryStatus = getLightBatteryStatus(lightData);
-        var lightText = lightData[1];
-        var controlMode = lightData[4];
         var title = lightData[5];
-        var justification = light.type;
+        var justification = lightData[0].type;
         var direction = justification == 0 ? 1 : -1;
         var lightXOffset = justification == 0 ? -4 : 2;
         dc.setColor(fgColor, bgColor);
@@ -798,9 +898,31 @@ class SmartBikeLightsView extends WatchUi.DataField {
             dc.drawText(lightX, _titleY, _titleFont, title, 1 /* TEXT_JUSTIFY_CENTER */);
         }
 
-        dc.drawText(lightX + (direction * (_batteryWidth / 2)) + lightXOffset, _lightY, _lightsFont, lightText, justification);
-        dc.drawText(lightX + (direction * 8), _lightY + 11, _controlModeFont, $.controlModes[controlMode], 1 /* TEXT_JUSTIFY_CENTER */);
+        dc.drawText(lightX + (direction * (_batteryWidth / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
+        dc.drawText(lightX + (direction * 8), _lightY + 11, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
         drawBattery(dc, fgColor, lightX, _batteryY, batteryStatus);
+    }
+
+    (:round)
+    private function drawLight(lightData, position, dc, width, fgColor, bgColor) {
+        var justification = lightData[0].type;
+        var direction = justification == 0 ? 1 : -1;
+        var lightX = Math.round(width * 0.25f * position) + _offsetX;
+        lightX += _initializedLights == 2 ? (direction * ((width / 4) - 25)) : 0;
+        var batteryStatus = getLightBatteryStatus(lightData);
+        var title = lightData[5];
+        var lightXOffset = justification == 0 ? -4 : 2;
+        dc.setColor(fgColor, bgColor);
+
+        if (title != null && _titleY != null) {
+            dc.drawText(lightX + (direction * 22), _titleY, _titleFont, title, justification);
+        }
+
+        dc.drawText(lightX + (direction * (_batteryWidth / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
+        dc.drawText(lightX + (direction * 8), _lightY + 11, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
+        if (_batteryY != null) {
+            drawBattery(dc, fgColor, lightX, _batteryY, batteryStatus);
+        }
     }
 
     private function drawBattery(dc, fgColor, x, y, batteryStatus) {
@@ -822,9 +944,16 @@ class SmartBikeLightsView extends WatchUi.DataField {
         dc.drawText(x, y, _batteryFont, batteryStatus.toString(), 1 /* TEXT_JUSTIFY_CENTER */);
     }
 
-    private function drawCenterText(dc, text, color, font, width, height) {
+    (:rectangle)
+    private function drawCenterText(dc, text, color, width, height) {
         setTextColor(dc, color);
-        dc.drawText(width / 2, height / 2, font, text, 1 /* TEXT_JUSTIFY_CENTER */ | 4 /* TEXT_JUSTIFY_VCENTER */);
+        dc.drawText(width / 2, height / 2, 2, text, 1 /* TEXT_JUSTIFY_CENTER */ | 4 /* TEXT_JUSTIFY_VCENTER */);
+    }
+
+    (:round)
+    private function drawCenterText(dc, text, color, width, height) {
+        setTextColor(dc, color);
+        dc.drawText(width / 2, height / 2, 0, text, 1 /* TEXT_JUSTIFY_CENTER */ | 4 /* TEXT_JUSTIFY_VCENTER */);
     }
 
     private function setTextColor(dc, color) {
@@ -938,8 +1067,13 @@ class SmartBikeLightsView extends WatchUi.DataField {
         return WatchUi.loadResource(Rez.Fonts[key]);
     }
 
-    private function validateLightModes(light, filters) {
-        if (light == null || filters == null) {
+    private function validateLightModes(light) {
+        if (light == null) {
+            return true;
+        }
+
+        var filters = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightFilters : _taillightFilters;
+        if (filters == null) {
             return true;
         }
 
@@ -953,6 +1087,28 @@ class SmartBikeLightsView extends WatchUi.DataField {
             }
 
             i = i + 3 + (totalFilters * 3);
+        }
+
+        return true;
+    }
+
+    (:settings)
+    private function validateSettingsLightModes(light) {
+        if (light == null) {
+            return true;
+        }
+
+        var settings = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? headlightSettings : taillightSettings;
+        if (settings == null) {
+            return true;
+        }
+
+        var capableModes = light.getCapableModes();
+        for (var i = 2; i < settings.size(); i += 2) {
+            if (capableModes.indexOf(settings[i]) < 0) {
+                _errorCode = 4;
+                return false;
+            }
         }
 
         return true;

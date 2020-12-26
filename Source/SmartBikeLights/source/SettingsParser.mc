@@ -12,14 +12,38 @@ public function parseConfiguration(value) {
         parseFilters(chars, filterResult[0] + 1, true, filterResult),     // Headlight filters
         parseLong(chars, filterResult[0] + 1, filterResult),              // Taillight modes
         parseFilters(chars, filterResult[0] + 1, true, filterResult),     // Taillight filters
-        parseLightPanelButtons(chars, filterResult[0] + 1, filterResult), // Headlight panel buttons
-        parseLightPanelButtons(chars, filterResult[0] + 1, filterResult)  // Taillight panel buttons
+        parseLightButtons(chars, filterResult[0] + 1, filterResult),      // Headlight panel/settings buttons
+        parseLightButtons(chars, filterResult[0] + 1, filterResult)       // Taillight panel/settings buttons
     ];
 }
 
-(:nonTouchScreen)
-public function parseLightPanelButtons(chars, i, filterResult) {
+(:noLightButtons)
+public function parseLightButtons(chars, i, filterResult) {
     return null;
+}
+
+// <TotalButtons>:<LightName>|[<Button>| ...]
+// <Button> := <ModeTitle>:<LightMode>
+// Example: 6:Ion Pro RT|Off:0|High:1|Medium:2|Low:5|Night Flash:62|Day Flash:63
+(:settings)
+public function parseLightButtons(chars, i, filterResult) {
+    var totalButtons = parseNumber(chars, i, filterResult);
+    if (totalButtons == null) {
+        return null;
+    }
+
+    var data = new [1 + (2 * totalButtons)];
+    data[0] = parseTitle(chars, filterResult[0] + 1, filterResult);
+    i = filterResult[0];
+    var dataIndex = 1;
+
+    for (var j = 0; j < totalButtons; j++) {
+        data[dataIndex] = parseTitle(chars, filterResult[0] + 1, filterResult);
+        data[dataIndex + 1] = parseNumber(chars, filterResult[0] + 1, filterResult);
+        dataIndex += 2;
+    }
+
+    return data;
 }
 
 // <TotalButtons>,<TotalButtonGroups>:<LightName>|[<ButtonGroup>| ...]
@@ -27,7 +51,7 @@ public function parseLightPanelButtons(chars, i, filterResult) {
 // <Button> := <ModeTitle>:<LightMode>
 // Example: 7,6:Ion Pro RT|2,:-1,Off:0|1,High:1|1,Medium:2|1,Low:5|1,Night Flash:62|1,Day Flash:63
 (:touchScreen)
-public function parseLightPanelButtons(chars, i, filterResult) {
+public function parseLightButtons(chars, i, filterResult) {
     var totalButtons = parseNumber(chars, i, filterResult);
     if (totalButtons == null) {
         return null;
@@ -37,7 +61,7 @@ public function parseLightPanelButtons(chars, i, filterResult) {
     // [:TotalButtonGroups:, :LightName:, :LightNameX:, :LightNameY:, :BatteryX:, :BatteryY:, (<ButtonGroup>)+]
     // <ButtonGroup> := [:NumberOfButtons:, :Mode:, :TitleX:, :TitleFont:, (<TitlePart>)+, :ButtonLeftX:, :ButtonTopY:, :ButtonWidth:, :ButtonHeight:){:NumberOfButtons:} ]
     // <TitlePart> := [(:Title:, :TitleY:)+]
-    var data = new  [6 + (8 * totalButtons) + totalButtonGroups];
+    var data = new [6 + (8 * totalButtons) + totalButtonGroups];
     data[0] = totalButtonGroups;
     data[1] = parseTitle(chars, filterResult[0] + 1, filterResult);
     i = filterResult[0];
@@ -134,9 +158,8 @@ public function parseGenericFilter(chars, index, filterResult) {
 
 public function parseTimespanPart(chars, index, filterResult, data, dataIndex) {
     var char = chars[index];
-    var charNumber = char.toNumber();
-    var type = charNumber == 115 /* s */ ? 2 /* Sunset */
-        : charNumber == 114 /* r */ ? 1 /* Sunrise */
+    var type = char == 's' ? 2 /* Sunset */
+        : char == 'r' ? 1 /* Sunrise */
         : 0; /* Total minutes of the day */
     if (type != 0) {
         index++;

@@ -3,6 +3,7 @@
         :colorScreen: = true / false
         :titleFont: = 0-8
         :titleFontTopPadding: = Number
+        :displayOffsetX: = Number
     -->
-    <jsonData id="Settings">[false, 1, -2]</jsonData>
+    <jsonData id="Settings">[false, 1, -2, 0]</jsonData>
 </resources>

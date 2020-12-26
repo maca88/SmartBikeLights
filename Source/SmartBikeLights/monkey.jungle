@@ -2,14 +2,36 @@ project.manifest = manifest.xml
 # excludeBase=deviceNetwork
 excludeBase=testNetwork
 
+lowMemory = $(excludeBase);touchScreen;polygons;settings;lightButtons
+roundLowMemory = $(lowMemory);rectangle
+rectangleLowMemory = $(lowMemory);round
+rectangleNonTouchScreen = $(excludeBase);touchScreen;noPolygons;noLightButtons;round
+
 # maps default
-base.excludeAnnotations = $(excludeBase);nonTouchScreen;noPolygons
+rectangle.excludeAnnotations = $(excludeBase);nonTouchScreen;noPolygons;noLightButtons;round;settings
+round.excludeAnnotations = $(excludeBase);touchScreen;noPolygons;noLightButtons;rectangle
+base.excludeAnnotations = $(rectangle.excludeAnnotations)
 
 # Non touch screen devices with 32KB memory
-edge130.excludeAnnotations = $(excludeBase);touchScreen;polygons
-edge130plus.excludeAnnotations = $(excludeBase);touchScreen;polygons
-edge_520.excludeAnnotations = $(excludeBase);touchScreen;polygons
+  # Rectangle screen devices
+edge130.excludeAnnotations = $(rectangleLowMemory)
+edge130plus.excludeAnnotations = $(rectangleLowMemory)
+edge_520.excludeAnnotations = $(rectangleLowMemory)
+  # Round screen devices
+fenix5.excludeAnnotations = $(roundLowMemory)
+fenix6.excludeAnnotations = $(roundLowMemory)
+fenix6s.excludeAnnotations = $(roundLowMemory)
+fr245.excludeAnnotations = $(roundLowMemory)
+fr645.excludeAnnotations = $(roundLowMemory)
+fr935.excludeAnnotations = $(roundLowMemory)
+vivoactive3.excludeAnnotations = $(roundLowMemory)
+vivoactive3d.excludeAnnotations = $(roundLowMemory)
+vivoactive3m.excludeAnnotations = $(roundLowMemory)
+vivoactive3mlte.excludeAnnotations = $(roundLowMemory)
+vivoactive4.excludeAnnotations = $(roundLowMemory)
+legacysagadarthvader.excludeAnnotations = $(roundLowMemory)
+legacyherofirstavenger.excludeAnnotations = $(roundLowMemory)
 
 # Non touch screen devices with more than 32KB memory
-edge520plus.excludeAnnotations = $(excludeBase);touchScreen;noPolygons
-edge530.excludeAnnotations = $(excludeBase);touchScreen;noPolygons
+edge520plus.excludeAnnotations = $(rectangleNonTouchScreen)
+edge530.excludeAnnotations = $(rectangleNonTouchScreen)

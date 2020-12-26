@@ -5,9 +5,5 @@
         :titleFontTopPadding: = Number
         :displayOffsetX: = Number
     -->
-    <jsonData id="Settings">[true, 2, 2, 0]</jsonData>
-    <!-- Simulator
-    <jsonData id="FontTopPaddings">[290495474803212675]</jsonData>  -->
-    <!-- Device -->
-    <jsonData id="FontTopPaddings">[217303114426875904]</jsonData>
+    <jsonData id="Settings">[true, 1, 0, 7]</jsonData>
 </resources>
