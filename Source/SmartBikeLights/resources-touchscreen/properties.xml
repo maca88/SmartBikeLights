@@ -1,0 +1,6 @@
+<resources>
+    <properties>
+        <!-- Whether only control mode can be changed by tapping on the icon -->
+        <property id="CMO" type="boolean">false</property>
+    </properties>
+</resources>

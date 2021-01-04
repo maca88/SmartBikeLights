@@ -10,20 +10,19 @@ module TestNetwork {
 
     class TestLightNetwork extends AntPlus.LightNetwork {
 
-        private var _view;
         private var _listener;
         private var _lights;
         private var _state = 0;
         private var _initialized = false;
 
-        function initialize(view, listener) {
+        function initialize(listener) {
             LightNetwork.initialize(listener);
-            _view = view.weak();
             _listener = listener;
             _lights = [
                 new TestBikeLight(0, 0 /* LIGHT_TYPE_HEADLIGHT */, [0, 1, 2, 5, 63, 62], listener, 81 /* Bontrager */, 6 /* ION PRO RT */),
                 new TestBikeLight(1, 2 /* LIGHT_TYPE_TAILLIGHT */, [0, 1, 5, 7, 8, 63], listener, 81 /* Bontrager */, 1 /* Flare RT */)
             ];
+            lastUpdate = System.getTimer();
         }
 
         function getBikeLights() {
@@ -46,18 +45,14 @@ module TestNetwork {
             if (counter == 0) {
                 _state = 0; /* LIGHT_NETWORK_STATE_NOT_FORMED */
                 _listener.onLightNetworkStateUpdate(_state);
-            } else if (!_initialized && _state == 0 && counter > 2) {
+            } else if (!_initialized && _state == 0 && counter > 1) {
                 _state = 2; /* LIGHT_NETWORK_STATE_FORMED */
                 _listener.onLightNetworkStateUpdate(_state);
             }
 
-            if (counter % 15 == 0) {
+            if (counter % 50 == 0) {
                 mode = mode != null ? (mode + 1) % 4 : 0;
                 mode = mode == 3 ? null : mode; // Simulate TRAIL mode that is not in the API
-            }
-
-            if (counter % 20 == 0) {
-                _view.get().onShow(); // Simulate switching from garmin menu to data field screen
             }
         }
 
@@ -107,7 +102,7 @@ module TestNetwork {
 
             updateBattery--;
             _batteryCounter++;
-            if (_batteryCounter % 2 != 0) {
+            if (_batteryCounter % 4 != 0) {
                 return _batteryStatus;
             }
 

@@ -3,8 +3,9 @@
         :colorScreen: = true / false
         :titleFont: = 0-8
         :titleFontTopPadding: = Number
+        :displayOffsetX: = Number
     -->
-    <jsonData id="Settings">[true, 2, 2]</jsonData>
+    <jsonData id="Settings">[true, 2, 2, 0]</jsonData>
     <!-- Simulator
     <jsonData id="FontTopPaddings">[290495474803212675]</jsonData>  -->
     <!-- Device -->

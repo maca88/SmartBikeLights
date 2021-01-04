@@ -1,0 +1,7 @@
+<resources>
+    <settings>
+        <setting propertyKey="@Properties.CMO" title="@Strings.CMO">
+            <settingConfig type="boolean" />
+        </setting>
+    </settings>
+</resources>

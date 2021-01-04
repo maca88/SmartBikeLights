@@ -1,10 +1,11 @@
 <resources>
-    <!-- Format [[:colorScreen:, :titleFont:, :titleFontTopPadding:]
+    <!-- Format [[:colorScreen:, :titleFont:, :titleFontTopPadding:, :displayOffsetX:]
         :colorScreen: = true / false
         :titleFont: = 0-8
         :titleFontTopPadding: = Number
+        :displayOffsetX: = Number
     -->
-    <jsonData id="Settings">[true, 2, -1]</jsonData>
+    <jsonData id="Settings">[true, 2, -1, 0]</jsonData>
     <!-- Simulator -->
     <jsonData id="FontTopPaddings">[290495475342180867]</jsonData>
 </resources>
