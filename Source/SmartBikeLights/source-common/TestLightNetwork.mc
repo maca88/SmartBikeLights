@@ -45,12 +45,12 @@ module TestNetwork {
             if (counter == 0) {
                 _state = 0; /* LIGHT_NETWORK_STATE_NOT_FORMED */
                 _listener.onLightNetworkStateUpdate(_state);
-            } else if (!_initialized && _state == 0 && counter > 2) {
+            } else if (!_initialized && _state == 0 && counter > 1) {
                 _state = 2; /* LIGHT_NETWORK_STATE_FORMED */
                 _listener.onLightNetworkStateUpdate(_state);
             }
 
-            if (counter % 15 == 0) {
+            if (counter % 50 == 0) {
                 mode = mode != null ? (mode + 1) % 4 : 0;
                 mode = mode == 3 ? null : mode; // Simulate TRAIL mode that is not in the API
             }
@@ -102,7 +102,7 @@ module TestNetwork {
 
             updateBattery--;
             _batteryCounter++;
-            if (_batteryCounter % 2 != 0) {
+            if (_batteryCounter % 4 != 0) {
                 return _batteryStatus;
             }
 

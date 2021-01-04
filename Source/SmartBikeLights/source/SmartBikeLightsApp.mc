@@ -2,7 +2,7 @@ using Toybox.Application;
 using Toybox.WatchUi;
 
 (:touchScreen)
-class SmartBikeLightsViewDelegate extends WatchUi.InputDelegate {
+class BikeLightsViewDelegate extends WatchUi.InputDelegate {
     private var _eventHandler;
 
     function initialize(eventHandler) {
@@ -23,7 +23,7 @@ class SmartBikeLightsApp extends Application.AppBase {
 
     function initialize() {
         AppBase.initialize();
-        _view = new SmartBikeLightsView();
+        _view = new BikeLightsView();
     }
 
     function onSettingsChanged() {
@@ -39,7 +39,7 @@ class SmartBikeLightsApp extends Application.AppBase {
 
     (:touchScreen)
     function getInitialView() {
-        return [_view, new SmartBikeLightsViewDelegate(_view)];
+        return [_view, new BikeLightsViewDelegate(_view)];
     }
 
     (:settings)

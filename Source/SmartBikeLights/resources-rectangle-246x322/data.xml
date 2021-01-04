@@ -1,5 +1,5 @@
 <resources>
-    <!-- Format [[:colorScreen:, :titleFont:, :titleFontTopPadding:]
+    <!-- Format [[:colorScreen:, :titleFont:, :titleFontTopPadding:, :displayOffsetX:]
         :colorScreen: = true / false
         :titleFont: = 0-8
         :titleFontTopPadding: = Number

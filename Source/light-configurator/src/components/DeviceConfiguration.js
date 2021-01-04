@@ -78,6 +78,8 @@ export default observer(({ configuration }) => {
           defaultMode={configuration.headlightDefaultMode}
           lightPanel={configuration.headlightPanel}
           setLightPanel={configuration.setHeadlightPanel}
+          lightSettings={configuration.headlightSettings}
+          setLightSettings={configuration.setHeadlightSettings}
         />
         <LightConfiguration
           className={classes.card}
@@ -94,6 +96,8 @@ export default observer(({ configuration }) => {
           defaultMode={configuration.taillightDefaultMode}
           lightPanel={configuration.taillightPanel}
           setLightPanel={configuration.setTaillightPanel}
+          lightSettings={configuration.taillightSettings}
+          setLightSettings={configuration.setTaillightSettings}
         />
 
         <Card className={classes.card}>

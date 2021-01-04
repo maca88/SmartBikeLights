@@ -5,6 +5,7 @@ import Polygon from './Polygon';
 import LightPanel from './LightPanel';
 import LightButtonGroup from './LightButtonGroup';
 import LightButton from './LightButton';
+import LightSettings from './LightSettings';
 import { deviceList } from '../constants';
 
 const defaultFilter = new Filter();
@@ -116,6 +117,10 @@ const parseLightPanel = (chars, i, filterResult) => {
       return null;
   }
 
+  if (chars[filterResult[0]] === ':') {
+    return parseLightSettings(totalButtons, chars, filterResult);
+  }
+
   const panel = new LightPanel();
   parseNumber(chars, filterResult[0] + 1, filterResult);
   panel.lightName = parseTitle(chars, filterResult[0] + 1, filterResult);
@@ -145,6 +150,19 @@ const parseLightPanel = (chars, i, filterResult) => {
 
   return panel;
 }
+
+const parseLightSettings = (totalButtons, chars, filterResult) => {
+  var settings = new LightSettings();
+  settings.lightName = parseTitle(chars, filterResult[0] + 1, filterResult);
+  for (let j = 0; j < totalButtons; j++) {
+    let lightButton = new LightButton();
+    lightButton.name = parseTitle(chars, filterResult[0] + 1, filterResult);
+    lightButton.mode = parseNumber(chars, filterResult[0] + 1, filterResult);
+    settings.buttons.push(lightButton);
+  }
+
+  return settings;
+};
 
 const parseFilters = (chars, i, lightMode, filterResult) => {
   const totalFilters = parseNumber(chars, i, filterResult);
@@ -252,11 +270,13 @@ export default class Configuration {
   headlightFilterGroups = [];
   headlightDefaultMode = null;
   headlightPanel = null;
+  headlightSettings = null;
   taillight = null;
   taillightModes = null;
   taillightFilterGroups = [];
   taillightDefaultMode = null;
   taillightPanel = null;
+  taillightSettings = null;
 
   constructor() {
     makeAutoObservable(this, {
@@ -291,8 +311,19 @@ export default class Configuration {
 
     configuration.taillightFilterGroups = filterGroups;
 
-    configuration.headlightPanel = parseLightPanel(value, filterResult[0] + 1, filterResult);
-    configuration.taillightPanel = parseLightPanel(value, filterResult[0] + 1, filterResult);
+    var panel = parseLightPanel(value, filterResult[0] + 1, filterResult);
+    if (panel instanceof LightSettings) {
+      configuration.headlightSettings = panel;
+    } else {
+      configuration.headlightPanel = panel;
+    }
+
+    panel = parseLightPanel(value, filterResult[0] + 1, filterResult);
+    if (panel instanceof LightSettings) {
+      configuration.taillightSettings = panel;
+    } else {
+      configuration.taillightPanel = panel;
+    }
 
     configuration.device = parseTitle(value, filterResult[0] + 1, filterResult);
     configuration.headlight = parseNumber(value, filterResult[0] + 1, filterResult);
@@ -304,14 +335,21 @@ export default class Configuration {
   }
 
   isValid() {
-    return this.globalFilterGroups.every(g => g.isValid()) && (
+    const device = deviceList.find(l => l.id === this.device);
+    return device &&
+      this.globalFilterGroups.every(g => g.isValid()) && (
         (this.headlight !== null || this.taillight !== null) &&
         this.islightValid(this.headlight, this.headlightFilterGroups, this.headlightDefaultMode) &&
         this.islightValid(this.taillight, this.taillightFilterGroups, this.taillightDefaultMode)
       ) &&
-      (this.headlightPanel == null || this.headlightPanel.isValid()) &&
-      (this.taillightPanel == null || this.taillightPanel.isValid()) &&
-      this.device;
+      this.isItemValid(this.headlightPanel, device.touchScreen) &&
+      this.isItemValid(this.taillightPanel, device.touchScreen) &&
+      this.isItemValid(this.headlightSettings, device.settings) &&
+      this.isItemValid(this.taillightSettings, device.settings);
+  }
+
+  isItemValid(item, validate) {
+    return !validate || item == null || item.isValid();
   }
 
   islightValid(light, lightFilterGroups, lightDefaultMode) {
@@ -336,8 +374,8 @@ export default class Configuration {
     config += `#${this.getFilterGroupsConfigurationValue(this.headlightFilterGroups, this.headlightDefaultMode)}`;
     config += `#${this.getNumberArray(this.taillightModes)}`;
     config += `#${this.getFilterGroupsConfigurationValue(this.taillightFilterGroups, this.taillightDefaultMode)}`;
-    config += `#${this.getLightPanelConfigurationValue(this.headlightPanel, this.device)}`;
-    config += `#${this.getLightPanelConfigurationValue(this.taillightPanel, this.device)}`;
+    config += `#${this.getLightPanelOrSettingsConfigurationValue(this.headlightPanel, this.headlightSettings, this.device)}`;
+    config += `#${this.getLightPanelOrSettingsConfigurationValue(this.taillightPanel, this.taillightSettings, this.device)}`;
     config += `#${(this.device)}`;
     config += `#${(this.headlight === null ? '' : this.headlight)}`;
     config += `#${(this.taillight === null ? '' : this.taillight)}`;
@@ -355,13 +393,37 @@ export default class Configuration {
     return `${value[0]},${value[1]}`;
   }
 
-  getLightPanelConfigurationValue(lightPanel, deviceId) {
+  getLightPanelOrSettingsConfigurationValue(lightPanel, lightSettings, deviceId) {
     const device = deviceList.find(l => l.id === deviceId);
-    if (!lightPanel || !device || !device.touchScreen || !lightPanel.buttonGroups.length) {
+    if (!device) {
       return '';
     }
 
-    const lightName = lightPanel.lightName ? lightPanel.lightName : ''
+    if (device.settings && lightSettings && lightSettings.buttons.length) {
+      return this.getLightSettingsConfigurationValue(lightSettings);
+    }
+
+    if (device.touchScreen && lightPanel && lightPanel.buttonGroups.length) {
+      return this.getLightPanelConfigurationValue(lightPanel);
+    }
+
+    return '';
+  }
+
+  getLightSettingsConfigurationValue(lightSettings) {
+    const lightName = lightSettings.lightName ? lightSettings.lightName : '';
+    const totalButtons = lightSettings.buttons.length;
+    let buttons = '';
+    for (let i = 0; i < lightSettings.buttons.length; i++) {
+      const button = lightSettings.buttons[i];
+      buttons += `|${button.name}:${button.mode}`;
+    }
+
+    return `${totalButtons}:${lightName}${buttons}`;
+  }
+
+  getLightPanelConfigurationValue(lightPanel) {
+    const lightName = lightPanel.lightName ? lightPanel.lightName : '';
     let buttonGroups = '';
     let totalButtons = 0;
     for (let i = 0; i < lightPanel.buttonGroups.length; i++) {
@@ -428,6 +490,10 @@ export default class Configuration {
     this.headlightPanel = value;
   }
 
+  setHeadlightSettings = (value) => {
+    this.headlightSettings = value;
+  }
+
   setTaillight = (value) => {
     this.taillight = value;
   }
@@ -442,5 +508,9 @@ export default class Configuration {
 
   setTaillightPanel = (value) => {
     this.taillightPanel = value;
+  }
+
+  setTaillightSettings = (value) => {
+    this.taillightSettings = value;
   }
 }

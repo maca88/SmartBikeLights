@@ -9,6 +9,7 @@ import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import AppTextInput from '../inputs/AppTextInput';
 import AppSelect from '../inputs/AppSelect';
+import LightButtonGroup from '../models/LightButtonGroup';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -80,6 +81,7 @@ export default observer(({ buttonGroup, lightModes, index, moveGroup, addButton,
     },
   });
 
+  var isGroup = buttonGroup instanceof LightButtonGroup;
   const [{ isDragging }, drag] = useDrag({
     item: { type: 'ButtonGroup', id: buttonGroup.id, index },
     collect: (monitor) => ({
@@ -87,41 +89,61 @@ export default observer(({ buttonGroup, lightModes, index, moveGroup, addButton,
     }),
   });
 
+  const getButtonTemplate = (button) => {
+    return (
+      <Grid item xs key={button.id}>
+        <Paper className={classes.paper}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={12}>
+              <AppSelect required items={lightModes} label="Light mode" setter={button.setMode} value={button.mode} />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              { button.mode >= 0
+              ? <AppTextInput required label="Button name" value={button.name} setter={button.setName} />
+              : <AppTextInput label="Button name" value="Smart / Manual / Network" />
+              }
+            </Grid>
+          </Grid>
+        </Paper>
+      </Grid>);
+  };
+
   const opacity = isDragging ? 0 : 1;
   drag(drop(ref));
   return (
     <div ref={ref} className={classes.container} style={{ ...opacity }}>
       <Grid container spacing={1}>
-        {buttonGroup.buttons.map((button, index) => (
-          <Grid item xs key={button.id}>
-            <Paper className={classes.paper}>
-              <Grid container spacing={3}>
+        { isGroup
+          ? buttonGroup.buttons.map((button, index) => getButtonTemplate(button))
+          : getButtonTemplate(buttonGroup)
+        }
+        <Grid item xs={1} className={classes.actions}>
+          {
+            isGroup
+            ? (
+              <Grid container spacing={1}>
                 <Grid item xs={12} sm={12}>
-                  <AppSelect required items={lightModes} label="Light mode" setter={button.setMode} value={button.mode} />
+                  <IconButton edge="end" aria-label="add" disabled={buttonGroup.buttons.length > 1} onClick={() => addButton(buttonGroup)}>
+                    <AddIcon />
+                  </IconButton>
                 </Grid>
                 <Grid item xs={12} sm={12}>
-                  { button.mode >= 0
-                  ? <AppTextInput required label="Button name" value={button.name} setter={button.setName} />
-                  : <AppTextInput label="Button name" value="Smart / Manual / Network" />
-                  }
+                  <IconButton edge="end" aria-label="remove" onClick={() => removeButton(buttonGroup)}>
+                    <RemoveIcon />
+                  </IconButton>
                 </Grid>
               </Grid>
-            </Paper>
-          </Grid>
-        ))}
-        <Grid item xs={1} className={classes.actions}>
-          <Grid container spacing={1}>
-            <Grid item xs={12} sm={12}>
-              <IconButton edge="end" aria-label="add" disabled={buttonGroup.buttons.length > 1} onClick={() => addButton(buttonGroup)}>
-                <AddIcon />
-              </IconButton>
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <IconButton edge="end" aria-label="remove" onClick={() => removeButton(buttonGroup)}>
-                <RemoveIcon />
-              </IconButton>
-            </Grid>
-          </Grid>
+            )
+            : (
+              <Grid container spacing={1}>
+                <Grid item xs={12} sm={12}>
+                  <IconButton aria-label="remove" onClick={() => removeButton(buttonGroup)}>
+                    <RemoveIcon />
+                  </IconButton>
+                </Grid>
+              </Grid>
+            )
+          }
         </Grid>
       </Grid>
     </div>

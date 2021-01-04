@@ -9,8 +9,10 @@ import { observer } from 'mobx-react-lite';
 import FilterGroups from './FilterGroups';
 import AppSelect from '../inputs/AppSelect';
 import LightPanel from './LightPanel';
+import LightSettings from './LightSettings';
 import LightPanelModel from '../models/LightPanel';
-import { isTouchScreen } from '../constants';
+import LightSettingsModel from '../models/LightSettings';
+import { isTouchScreen, hasSettings } from '../constants';
 
 const getModes = (value, lights) => {
   return value !== null ? lights.find(l => l.id === value).modes : null;
@@ -29,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default observer(({
   className, headerClassName, device, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
-  setLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel }) => {
+  setLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel, lightSettings, setLightSettings }) => {
   const classes = useStyles();
   const [modes, setModes] = React.useState(getModes(light, lightList));
   const setValue = (value) => {
@@ -42,10 +44,17 @@ export default observer(({
     if (light == null) {
       setLightPanel(null);
     } else if (lightPanel == null) {
-      const lightPanel = new LightPanelModel(getDefaultPanel(light, lightList));
-      setLightPanel(lightPanel);
+      setLightPanel(new LightPanelModel(getDefaultPanel(light, lightList)));
     }
   }, [light, lightList, setLightPanel, lightPanel]);
+
+  useEffect(() => {
+    if (light == null) {
+      setLightSettings(null);
+    } else if (lightSettings == null) {
+      setLightSettings(new LightSettingsModel(getDefaultPanel(light, lightList)));
+    }
+  }, [light, lightList, lightSettings, setLightSettings]);
 
   return (
     <Card className={className}>
@@ -95,6 +104,14 @@ export default observer(({
           ? <React.Fragment>
             <Typography variant="h5" className={classes.sectionTitle} color="textPrimary">Light panel</Typography>
             <LightPanel lightPanel={lightPanel} lightModes={modes} />
+          </React.Fragment>
+          : null
+        }
+        {
+          modes && lightSettings && hasSettings(device)
+          ? <React.Fragment>
+            <Typography variant="h5" className={classes.sectionTitle} color="textPrimary">Light settings</Typography>
+            <LightSettings lightSettings={lightSettings} lightModes={modes} />
           </React.Fragment>
           : null
         }
