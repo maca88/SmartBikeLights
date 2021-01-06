@@ -20,8 +20,8 @@ Smart Bike Lights is a [data field](https://developer.garmin.com/connect-iq/conn
 1. Download the data field application from Garmin Connect Store and synchronize your Garmin device
 2. Pair your bike lights with your Garmin device ([Garmin manual](https://www8.garmin.com/manuals/webhelp/variaut/EN-US/GUID-C4BB544A-78FA-4B3E-9061-2371B7B3C558.html))
 3. On your Garmin device set `Light Beam Activated` setting to `Timer Start` in `Menu` -> `Sensors` -> `Lights` -> `Network Options`
-4. Configure your paired lights with the [Lights Configurator](https://maca88.github.io/SmartBikeLights/) (In case your light is not on the list, please open an issue)
-5. By using Garmin Connect Mobile or Garmin Express, copy the final configuration value from [Lights Configurator](https://maca88.github.io/SmartBikeLights/) into the application setting: `Lights Configuration`.
+4. Configure your paired lights with the [Lights Configurator](https://maca88.github.io/SmartBikeLights/) (In case your light is not on the list, check [this thread](https://forums.garmin.com/developer/connect-iq/f/showcase/248492/data-field-smart-bike-lights))
+5. By using Garmin Connect Mobile or Garmin Express, copy the final configuration value from [Lights Configurator](https://maca88.github.io/SmartBikeLights/) into the application setting: `Lights Configuration`
 6. Select the data screen where you want put the data field
 7. On the chosen field select `Connect IQ` -> `Smart Bike Lights`
 
