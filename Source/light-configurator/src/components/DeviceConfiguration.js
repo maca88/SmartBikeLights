@@ -1,23 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
-import Alert from '@material-ui/core/Alert';
 import { observer } from 'mobx-react-lite'
 import FilterGroups from './FilterGroups';
 import LightConfiguration from './LightConfiguration';
-import AppTextInput from '../inputs/AppTextInput';
+import ConfigurationResult from './ConfigurationResult';
 import { headlightList, taillightList } from '../constants';
+import { getDevice, deviceList } from '../dataFieldConstants';
 
 const useStyles = makeStyles((theme) => ({
-  mainContent: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(8, 0, 6),
-  },
   copyButton: {
     marginTop: theme.spacing(4),
   },
@@ -34,6 +29,13 @@ const useStyles = makeStyles((theme) => ({
 
 export default observer(({ configuration }) => {
   const classes = useStyles();
+  const [device, setDevice] = React.useState(getDevice(configuration.device));
+  useEffect(
+    () => {
+      setDevice(getDevice(configuration.device));
+    },
+    [configuration.device]
+  );
 
   return (
       <React.Fragment>
@@ -59,15 +61,15 @@ export default observer(({ configuration }) => {
                   Filter groups
               </Typography>
             </Grid>
-            <FilterGroups filterGroups={configuration.globalFilterGroups} device={configuration.device} />
+            <FilterGroups filterGroups={configuration.globalFilterGroups} device={device} />
           </CardContent>
         </Card>
         
         <LightConfiguration
           className={classes.card}
           headerClassName={classes.cardHeader}
-          device={configuration.device}
           globalFilterGroups={configuration.globalFilterGroups}
+          device={device}
           lightType="Headlight"
           lightList={headlightList}
           lightFilterGroups={configuration.headlightFilterGroups}
@@ -84,8 +86,8 @@ export default observer(({ configuration }) => {
         <LightConfiguration
           className={classes.card}
           headerClassName={classes.cardHeader}
-          device={configuration.device}
           globalFilterGroups={configuration.globalFilterGroups}
+          device={device}
           lightType="Taillight"
           lightList={taillightList}
           light={configuration.taillight}
@@ -99,34 +101,12 @@ export default observer(({ configuration }) => {
           lightSettings={configuration.taillightSettings}
           setLightSettings={configuration.setTaillightSettings}
         />
-
-        <Card className={classes.card}>
-          <CardHeader
-            title="Lights Configuration"
-            titleTypographyProps={{ align: 'center' }}
-            className={classes.cardHeader}
-          />
-          <CardContent>
-            <Typography color="textPrimary" gutterBottom>
-            When the lights are configured copy the below value and paste it in the Smart Light Bike application setting 'Lights Configuration' by using 
-            Garmin Connect Mobile or Garmin Express.
-            </Typography>
-            {configuration.isValid() ?
-            <React.Fragment>
-              <Grid item xs={12} sm={12}>
-                <AppTextInput value={configuration.getConfigurationValue()} />
-              </Grid>
-              <Grid item className={classes.copyButton} xs={12} sm={12}>
-                <Button variant="contained" onClick={() => {navigator.clipboard.writeText(configuration.getConfigurationValue())}}>Copy to clipboard</Button>
-              </Grid>
-            </React.Fragment>
-            :
-            <Grid item xs={12} sm={12}>
-              <Alert severity="error">Please fill the missing fields.</Alert>
-            </Grid>
-            }
-          </CardContent>
-        </Card>
+        <ConfigurationResult 
+          className={classes.card}
+          headerClassName={classes.cardHeader}
+          configuration={configuration}
+          deviceList={deviceList}
+        />
       </React.Fragment>
     );
 });

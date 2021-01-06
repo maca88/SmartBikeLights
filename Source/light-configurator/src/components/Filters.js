@@ -15,7 +15,7 @@ import PositionFilter from '../filters/PositionFilter';
 import { AppContext } from '../AppContext';
 import { action } from 'mobx';
 
-export default observer(({ filters, filterTypes }) => {
+export default observer(({ filters, filterTypes, device }) => {
   const removeFilter = action((filter) => {
     filters.remove(filter);
   });
@@ -35,6 +35,7 @@ export default observer(({ filters, filterTypes }) => {
             param1={context}
             removeLabel="Remove filter"
             removeCallback={removeFilter}
+            validationParameter={device}
           />
         )}
       </AppContext.Consumer>

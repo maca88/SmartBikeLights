@@ -1,6 +1,6 @@
 {
-  "short_name": "SmartBikeLights Configurator",
-  "name": "SmartBikeLights Configurator",
+  "short_name": "Lights Configurator",
+  "name": "Lights Configurator",
   "icons": [
     {
       "src": "favicon.ico",

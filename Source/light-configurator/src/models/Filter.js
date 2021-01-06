@@ -51,13 +51,13 @@ export default class Filter {
     });
   }
 
-  isValid() {
+  isValid(device) {
     switch (this.type) {
       case 'E':
         return this.fromType && this.fromValue !== null && !Number.isNaN(this.fromValue) && 
           this.toType && this.toValue !== null && !Number.isNaN(this.toValue);
       case 'F':
-        return this.polygons.length;
+        return device.polygons && this.polygons.length;
       default:
         return this.type && this.value !== '' && this.value !== null && !Number.isNaN(this.value) && this.operator;
     }

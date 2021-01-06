@@ -35,12 +35,12 @@ export default class FilterGroup {
     return config;
   }
 
-  isValid() {
+  isValid(device) {
     if ((this._hasLightMode && this.lightMode === null) || !this.filters.length) {
       return false;
     }
 
-    return this.filters.every(f => f.isValid());
+    return this.filters.every(f => f.isValid(device));
   }
 
   setName = (value) => {

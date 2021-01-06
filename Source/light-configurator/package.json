@@ -1,6 +1,6 @@
 {
   "name": "light-configurator",
-  "homepage": "http://maca88.github.io/SmartBikeLights",
+  "homepage": ".",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -27,11 +27,18 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
+    "start-datafield": "set \"REACT_APP_TYPE=datafield\" && npm start",
+    "build-datafield": "set \"REACT_APP_TYPE=datafield\" && npm run build",
+    "publish-datafield": "gh-pages -f -d build -r https://github.com/maca88/SmartBikeLights.git",
+    "deploy-datafield": "npm run build-datafield && npm run publish-datafield",
+    "start-widget": "set \"REACT_APP_TYPE=widget\" && npm start",
+    "build-widget": "set \"REACT_APP_TYPE=widget\" && npm run build",
+    "publish-widget": "gh-pages -f -d build -r https://github.com/maca88/BikeLightsControl.git",
+    "deploy-widget": "npm run build-widget && npm run publish-widget",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "deploy": "gh-pages -d build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

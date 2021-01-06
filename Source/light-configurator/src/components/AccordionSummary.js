@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default observer(({ item, param1, removeLabel, removeCallback }) => {
+export default observer(({ item, param1, removeLabel, removeCallback, validationParameter }) => {
   const classes = useStyles();
   return <AccordionSummary
     expandIcon={<ExpandMoreIcon />}
@@ -65,7 +65,7 @@ export default observer(({ item, param1, removeLabel, removeCallback }) => {
           <Typography >{item.getDisplayName(param1)}</Typography>
         </Grid>
         <Grid item xs={1} sm={1} className={classes.error} >
-        { item.isValid() ? null : <ErrorOutlineIcon /> }
+        { item.isValid(validationParameter) ? null : <ErrorOutlineIcon /> }
         </Grid>
       </Grid>
     </div>

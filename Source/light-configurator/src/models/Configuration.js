@@ -6,7 +6,6 @@ import LightPanel from './LightPanel';
 import LightButtonGroup from './LightButtonGroup';
 import LightButton from './LightButton';
 import LightSettings from './LightSettings';
-import { deviceList } from '../constants';
 
 const defaultFilter = new Filter();
 defaultFilter.type = 'D';
@@ -283,7 +282,7 @@ export default class Configuration {
     });
   }
 
-  static parse(value) {
+  static parse(value, deviceList) {
     if (!value || value.length === 0) {
       return null;
     }
@@ -331,16 +330,16 @@ export default class Configuration {
     configuration.units = parseNumber(value, filterResult[0] + 1, filterResult);
     configuration.timeFormat = parseNumber(value, filterResult[0] + 1, filterResult);
 
-    return configuration.isValid() ? configuration : null;
+    return configuration.isValid(deviceList) ? configuration : null;
   }
 
-  isValid() {
+  isValid(deviceList) {
     const device = deviceList.find(l => l.id === this.device);
     return device &&
-      this.globalFilterGroups.every(g => g.isValid()) && (
+      this.globalFilterGroups.every(g => g.isValid(device)) && (
         (this.headlight !== null || this.taillight !== null) &&
-        this.islightValid(this.headlight, this.headlightFilterGroups, this.headlightDefaultMode) &&
-        this.islightValid(this.taillight, this.taillightFilterGroups, this.taillightDefaultMode)
+        this.islightValid(this.headlight, this.headlightFilterGroups, this.headlightDefaultMode, device) &&
+        this.islightValid(this.taillight, this.taillightFilterGroups, this.taillightDefaultMode, device)
       ) &&
       this.isItemValid(this.headlightPanel, device.touchScreen) &&
       this.isItemValid(this.taillightPanel, device.touchScreen) &&
@@ -352,20 +351,20 @@ export default class Configuration {
     return !validate || item == null || item.isValid();
   }
 
-  islightValid(light, lightFilterGroups, lightDefaultMode) {
+  islightValid(light, lightFilterGroups, lightDefaultMode, device) {
     if (light === null) {
       return true;
     }
 
-    return lightFilterGroups.every(g => g.isValid()) &&
+    return lightFilterGroups.every(g => g.isValid(device)) &&
           (
             (!lightFilterGroups.length && !this.globalFilterGroups.length) ||
             lightDefaultMode !== null
           );
   }
 
-  getConfigurationValue() {
-    if (!this.isValid()) {
+  getConfigurationValue(deviceList) {
+    if (!this.isValid(deviceList)) {
       return null;
     }
 
@@ -374,8 +373,8 @@ export default class Configuration {
     config += `#${this.getFilterGroupsConfigurationValue(this.headlightFilterGroups, this.headlightDefaultMode)}`;
     config += `#${this.getNumberArray(this.taillightModes)}`;
     config += `#${this.getFilterGroupsConfigurationValue(this.taillightFilterGroups, this.taillightDefaultMode)}`;
-    config += `#${this.getLightPanelOrSettingsConfigurationValue(this.headlightPanel, this.headlightSettings, this.device)}`;
-    config += `#${this.getLightPanelOrSettingsConfigurationValue(this.taillightPanel, this.taillightSettings, this.device)}`;
+    config += `#${this.getLightPanelOrSettingsConfigurationValue(this.headlightPanel, this.headlightSettings, this.device, deviceList)}`;
+    config += `#${this.getLightPanelOrSettingsConfigurationValue(this.taillightPanel, this.taillightSettings, this.device, deviceList)}`;
     config += `#${(this.device)}`;
     config += `#${(this.headlight === null ? '' : this.headlight)}`;
     config += `#${(this.taillight === null ? '' : this.taillight)}`;
@@ -393,7 +392,7 @@ export default class Configuration {
     return `${value[0]},${value[1]}`;
   }
 
-  getLightPanelOrSettingsConfigurationValue(lightPanel, lightSettings, deviceId) {
+  getLightPanelOrSettingsConfigurationValue(lightPanel, lightSettings, deviceId, deviceList) {
     const device = deviceList.find(l => l.id === deviceId);
     if (!device) {
       return '';

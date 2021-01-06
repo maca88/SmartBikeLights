@@ -15,11 +15,11 @@ import AppSelect from '../inputs/AppSelect';
 import FilterGroup from '../models/FilterGroup';
 import Filter from '../models/Filter';
 import Filters from '../components/Filters';
-import { filterList, deviceMap } from '../constants';
+import { filterList } from '../constants';
 
 const filtersWoPosition = filterList.filter(o => o.id !== 'F');
-const getFilterTypes = (device, hasLightModes) => {
-  let list = !device || deviceMap[device].polygons ? filterList : filtersWoPosition;
+const getFilterTypes = (hasLightModes, device) => {
+  let list = device?.polygons ? filterList : filtersWoPosition;
   return hasLightModes ? list : list.filter(o => o.id !== 'B');
 };
 const useStyles = makeStyles((theme) => ({
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 export default observer(({ filterGroups, lightModes, device }) => {
-  const [filterTypes, setFilterTypes] = React.useState(getFilterTypes(device, lightModes));
+  const [filterTypes, setFilterTypes] = React.useState(getFilterTypes(lightModes, device));
   const classes = useStyles();
   const createFilterGroup = action(() => {
     filterGroups.push(new FilterGroup(!!lightModes));
@@ -53,9 +53,9 @@ export default observer(({ filterGroups, lightModes, device }) => {
 
   useEffect(
     () => {
-      setFilterTypes(getFilterTypes(device, lightModes));
+      setFilterTypes(getFilterTypes(lightModes, device));
     },
-    [device, lightModes]
+    [lightModes, device]
   );
 
   return (
@@ -71,6 +71,7 @@ export default observer(({ filterGroups, lightModes, device }) => {
             param1={lightModes}
             removeLabel="Remove group"
             removeCallback={removeFilterGroup}
+            validationParameter={device}
           />
           <AccordionDetails>
             <Grid container spacing={3}>
@@ -90,7 +91,7 @@ export default observer(({ filterGroups, lightModes, device }) => {
               </Grid>
             </Grid>
             <div>
-              <Filters filters={filterGroup.filters} filterTypes={filterTypes} />
+              <Filters filters={filterGroup.filters} filterTypes={filterTypes} device={device} />
             </div>
             <Button
               variant="contained"
