@@ -436,6 +436,10 @@ class BikeLightsView extends BaseView {
 
     (:lightButtons)
     function setLightAndControlMode(lightData, lightType, newMode, newControlMode) {
+        if (_initializedLights == 0 || _errorCode != null) {
+            return; // This can happen when in menu the network is dropped or an invalid configuration is set
+        }
+
         var controlMode = lightData[4];
         if (newControlMode == 1 /* NETWORK */) {
             setNetworkMode(lightData, _networkMode);
