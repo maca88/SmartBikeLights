@@ -219,8 +219,8 @@ class BikeLightsView extends BaseView {
             var position = activityInfo.currentLocation.toDegrees();
             var time = Gregorian.utcInfo(Time.now(), Time.FORMAT_SHORT);
             var jd = getJD(time.year, time.month, time.day);
-            _sunriseTime = Math.round(calcSunriseSetUTC(true, jd, position[0], position[1]) * 60).toNumber();
-            _sunsetTime = Math.round(calcSunriseSetUTC(false, jd, position[0], position[1]) * 60).toNumber();
+            _sunriseTime = getSunriseSet(true, jd, position);
+            _sunsetTime = getSunriseSet(false, jd, position);
         }
 
         var globalFilterResult = null;
@@ -755,6 +755,11 @@ class BikeLightsView extends BaseView {
     protected function drawCenterText(dc, text, color, width, height) {
         setTextColor(dc, color);
         dc.drawText(width / 2, height / 2, 0, text, 1 /* TEXT_JUSTIFY_CENTER */ | 4 /* TEXT_JUSTIFY_VCENTER */);
+    }
+
+    protected function getSunriseSet(sunrise, jd, position) {
+        var value = Math.round(calcSunriseSetUTC(sunrise, jd, position[0], position[1]) * 60).toNumber();
+        return (value < 0 ? value + 86400 : value) % 86400;
     }
 
     private function updateLightTextAndMode(lightData, mode) {
@@ -1591,7 +1596,7 @@ class BikeLightsView extends BaseView {
         return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + b - 1524.5;
     }
 
-    protected function calcSunriseSetUTC(rise, jd, latitude, longitude) {
+    private function calcSunriseSetUTC(rise, jd, latitude, longitude) {
         var t = (jd - 2451545.0) / 36525.0;
         var eqTime = calcEquationOfTime(t);
         var solarDec = calcSunDeclination(t);
