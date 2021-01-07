@@ -436,7 +436,7 @@ class BikeLightsView extends BaseView {
 
     (:lightButtons)
     function setLightAndControlMode(lightData, lightType, newMode, newControlMode) {
-        if (_initializedLights == 0 || _errorCode != null) {
+        if (lightData[0] == null || _errorCode != null) {
             return; // This can happen when in menu the network is dropped or an invalid configuration is set
         }
 
@@ -678,7 +678,7 @@ class BikeLightsView extends BaseView {
             var lightData = _initializedLights > 1 ? taillightData
                 : headlightData[0].type == 2 ? headlightData
                 : null;
-            taillightSettings = getDefaultLightSettings(lightData[0]);
+            taillightSettings = lightData != null ? getDefaultLightSettings(lightData[0]) : null;
         }
 
         _settingsInitialized = true;
