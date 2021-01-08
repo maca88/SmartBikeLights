@@ -766,7 +766,10 @@ class BikeLightsView extends BaseView {
     }
 
     protected function getSunriseSet(sunrise, jd, position) {
-        var value = Math.round(calcSunriseSetUTC(sunrise, jd, position[0], position[1]) * 60).toNumber();
+        return getSecondsOfDay(Math.round(calcSunriseSetUTC(sunrise, jd, position[0], position[1]) * 60).toNumber());
+    }
+
+    protected function getSecondsOfDay(value) {
         return (value < 0 ? value + 86400 : value) % 86400;
     }
 
@@ -1339,9 +1342,11 @@ class BikeLightsView extends BaseView {
         }
 
         var value = filterValue[index + 1];
-        return type == 2 /* Sunset */ ? _sunsetTime + value
+        return getSecondsOfDay(
+            type == 2 /* Sunset */ ? _sunsetTime + value
             : type == 1 /* Sunrise */ ? _sunriseTime + value
-            : value;
+            : value
+        );
     }
 
     // <GlobalFilters>#<HeadlightModes>#<HeadlightFilters>#<TaillightModes>#<TaillightFilters>
