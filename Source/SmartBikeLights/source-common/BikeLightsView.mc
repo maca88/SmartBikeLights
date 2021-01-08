@@ -441,11 +441,15 @@ class BikeLightsView extends BaseView {
         }
 
         var controlMode = lightData[4];
+        // In case the previous mode is Network we have to call setMode to override it
+        var forceSetMode = controlMode == 1 /* NETWORK */ && newControlMode != null;
         if (newControlMode == 1 /* NETWORK */) {
             setNetworkMode(lightData, _networkMode);
         } else if ((controlMode == 2 /* MANUAL */ && newControlMode == null) || newControlMode == 2 /* MANUAL */) {
             setLightData("MM", lightType, newMode);
-            setLightMode(lightData, newMode, null, false);
+            setLightMode(lightData, newMode, null, forceSetMode);
+        } else if (newControlMode == 0 /* SMART */ && forceSetMode) {
+            setLightMode(lightData, lightData[2], null, true);
         }
 
         if (newControlMode != null) {
