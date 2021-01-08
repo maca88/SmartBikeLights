@@ -156,13 +156,13 @@ class BikeLightsView extends BaseView {
             return;
         }
 
-        _activityColor = Properties.getValue("AC");
+        _activityColor = getPropertyValue("AC");
         try {
             // Free memory before parsing to avoid out of memory exception
             _globalFilters = null;
             _headlightFilters = null;
             _taillightFilters = null;
-            var configuration = parseConfiguration(Properties.getValue("LC"));
+            var configuration = parseConfiguration(getPropertyValue("LC"));
             _globalFilters = configuration[0];
             _headlightFilters = configuration[2];
             _taillightFilters = configuration[4];
@@ -333,7 +333,7 @@ class BikeLightsView extends BaseView {
         _networkMode = networkMode;
 
         // Initialize lights
-        var recordLightModes = Properties.getValue("RL");
+        var recordLightModes = getPropertyValue("RL");
         var totalLights = lights.size();
         for (var i = 0; i < totalLights; i++) {
             var light = lights[i];
@@ -502,6 +502,10 @@ class BikeLightsView extends BaseView {
 
         setLightAndControlMode(lightData, lightType, newMode, newControlMode);
         return true;
+    }
+
+    protected function getPropertyValue(key) {
+        return Properties.getValue(key);
     }
 
     (:widget)
@@ -803,7 +807,7 @@ class BikeLightsView extends BaseView {
 
     (:touchScreen)
     private function setupLightButtons(configuration) {
-        _controlModeOnly = Properties.getValue("CMO");
+        _controlModeOnly = getPropertyValue("CMO");
         _panelInitialized = false;
         _headlightPanel = configuration[5];
         _taillightPanel = configuration[6];
