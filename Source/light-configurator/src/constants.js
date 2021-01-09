@@ -177,6 +177,12 @@ const bontragerFlareRtModes = [
   { id: 63, name: 'Night Flash' }
 ];
 
+const garminVariaRtl500 = [
+  { id: 0, name: 'Off' },
+  { id: 1, name: 'Soild' },
+  { id: 7, name: 'Flash' }
+];
+
 const garminVariaRtl510 = [
   { id: 0, name: 'Off' },
   { id: 4, name: 'Soild' },
@@ -207,6 +213,20 @@ export const taillightList = [
         [bontragerFlareRtModes[3]],
         [bontragerFlareRtModes[4]],
         [bontragerFlareRtModes[5]]
+      ]
+    }
+  },
+  {
+    id: 4,
+    name: 'Garmin Varia RTL500',
+    modes: garminVariaRtl500,
+    lightModes: [0, 67108865], // 67108865
+    defaultLightPanel: {
+      shortName: 'Varia 500',
+      buttonGroups: [
+        [controlMode, garminVariaRtl500[0]],
+        [garminVariaRtl500[1]],
+        [garminVariaRtl500[2]]
       ]
     }
   },
