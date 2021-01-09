@@ -128,7 +128,7 @@ class BikeLightsView extends BaseView {
     (:dataField) private var _lastSpeed;
     (:dataField) private var _acceleration;
 
-    private var _lastUpdateTime;
+    private var _lastUpdateTime = 0;
 
     // Used as an out parameter for getting the group filter title
     private var _titleResult = [null];
@@ -189,7 +189,14 @@ class BikeLightsView extends BaseView {
 
     // onShow() is called when this View is brought to the foreground
     function onShow() {
-        //System.println("onShow"  + " timer=" + System.getTimer());
+        //System.println("onShow=" + _lastUpdateTime  + " timer=" + System.getTimer());
+        // When start button is pressed onShow is called, skip re-initialization in such case. This also prevents
+        // a re-initialization when switching between two data screens that both contain this data field.
+        if (_initializedLights > 0 && System.getTimer() - _lastUpdateTime < 1500) {
+            initializeLights(null, false);
+            return;
+        }
+
         // In case the user modifies the network mode outside the data field by using the built-in Garmin lights menu,
         // the LightNetwork mode will not be updated (LightNetwork.getNetworkMode). The only way to update it is to
         // create a new LightNetwork.
@@ -314,13 +321,9 @@ class BikeLightsView extends BaseView {
             return;
         }
 
-        var lights = _lightNetwork.getBikeLights();
-        if (_initializedLights > 0 || networkState != 2 /* LIGHT_NETWORK_STATE_FORMED */ || lights == null) {
+        if (_initializedLights > 0 || networkState != 2 /* LIGHT_NETWORK_STATE_FORMED */) {
+            //System.println("Skip=" + _initializedLights + " networkState=" + networkState +" timer=" + System.getTimer());
             return;
-        }
-
-        if (_errorCode == 1 && _errorCode == 2) {
-            _errorCode = null;
         }
 
         var networkMode = _lightNetwork.getNetworkMode();
@@ -333,70 +336,12 @@ class BikeLightsView extends BaseView {
         _networkMode = networkMode;
 
         // Initialize lights
-        var recordLightModes = getPropertyValue("RL");
-        var totalLights = lights.size();
-        for (var i = 0; i < totalLights; i++) {
-            var light = lights[i];
-            if (light == null) {
-                _errorCode = 1;
-                return;
-            }
-
-            var lightType = light.type;
-            if (lightType != 0 && lightType != 2) {
-                _errorCode = 1;
-                return;
-            }
-
-            var capableModes = getLightModes(light);
-            var filters = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightFilters : _taillightFilters;
-            if (newNetworkMode != null) {
-                setLightData("CM", lightType, 1 /* NETWORK */);
-            }
-
-            var controlMode = getLightData("CM", lightType, filters != null ? 0 /* SMART */ : 1 /* NETWORK */);
-            var lightMode = getInitialLightMode(light, controlMode);
-            var lightModeIndex = capableModes.indexOf(lightMode);
-            if (lightModeIndex < 0) {
-                lightModeIndex = 0;
-                lightMode = 0; /* LIGHT_MODE_OFF */
-            }
-
-            var lightData = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ || totalLights == 1 ? headlightData : taillightData;
-            if (lightData[0] != null) {
-                _errorCode = 2;
-                return;
-            }
-
-            if (recordLightModes && lightData[6] == null) {
-                lightData[6] = createField(
-                    lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? "headlight_mode" : "taillight_mode",
-                    lightType, // Id
-                    1 /*DATA_TYPE_SINT8 */,
-                    {
-                        :mesgType=> 20 /* Fit.MESG_TYPE_RECORD */
-                    }
-                );
-            }
-
-            lightData[0] = light;
-            lightData[2] = null; // Force to update light text in case light modes were changed
-            updateLightTextAndMode(lightData, lightMode);
-            lightData[4] = controlMode;
-            // In case of SMART or MANUAL control mode, we have to set the light mode in order to prevent the network mode
-            // from changing it.
-            setInitialLightMode(lightData, lightMode, controlMode);
-
-            // Allow the initialization to complete even if the modes are invalid, so that the user
-            // is able to correct them by modifying the light configuration
-            validateLightModes(light);
-        }
-
-        _initializedLights = totalLights;
+        _initializedLights = initializeLights(newNetworkMode, true);
     }
 
     function updateLight(light, mode) {
         if (_initializedLights == 0) {
+            //System.println("skip updateLight light=" + light.type + " mode=" + mode + " timer=" + System.getTimer());
             return;
         }
 
@@ -408,15 +353,18 @@ class BikeLightsView extends BaseView {
             return;
         }
 
-        // Update title
-        lightData[5] = nextMode == mode ? lightData[8]
-            : lightData[4] == 1 /* NETWORK */ ? lightData[5]
-            : null;
-        lightData[7] = null;
-        lightData[8] = null;
-        //System.println("updateLight light=" + light.type + " mode=" + mode + " currMode=" + lightData[2] + " nextMode=" + nextMode  + " timer=" + System.getTimer());
-        if (updateLightTextAndMode(lightData, mode) && nextMode != mode && lightData[4] != 1 /* NETWORK */) {
-            // Change done outside the data field
+        //System.println("updateLight light=" + light.type + " mode=" + mode + " currMode=" + lightData[2] + " nextMode=" + nextMode + " timer=" + System.getTimer());
+        var controlMode = lightData[4];
+        if (nextMode == mode) {
+            lightData[5] = lightData[8]; // Update title
+            lightData[7] = null;
+            lightData[8] = null;
+        } else if (controlMode != 1 /* NETWORK */) {
+            lightData[5] = null;
+        }
+
+        if (updateLightTextAndMode(lightData, mode) && nextMode != mode && controlMode != 1 /* NETWORK */) {
+            // Change was done outside the data field.
             onExternalLightModeChange(lightData, mode);
         }
     }
@@ -554,6 +502,81 @@ class BikeLightsView extends BaseView {
         _offsetX = settings[3] * offsetDirection;
     }
 
+    protected function initializeLights(newNetworkMode, firstTime) {
+        //System.println("initializeLights=" + newNetworkMode + " firstTime=" + firstTime + " timer=" + System.getTimer());
+        var errorCode = _errorCode;
+        if (errorCode == 1 || errorCode == 2) {
+            errorCode = null;
+        }
+
+        var lights = _lightNetwork.getBikeLights();
+        if (lights == null) {
+            _errorCode = errorCode;
+            return 0;
+        }
+
+        var recordLightModes = getPropertyValue("RL");
+        var totalLights = lights.size();
+        for (var i = 0; i < totalLights; i++) {
+            var light = lights[i];
+            var lightType = light != null ? light.type : 7;
+            if (lightType != 0 && lightType != 2) {
+                errorCode = 1;
+                break;
+            }
+
+            var capableModes = getLightModes(light);
+            var filters = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightFilters : _taillightFilters;
+            if (newNetworkMode != null) {
+                setLightData("CM", lightType, 1 /* NETWORK */);
+            }
+
+            var controlMode = getLightData("CM", lightType, filters != null ? 0 /* SMART */ : 1 /* NETWORK */);
+            var lightMode = getInitialLightMode(light, controlMode);
+            var lightModeIndex = capableModes.indexOf(lightMode);
+            if (lightModeIndex < 0) {
+                lightModeIndex = 0;
+                lightMode = 0; /* LIGHT_MODE_OFF */
+            }
+
+            var lightData = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ || totalLights == 1 ? headlightData : taillightData;
+            if (firstTime && lightData[0] != null) {
+                errorCode = 2;
+                break;
+            }
+
+            if (recordLightModes && lightData[6] == null) {
+                lightData[6] = createField(
+                    lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? "headlight_mode" : "taillight_mode",
+                    lightType, // Id
+                    1 /*DATA_TYPE_SINT8 */,
+                    {
+                        :mesgType=> 20 /* Fit.MESG_TYPE_RECORD */
+                    }
+                );
+            }
+
+            lightData[0] = light;
+            lightData[2] = null; // Force to update light text in case light modes were changed
+            updateLightTextAndMode(lightData, lightMode);
+            var oldControlMode = lightData[4];
+            lightData[4] = controlMode;
+            // In case of SMART or MANUAL control mode, we have to set the light mode in order to prevent the network mode
+            // from changing it.
+            if (firstTime || oldControlMode != controlMode) {
+                setInitialLightMode(lightData, lightMode, controlMode);
+            }
+
+            // Allow the initialization to complete even if the modes are invalid, so that the user
+            // is able to correct them by modifying the light configuration
+            validateLightModes(light);
+        }
+
+        _errorCode = errorCode;
+
+        return errorCode == null ? totalLights : 0;
+    }
+
     (:touchScreen)
     protected function onLightPanelTap(location, lightData, lightType, controlMode) {
         var panelData = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightPanel : _taillightPanel;
@@ -602,9 +625,11 @@ class BikeLightsView extends BaseView {
     }
 
     protected function setLightMode(lightData, mode, title, force) {
-        if (!force && lightData[2] == mode) {
-            lightData[5] = title;
-            return;
+        if (lightData[2] == mode) {
+            lightData[5] = title; // updateLight may not be called when setting the same mode
+            if (!force) {
+                return;
+            }
         }
 
         //System.println("setLightMode=" + mode + " light=" + lightData[0].type + " force=" + force + " timer=" + System.getTimer());
