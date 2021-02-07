@@ -179,20 +179,20 @@ const bontragerFlareRtModes = [
 
 const garminVariaRtl500 = [
   { id: 0, name: 'Off' },
-  { id: 1, name: 'Soild' },
+  { id: 1, name: 'Solid' },
   { id: 7, name: 'Flash' }
 ];
 
 const garminVariaRtl510 = [
   { id: 0, name: 'Off' },
-  { id: 4, name: 'Soild' },
+  { id: 4, name: 'Solid' },
   { id: 7, name: 'Day Flash' },
   { id: 6, name: 'Night Flash' }
 ];
 
 const garminVariaRtl515 = [
   { id: 0, name: 'Off' },
-  { id: 4, name: 'Soild' },
+  { id: 4, name: 'Solid' },
   { id: 5, name: 'Peloton' },
   { id: 7, name: 'Day Flash' },
   { id: 6, name: 'Night Flash' }
