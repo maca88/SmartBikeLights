@@ -795,7 +795,7 @@ class BikeLightsView extends BaseView {
     }
 
     protected function getSecondsOfDay(value) {
-        return (value < 0 ? value + 86400 : value) % 86400;
+        return value == null ? null : (value < 0 ? value + 86400 : value) % 86400;
     }
 
     private function updateLightTextAndMode(lightData, mode) {
