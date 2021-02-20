@@ -80,9 +80,14 @@ export default observer(({ filterGroups, lightModes, device }) => {
               </Grid>
               {
                 lightModes ? (
-                <Grid item xs={12} sm={6}>
-                  <AppSelect required items={lightModes} label="Light mode" setter={filterGroup.setLightMode} value={filterGroup.lightMode} />
-                </Grid>
+                  <React.Fragment>
+                    <Grid item xs={12} sm={6}>
+                      <AppSelect required items={lightModes} label="Light mode" setter={filterGroup.setLightMode} value={filterGroup.lightMode} />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <AppTextInput type="number" label="Minimum active time in seconds" setter={filterGroup.setMinActiveTime} value={filterGroup.minActiveTime} />
+                    </Grid>
+                  </React.Fragment>
                 )
                 : null
               }

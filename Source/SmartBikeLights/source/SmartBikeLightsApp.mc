@@ -1,5 +1,6 @@
 using Toybox.Application;
 using Toybox.WatchUi;
+using Toybox.AntPlus;
 
 (:touchScreen)
 class BikeLightsViewDelegate extends WatchUi.InputDelegate {
@@ -14,6 +15,23 @@ class BikeLightsViewDelegate extends WatchUi.InputDelegate {
         return _eventHandler.stillAlive()
             ? _eventHandler.get().onTap(clickEvent.getCoordinates())
             : false;
+    }
+}
+
+class BikeLightNetworkListener extends AntPlus.LightNetworkListener {
+    private var _eventHandler;
+
+    function initialize(eventHandler) {
+        LightNetworkListener.initialize();
+        _eventHandler = eventHandler.weak();
+    }
+
+    function onLightNetworkStateUpdate(state) {
+        _eventHandler.get().onNetworkStateUpdate(state);
+    }
+
+    function onBikeLightUpdate(light) {
+        _eventHandler.get().updateLight(light, light.mode);
     }
 }
 

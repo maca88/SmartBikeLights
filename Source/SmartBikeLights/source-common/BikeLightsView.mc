@@ -4,24 +4,6 @@ using Toybox.Lang;
 using Toybox.Time.Gregorian;
 using Toybox.Application.Properties as Properties;
 
-(:glance)
-class BikeLightNetworkListener extends AntPlus.LightNetworkListener {
-    private var _eventHandler;
-
-    function initialize(eventHandler) {
-        LightNetworkListener.initialize();
-        _eventHandler = eventHandler.weak();
-    }
-
-    function onLightNetworkStateUpdate(state) {
-        _eventHandler.get().onNetworkStateUpdate(state);
-    }
-
-    function onBikeLightUpdate(light) {
-        _eventHandler.get().updateLight(light, light.mode);
-    }
-}
-
 const lightModeCharacters = [
     "S", /* High steady beam */
     "M", /* Medium steady beam */
@@ -85,8 +67,9 @@ class BikeLightsView extends BaseView {
     // 7. Next light mode
     // 8. Next title
     // 9. Compute setMode timeout
-    var headlightData = new [10]; // Can represent a taillight in case it is the only one
-    var taillightData = new [10];
+    // 10. Minimum active filter group time in seconds
+    var headlightData = new [11]; // Can represent a taillight in case it is the only one
+    var taillightData = new [11];
 
     protected var _errorCode;
 
@@ -131,7 +114,7 @@ class BikeLightsView extends BaseView {
     private var _lastUpdateTime = 0;
 
     // Used as an out parameter for getting the group filter title
-    private var _titleResult = [null];
+    private var _filterResult = [null /* Title */, 0 /* Filter timeout */];
 
     function initialize() {
         BaseView.initialize();
@@ -176,7 +159,7 @@ class BikeLightsView extends BaseView {
             headlightData[3] = headlightModes;
             var lightData = headlightModes == null ? headlightData : taillightData;
             lightData[3] = configuration[3];
-        } catch (e instanceof Lang.Exception) {
+        } catch (e) {
             _errorCode = 3;
         }
     }
@@ -232,7 +215,7 @@ class BikeLightsView extends BaseView {
 
         var globalFilterResult = null;
         var size = _initializedLights;
-        var titleResult = _titleResult;
+        var filterResult = _filterResult;
         var globalFilterTitle = null;
         for (var i = 0; i < size; i++) {
             var lightData = i == 0 ? headlightData : taillightData;
@@ -246,13 +229,20 @@ class BikeLightsView extends BaseView {
             }
 
             if (lightData[4] != 0 /* SMART */ || lightData[2] < 0 /* Disconnected */) {
+                lightData[10] = null;
                 continue;
             }
 
-            titleResult[0] = null;
+            var filterTimer = lightData[10];
+            if (filterTimer != null && filterTimer > 1) {
+                lightData[10]--;
+                continue;
+            }
+
+            filterResult[0] = null;
             // Calculate global filters only once and only when one of the lights is in smart mode
             globalFilterResult = globalFilterResult == null
-                ? checkFilters(activityInfo, _globalFilters, titleResult, null)
+                ? checkFilters(activityInfo, _globalFilters, filterResult, null)
                 : globalFilterResult;
             if (globalFilterResult == 0) {
                 setLightMode(lightData, 0, null, false);
@@ -260,16 +250,17 @@ class BikeLightsView extends BaseView {
             }
 
             if (globalFilterTitle == null) {
-                globalFilterTitle = titleResult[0];
+                globalFilterTitle = filterResult[0];
             }
 
             var light = lightData[0];
             var lightMode = checkFilters(
                 activityInfo,
-                light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightFilters : _taillightFilters,
-                titleResult,
+                getLightFilters(light),
+                filterResult,
                 lightData);
-            var title = titleResult[0] != null ? titleResult[0] : globalFilterTitle;
+            var title = filterResult[0] != null ? filterResult[0] : globalFilterTitle;
+            lightData[10] = filterResult[1];
             setLightMode(lightData, lightMode, title, false);
         }
 
@@ -526,7 +517,7 @@ class BikeLightsView extends BaseView {
             }
 
             var capableModes = getLightModes(light);
-            var filters = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightFilters : _taillightFilters;
+            var filters = getLightFilters(light);
             if (newNetworkMode != null) {
                 setLightData("CM", lightType, 1 /* NETWORK */);
             }
@@ -796,6 +787,10 @@ class BikeLightsView extends BaseView {
 
     protected function getSecondsOfDay(value) {
         return value == null ? null : (value < 0 ? value + 86400 : value) % 86400;
+    }
+
+    private function getLightFilters(light) {
+        return light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightFilters : _taillightFilters;
     }
 
     private function updateLightTextAndMode(lightData, mode) {
@@ -1145,9 +1140,9 @@ class BikeLightsView extends BaseView {
     }
 
     private function getLightText(lightType, mode, lightModes) {
-        var lightModeCharacter = null;
+        var lightModeCharacter = "";
         if (mode < 0) {
-            lightModeCharacter = "X";
+            lightModeCharacter = "X"; // Disconnected
         } else if (mode > 0) {
             var index = lightModes == null
                 ? -1
@@ -1157,9 +1152,7 @@ class BikeLightsView extends BaseView {
                 : $.lightModeCharacters[index];
         }
 
-        return lightType == 0 /* LIGHT_TYPE_HEADLIGHT */
-            ? lightModeCharacter == null ? ">" : lightModeCharacter + ">"
-            : lightModeCharacter == null ? "<" : "<" + lightModeCharacter;
+        return lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? lightModeCharacter + ">" : "<" + lightModeCharacter;
     }
 
     private function getFont(key) {
@@ -1171,7 +1164,7 @@ class BikeLightsView extends BaseView {
             return true;
         }
 
-        var filters = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightFilters : _taillightFilters;
+        var filters = getLightFilters(light);
         if (filters == null) {
             return true;
         }
@@ -1185,7 +1178,7 @@ class BikeLightsView extends BaseView {
                 return false;
             }
 
-            i = i + 3 + (totalFilters * 3);
+            i = i + 4 + (totalFilters * 3);
         }
 
         return true;
@@ -1214,9 +1207,10 @@ class BikeLightsView extends BaseView {
     }
 
     (:dataField)
-    private function checkFilters(activityInfo, filters, titleResult, lightData) {
+    private function checkFilters(activityInfo, filters, filterResult, lightData) {
         if (filters == null) {
-            titleResult[0] = null;
+            filterResult[0] = null;
+            filterResult[1] = null;
             return lightData != null ? 0 : 1;
         }
 
@@ -1224,6 +1218,7 @@ class BikeLightsView extends BaseView {
         var nextGroupIndex = null;
         var lightMode = 1;
         var title = null;
+        var minActiveTime = null;
         while (i < filters.size()) {
             var data = filters[i];
             if (nextGroupIndex == null) {
@@ -1231,7 +1226,8 @@ class BikeLightsView extends BaseView {
                 var totalFilters = filters[i + 1];
                 if (lightData != null) {
                     lightMode = filters[i + 2];
-                    i += 3;
+                    minActiveTime = filters[i + 3];
+                    i += 4;
                 } else {
                     i += 2;
                 }
@@ -1239,7 +1235,8 @@ class BikeLightsView extends BaseView {
                 nextGroupIndex = i + (totalFilters * 3);
                 continue;
             } else if (i >= nextGroupIndex) {
-                titleResult[0] = title;
+                filterResult[0] = title;
+                filterResult[1] = minActiveTime;
                 return lightMode;
             }
 
@@ -1257,11 +1254,13 @@ class BikeLightsView extends BaseView {
         }
 
         if (nextGroupIndex != null) {
-            titleResult[0] = title;
+            filterResult[0] = title;
+            filterResult[1] = minActiveTime;
             return lightMode;
         }
 
-        titleResult[0] = null;
+        filterResult[0] = null;
+        filterResult[1] = null;
         return 0;
     }
 
@@ -1304,7 +1303,7 @@ class BikeLightsView extends BaseView {
 
     (:noPolygons)
     private function isInsideAnyPolygon(activityInfo, filterValue) {
-        throw new Lang.Exception();
+        return false;
     }
 
     (:polygons)
@@ -1487,7 +1486,7 @@ class BikeLightsView extends BaseView {
     }
 
     // <TotalFilters>,<TotalGroups>|[<FilterGroup>| ...]
-    // <FilterGroup> := <GroupName>:<FiltersNumber>(?:<LightMode>)[<Filter>, ...]
+    // <FilterGroup> := <GroupName>:<FiltersNumber>(?:<LightMode>)(?:<MinActiveTime>)[<Filter>, ...]
     // <Filter> := <FilterType><FilterOperator><FilterValue>
     (:dataField)
     private function parseFilters(chars, i, lightMode, filterResult) {
@@ -1496,7 +1495,7 @@ class BikeLightsView extends BaseView {
             return null;
         }
 
-        var groupDataLength = lightMode ? 3 : 2;
+        var groupDataLength = lightMode ? 4 : 2;
         var totalGroups = parse(1 /* NUMBER */, chars, filterResult[0] + 1, filterResult);
         var data = new [(totalFilters * 3) + totalGroups * groupDataLength];
         i = filterResult[0];
@@ -1513,6 +1512,9 @@ class BikeLightsView extends BaseView {
                 data[dataIndex + 1] = parse(1 /* NUMBER */, chars, filterResult[0] + 1, filterResult); // Number of filters in the group
                 if (lightMode) {
                     data[dataIndex + 2] = parse(1 /* NUMBER */, chars, filterResult[0] + 1 /* Skip : */, filterResult); // The light mode id
+                    if (chars[filterResult[0]] == ':') { // For back compatibility
+                        data[dataIndex + 3] = parse(1 /* NUMBER */, chars, filterResult[0] + 1 /* Skip : */, filterResult); // The min active filter time
+                    }
                 }
 
                 dataIndex += groupDataLength;
@@ -1569,7 +1571,7 @@ class BikeLightsView extends BaseView {
 
     (:noPolygons)
     private function parsePolygons(chars, index, filterResult) {
-        throw new Lang.Exception();
+        return null;
     }
 
     (:polygons)

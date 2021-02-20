@@ -7,6 +7,7 @@ export default class FilterGroup {
   name = null;
   filters = [];
   lightMode = null;
+  minActiveTime = null;
   // Ui properties
   open = true;
 
@@ -26,6 +27,7 @@ export default class FilterGroup {
     let config = `${(this.name || '')}:${this.filters.length}`;
     if (this._hasLightMode) {
       config += `:${this.lightMode}`;
+      config += `:${(this.minActiveTime || 1)}`;
     }
 
     this.filters.forEach(f => {
@@ -53,6 +55,10 @@ export default class FilterGroup {
 
   setLightMode = (value) => {
     this.lightMode = value;
+  }
+
+  setMinActiveTime = (value) => {
+    this.minActiveTime = value;
   }
 
   setOpen = (value) => {

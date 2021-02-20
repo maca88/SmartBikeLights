@@ -169,7 +169,7 @@ const parseFilters = (chars, i, lightMode, filterResult) => {
     return null;
   }
 
-  const groupDataLength = lightMode ? 3 : 2;
+  const groupDataLength = lightMode ? 4 : 2;
   const totalGroups = parseNumber(chars, filterResult[0] + 1, filterResult);
   const data = new Array((totalFilters * 3) + totalGroups * groupDataLength);
   i = filterResult[0];
@@ -186,6 +186,9 @@ const parseFilters = (chars, i, lightMode, filterResult) => {
       data[dataIndex + 1] = parseNumber(chars, filterResult[0] + 1, filterResult); // Number of filters in the group
       if (lightMode) {
         data[dataIndex + 2] = parseNumber(chars, filterResult[0] + 1 /* Skip : */, filterResult); // The light mode id
+        if (chars[filterResult[0]] === ':') { // For back compatibility
+          data[dataIndex + 3] = parseNumber(chars, filterResult[0] + 1 /* Skip : */, filterResult); // The min active filter time
+        }
       }
 
       dataIndex += groupDataLength;
@@ -245,7 +248,12 @@ const parseToFilterGroups = (chars, i, hasLightMode, filterResult) => {
     let filterGroup = new FilterGroup(hasLightMode);
     filterGroup.name = values[i++];
     let totalFilters = values[i++];
-    filterGroup.lightMode = hasLightMode ? values[i++] : null;
+    if (hasLightMode) {
+      filterGroup.lightMode = values[i++];
+      var minActiveTime = values[i++];
+      filterGroup.minActiveTime = minActiveTime !== null && minActiveTime > 1 ? minActiveTime : null;
+    }
+
     let endIndex = i + totalFilters * 3;
     for (let j = i; j < endIndex;) {
       filterGroup.filters.push(parseToFilter(values[j++], values[j++], values[j++]));
