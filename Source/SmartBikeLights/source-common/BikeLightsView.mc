@@ -1361,7 +1361,7 @@ class BikeLightsView extends BaseView {
     private function isTargetBehind(activityInfo, operator, filterValue) {
         if (_bikeRadar == null) {
             if (Toybox.AntPlus has :BikeRadar) {
-                _bikeRadar = AntPlus.BikeRadar(null);
+                _bikeRadar = new AntPlus.BikeRadar(null);
             } else {
                 return false;
             }
