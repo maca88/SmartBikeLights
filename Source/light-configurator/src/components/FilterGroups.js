@@ -17,9 +17,12 @@ import Filter from '../models/Filter';
 import Filters from '../components/Filters';
 import { filterList } from '../constants';
 
-const filtersWoPosition = filterList.filter(o => o.id !== 'F');
+const filtersWoRadar = filterList.filter(o => o.id !== 'I');
+const filtersWoPositionAndRadar = filtersWoRadar.filter(o => o.id !== 'F');
 const getFilterTypes = (hasLightModes, device) => {
-  let list = device?.polygons ? filterList : filtersWoPosition;
+  let list = device?.polygons && device?.bikeRadar ? filterList
+    : device?.polygons ? filtersWoRadar
+    : filtersWoPositionAndRadar;
   return hasLightModes ? list : list.filter(o => o.id !== 'B');
 };
 const useStyles = makeStyles((theme) => ({

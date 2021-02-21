@@ -110,6 +110,7 @@ class BikeLightsView extends BaseView {
     protected var _sunriseTime;
     (:dataField) private var _lastSpeed;
     (:dataField) private var _acceleration;
+    (:polygons) private var _bikeRadar;
 
     private var _lastUpdateTime = 0;
 
@@ -1240,12 +1241,7 @@ class BikeLightsView extends BaseView {
                 return lightMode;
             }
 
-            var filterValue = filters[i + 2];
-            var result = data == 'E' ? isWithinTimespan(filters, i, filterValue)
-                : data == 'F' ? isInsideAnyPolygon(activityInfo, filterValue)
-                : data == 'D' ? true
-                : checkGenericFilter(activityInfo, data, filters[i + 1], filterValue, lightData);
-            if (result) {
+            if (checkFilter(data, activityInfo, filters, i, filters[i + 2], lightData)) {
                 i += 3;
             } else {
                 i = nextGroupIndex;
@@ -1262,6 +1258,22 @@ class BikeLightsView extends BaseView {
         filterResult[0] = null;
         filterResult[1] = null;
         return 0;
+    }
+
+    (:polygons)
+    private function checkFilter(filterType, activityInfo, filters, i, filterValue, lightData) {
+        return filterType == 'E' ? isWithinTimespan(filters, i, filterValue)
+            : filterType == 'F' ? isInsideAnyPolygon(activityInfo, filterValue)
+            : filterType == 'I' ? isTargetBehind(activityInfo, filters[i + 1], filterValue)
+            : filterType == 'D' ? true
+            : checkGenericFilter(activityInfo, filterType, filters[i + 1], filterValue, lightData);
+    }
+
+    (:noPolygons)
+    private function checkFilter(filterType, activityInfo, filters, i, filterValue, lightData) {
+        return filterType == 'E' ? isWithinTimespan(filters, i, filterValue)
+            : filterType == 'D' ? true
+            : checkGenericFilter(activityInfo, filterType, filters[i + 1], filterValue, lightData);
     }
 
     (:dataField)
@@ -1299,11 +1311,6 @@ class BikeLightsView extends BaseView {
             : operator == '>' ? value > filterValue
             : operator == '=' ? value == filterValue
             : false;
-    }
-
-    (:noPolygons)
-    private function isInsideAnyPolygon(activityInfo, filterValue) {
-        return false;
     }
 
     (:polygons)
@@ -1348,6 +1355,47 @@ class BikeLightsView extends BaseView {
         }
 
         return result;
+    }
+
+    (:polygons)
+    private function isTargetBehind(activityInfo, operator, filterValue) {
+        if (_bikeRadar == null) {
+            if (Toybox.AntPlus has :BikeRadar) {
+                _bikeRadar = AntPlus.BikeRadar(null);
+            } else {
+                return false;
+            }
+        }
+
+        var targets = _bikeRadar.getRadarInfo();
+        if (targets == null) {
+            return false;
+        }
+
+        var range = filterValue[0];
+        var threatOperator = filterValue[1];
+        var threat = filterValue[2];
+        for (var i = 0; i < targets.size(); i++) {
+            var target = targets[i];
+            if (checkOperatorValue(threatOperator, target.threat, threat) &&
+                checkOperatorValue(operator, target.range, range)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    (:polygons)
+    private function checkOperatorValue(operator, value, filterValue) {
+        if (value == null) {
+            return filterValue < 0;
+        }
+
+        return operator == '<' ? value < filterValue
+            : operator == '>' ? value > filterValue
+            : operator == '=' ? value == filterValue
+            : false;
     }
 
     (:dataField)
@@ -1520,10 +1568,7 @@ class BikeLightsView extends BaseView {
                 dataIndex += groupDataLength;
                 i = filterResult[0];
             } else if (charNumber >= 65 /* A */ && charNumber <= 90 /* Z */) {
-                var filterValue = charNumber == 70 /* F */ ? parsePolygons(chars, i + 1, filterResult)
-                    : charNumber == 69 /* E */ ? parseTimespan(chars, i + 1, filterResult)
-                    : parseGenericFilter(chars, i + 1, filterResult);
-
+                var filterValue = parseFilter(charNumber, chars, i + 1, filterResult);
                 data[dataIndex] = chars[i]; // Filter type
                 data[dataIndex + 1] = filterResult[1]; // Filter operator
                 data[dataIndex + 2] = filterValue; // Filter value
@@ -1535,6 +1580,20 @@ class BikeLightsView extends BaseView {
         }
 
         return data;
+    }
+
+    (:noPolygons)
+    private function parseFilter(charNumber, chars, i, filterResult) {
+        return charNumber == 69 /* E */ ? parseTimespan(chars, i, filterResult)
+            : parseGenericFilter(chars, i, filterResult);
+    }
+
+    (:polygons)
+    private function parseFilter(charNumber, chars, i, filterResult) {
+        return charNumber == 69 /* E */ ? parseTimespan(chars, i, filterResult)
+            : charNumber == 70 /* F */? parsePolygons(chars, i, filterResult)
+            : charNumber == 73 /* I */ ? parseBikeRadar(chars, i, filterResult)
+            : parseGenericFilter(chars, i, filterResult);
     }
 
     // E<?FromType><FromValue>,<?ToType><ToValue> (Es45,r-45 E35645,8212)
@@ -1566,12 +1625,7 @@ class BikeLightsView extends BaseView {
         }
 
         data[dataIndex] = type;
-        data[dataIndex + 1] = parse(1, chars, index, filterResult);
-    }
-
-    (:noPolygons)
-    private function parsePolygons(chars, index, filterResult) {
-        return null;
+        data[dataIndex + 1] = parse(1 /* NUMBER */, chars, index, filterResult);
     }
 
     (:polygons)
@@ -1586,6 +1640,18 @@ class BikeLightsView extends BaseView {
             dataIndex++;
             index = filterResult[0] + 1;
         }
+
+        return data;
+    }
+
+    // I<300>0
+    (:polygons)
+    private function parseBikeRadar(chars, index, filterResult) {
+        filterResult[1] = chars[index]; // Filter operator
+        var data = new [3];
+        data[0] = parse(1 /* NUMBER */, chars, index + 1, filterResult); // Range
+        data[1] = chars[filterResult[0]]; // Threat operator
+        data[2] = parse(1 /* NUMBER */, chars, filterResult[0] + 1, filterResult); // Threat
 
         return data;
     }

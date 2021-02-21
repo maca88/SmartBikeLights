@@ -5,7 +5,8 @@ export const filterList = [
   { id: 'E', name: 'Timespan' },
   { id: 'F', name: 'Position' },
   { id: 'G', name: 'GPS accuracy' },
-  { id: 'H', name: 'Timer state' }
+  { id: 'H', name: 'Timer state' },
+  { id: 'I', name: 'Bike radar' },
 ];
 
 let map = {};
@@ -67,6 +68,12 @@ export const timerStateList = [
   'ST', // Recording stopped
   'PA', // Recording paused
   'RE'  // Recording
+];
+
+export const vehicleThreatList = [
+  'None',
+  'Medium',
+  'High'
 ];
 
 const lightModes = [

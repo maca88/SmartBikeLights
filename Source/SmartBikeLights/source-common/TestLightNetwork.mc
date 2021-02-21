@@ -1,5 +1,29 @@
 using Toybox.AntPlus;
 
+(:testNetwork :polygons)
+module TestAntPlus {
+    class BikeRadar {
+        private var target;
+
+        function initialize(listener) {
+            target = new RadarTarget();
+        }
+
+        function getRadarInfo() {
+            return [target];
+        }
+    }
+
+    class RadarTarget {
+        public var speed = 0;
+        public var range = 100;
+        public var threat = 0;
+
+        function initialize() {
+        }
+    }
+}
+
 (:testNetwork)
 module TestNetwork {
 

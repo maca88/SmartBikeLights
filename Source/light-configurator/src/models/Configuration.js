@@ -95,6 +95,16 @@ const parsePolygons = (chars, index, filterResult) => {
   return data;
 };
 
+const parseBikeRadar = (chars, index, filterResult) => {
+  filterResult[1] = chars[index]; // Filter operator
+  const data = new Array(3);
+  data[0] = parseNumber(chars, index + 1, filterResult);
+  data[1] = chars[filterResult[0]]; // Threat operator
+  data[2] = parseNumber(chars, filterResult[0] + 1, filterResult);
+
+  return data;
+};
+
 const parseGenericFilter = (chars, index, filterResult) => {
   filterResult[1] = chars[index]; // Filter operator
 
@@ -194,8 +204,9 @@ const parseFilters = (chars, i, lightMode, filterResult) => {
       dataIndex += groupDataLength;
       i = filterResult[0];
     } else if (charNumber >= 65 /* A */ && charNumber <= 90 /* Z */) {
-      const filterValue = charNumber === 70 /* F */ ? parsePolygons(chars, i + 1, filterResult)
-          : charNumber === 69 /* E */ ? parseTimespan(chars, i + 1, filterResult)
+      const filterValue = charNumber === 69 /* E */ ? parseTimespan(chars, i + 1, filterResult)
+          : charNumber === 70 /* F */ ? parsePolygons(chars, i + 1, filterResult)
+          : charNumber === 73 /* I */ ? parseBikeRadar(chars, i + 1, filterResult)
           : parseGenericFilter(chars, i + 1, filterResult);
 
       data[dataIndex] = chars[i]; // Filter type
@@ -229,6 +240,17 @@ const parseToFilter = (type, operator, value) => {
       }
 
       filter.polygons.push(polygon);
+    }
+  } else if (type === 'I' /* Bike radar */) {
+    if (value[0] >= 0) {
+      filter.value = value[0];
+    } else {
+      filter.operator = null;
+    }
+
+    if (value[2] >= 0) {
+      filter.threatOperator = value[1];
+      filter.threat = value[2];
     }
   } else {
     filter.value = value;
@@ -378,9 +400,9 @@ export default class Configuration {
 
     let config = `${this.getFilterGroupsConfigurationValue(this.globalFilterGroups, null)}`;
     config += `#${this.getNumberArray(this.headlightModes)}`;
-    config += `#${this.getFilterGroupsConfigurationValue(this.headlightFilterGroups, this.headlightDefaultMode)}`;
+    config += `#${this.headlight === null ? '' : this.getFilterGroupsConfigurationValue(this.headlightFilterGroups, this.headlightDefaultMode)}`;
     config += `#${this.getNumberArray(this.taillightModes)}`;
-    config += `#${this.getFilterGroupsConfigurationValue(this.taillightFilterGroups, this.taillightDefaultMode)}`;
+    config += `#${this.taillight === null ? '' : this.getFilterGroupsConfigurationValue(this.taillightFilterGroups, this.taillightDefaultMode)}`;
     config += `#${this.getLightPanelOrSettingsConfigurationValue(this.headlightPanel, this.headlightSettings, this.device, deviceList)}`;
     config += `#${this.getLightPanelOrSettingsConfigurationValue(this.taillightPanel, this.taillightSettings, this.device, deviceList)}`;
     config += `#${(this.device)}`;

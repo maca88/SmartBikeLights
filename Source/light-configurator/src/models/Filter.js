@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 import { makeAutoObservable } from 'mobx';
-import { filterMap, batteryStateList, gpsAccuracyList, timerStateList, timespanTypeMap, speedUnitList, getBatteryOperator, getBatteryValue } from '../constants';
+import { filterMap, batteryStateList, gpsAccuracyList, timerStateList, timespanTypeMap, speedUnitList, getBatteryOperator, getBatteryValue, vehicleThreatList } from '../constants';
 import addSeconds from 'date-fns/addSeconds';
 import startOfToday from 'date-fns/startOfToday';
 import format from 'date-fns/format';
@@ -41,6 +41,9 @@ export default class Filter {
   toValue = null;
   // Position fields
   polygons = [];
+  // Bike radar fields
+  threatOperator = null;
+  threat = null;
   // Ui properties
   open = true;
 
@@ -58,9 +61,16 @@ export default class Filter {
           this.toType && this.toValue !== null && !Number.isNaN(this.toValue);
       case 'F':
         return device.polygons && this.polygons.length;
+      case 'I':
+        return (!this.operator || this.isValidOperator(this.operator, this.value)) &&
+          (!this.threatOperator || this.isValidOperator(this.threatOperator, this.threat));
       default:
-        return this.type && this.value !== '' && this.value !== null && !Number.isNaN(this.value) && this.operator;
+        return this.type && this.isValidOperator(this.operator, this.value);
     }
+  }
+
+  isValidOperator(operator, value) {
+    return value !== '' && value !== null && !Number.isNaN(value) && operator;
   }
 
   getConfigurationValue() {
@@ -90,6 +100,12 @@ export default class Filter {
       return config;
     }
 
+    if (this.type === 'I') {
+      config += this.operator ? `${(this.operator)}${(this.value)}` : '>-1';
+      config += this.threatOperator ? `${(this.threatOperator)}${(this.threat)}` : '>-1';
+      return config;
+    }
+
     return `${config}${this.operator}${this.value}`;
   }
 
@@ -111,6 +127,18 @@ export default class Filter {
     } else if (this.type === 'F' /* Position */) {
       if (this.polygons.length) {
         name += this.polygons.length + ' polygons';
+      }
+    } else if (this.type === 'I' /* Bike radar */) {
+      if (this.isValidOperator(this.operator, this.value)) {
+        name += `Range ${this.operator} ${this.value} `;
+      }
+
+      if (this.isValidOperator(this.threatOperator, this.threat)) {
+        name += `Threat ${this.threatOperator} ${vehicleThreatList[this.threat]}`;
+      }
+
+      if (this.operator === null && this.threatOperator === null) {
+        name += 'Any vehicle';
       }
     } else if (this.value !== null && !Number.isNaN(this.value)) {
       switch (this.type) {
@@ -168,6 +196,14 @@ export default class Filter {
 
   setToValue = (value) => {
     this.toValue = value;
+  }
+
+  setThreat = (value) => {
+    this.threat = value;
+  }
+
+  setThreatOperator = (value) => {
+    this.threatOperator = value;
   }
 
   setOpen = (value) => {

@@ -12,6 +12,7 @@ import GpsAccuracyFilter from '../filters/GpsAccuracyFilter';
 import TimerStateFilter from '../filters/TimerStateFilter';
 import TimespanFilter from '../filters/TimespanFilter';
 import PositionFilter from '../filters/PositionFilter';
+import BikeRadarFilter from '../filters/BikeRadarFilter';
 import { AppContext } from '../AppContext';
 import { action } from 'mobx';
 
@@ -53,6 +54,7 @@ export default observer(({ filters, filterTypes, device }) => {
               : filter.type === 'C' ? <SpeedFilter filter={filter} />
               : filter.type === 'G' ? <GpsAccuracyFilter filter={filter} />
               : filter.type === 'H' ? <TimerStateFilter filter={filter} />
+              : filter.type === 'I' ? <BikeRadarFilter filter={filter} />
               : null
             }
           </Grid>
