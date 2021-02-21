@@ -8,29 +8,27 @@ import { AppContext } from '../AppContext';
 
 export default observer(({ filter }) => {
   const { units } = useContext(AppContext);
-  const [speed, setSpeed] = React.useState(0);
+  const [speed, setSpeed] = React.useState(null);
   const setFilterValue = (speed) => {
-    if (speed === '') {
-      speed = null;
+    let mps = null;
+    if (speed !== '' && !Number.isNaN(speed)) {
+      mps = units === 1 /* Statute */
+        ? speed * 0.44704
+        : speed * 0.27777777777778;
     }
 
-    const mps = units === 1 /* Statute */
-      ? speed * 0.44704
-      : speed * 0.27777777777778;
-    filter.setValue(speed === null ? null : Math.round(mps * 100000) / 100000);
+    filter.setValue(mps === null ? null : Math.round(mps * 100000) / 100000);
   };
 
   useEffect(() => {
-    let newSpeed;
-    if (Number.isNaN(filter.value)) {
-      newSpeed = 0;
-    } else {
+    let newSpeed = null;
+    if (filter.value !== null && !Number.isNaN(filter.value)) {
       newSpeed = units === 0 /* Metric */
         ? filter.value * 3.6
         : filter.value * 2.236934;
     }
 
-    setSpeed(Math.round(newSpeed * 100) / 100);
+    setSpeed(newSpeed === null ? null : Math.round(newSpeed * 100) / 100);
   }, [units, filter.value]);
 
   return (

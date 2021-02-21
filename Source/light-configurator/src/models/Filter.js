@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 import { makeAutoObservable } from 'mobx';
-import { filterMap, batteryStateList, gpsAccuracyList, timerStateList, timespanTypeMap, speedUnitList, getBatteryOperator, getBatteryValue, vehicleThreatList } from '../constants';
+import { filterMap, batteryStateList, gpsAccuracyList, timerStateList, timespanTypeMap, speedUnitList, getBatteryOperator, getBatteryValue, vehicleThreatList, distanceUnitList } from '../constants';
 import addSeconds from 'date-fns/addSeconds';
 import startOfToday from 'date-fns/startOfToday';
 import format from 'date-fns/format';
@@ -27,6 +27,15 @@ const getSpeedName = (value, units) => {
   const unitsName = speedUnitList[units].name;
 
   return `${Math.round(speed * 100) / 100} ${unitsName}`; 
+};
+
+const getDistanceName = (value, units) => {
+  const distance = units === 0 /* Metric */
+      ? value
+      : value * 3.2808;
+  const unitsName = distanceUnitList[units].name;
+
+  return `${Math.round(distance * 100) / 100} ${unitsName}`; 
 };
 
 export default class Filter {
@@ -129,11 +138,16 @@ export default class Filter {
         name += this.polygons.length + ' polygons';
       }
     } else if (this.type === 'I' /* Bike radar */) {
-      if (this.isValidOperator(this.operator, this.value)) {
-        name += `Range ${this.operator} ${this.value} `;
+      var isRangeValid = this.isValidOperator(this.operator, this.value);
+      if (isRangeValid) {
+        name += `Range ${this.operator} ${getDistanceName(this.value, context.units)} `;
       }
 
       if (this.isValidOperator(this.threatOperator, this.threat)) {
+        if (isRangeValid) {
+          name += 'AND ';
+        }
+
         name += `Threat ${this.threatOperator} ${vehicleThreatList[this.threat]}`;
       }
 

@@ -35,6 +35,11 @@ export const speedUnitList = [
   { id: 1, name: 'MPH' },
 ];
 
+export const distanceUnitList = [
+  { id: 0, name: 'meters' },
+  { id: 1, name: 'feet' },
+];
+
 export const timeFormatList = [
   { id: 0, name: '24h' },
   { id: 1, name: '12h' },
