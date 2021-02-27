@@ -117,6 +117,15 @@ const garminVariaHl500 = [
   { id: 7, name: 'Flash' }
 ];
 
+const garminVariaUt800 = [
+  { id: 0, name: 'Off' },
+  { id: 2, name: 'High' },
+  { id: 3, name: 'Medium' },
+  { id: 4, name: 'Low' },
+  { id: 6, name: 'Night Flash' },
+  { id: 7, name: 'Day Flash' }
+];
+
 export const controlMode = {id: -1, name: "Control mode"};
 
 export const headlightList = [
@@ -156,7 +165,7 @@ export const headlightList = [
   },
   {
     id: 3,
-    name: 'Garmin Varia HL 500',
+    name: 'Garmin Varia HL500',
     modes: garminVariaHl500,
     lightModes: [0, 67121681], // 67121681
     defaultLightPanel: {
@@ -168,6 +177,23 @@ export const headlightList = [
         [garminVariaHl500[3]],
         [garminVariaHl500[4]],
         [garminVariaHl500[5]]
+      ]
+    }
+  },
+  {
+    id: 4,
+    name: 'Garmin Varia UT800',
+    modes: garminVariaUt800,
+    lightModes: [0, 73413136], // 73413136
+    defaultLightPanel: {
+      shortName: 'Varia 800',
+      buttonGroups: [
+        [controlMode, garminVariaUt800[0]],
+        [garminVariaUt800[1]],
+        [garminVariaUt800[2]],
+        [garminVariaUt800[3]],
+        [garminVariaUt800[4]],
+        [garminVariaUt800[5]]
       ]
     }
   },
