@@ -36,9 +36,6 @@ export default observer(({ label, filter }) => {
   }, [units, filter.value]);
   return (
   <Grid container spacing={3}>
-    <Grid item xs={12} sm={12}>
-      <Typography style={{fontWeight:700}}>NOTE: This is an experimental filter!</Typography>
-    </Grid>
     <Grid item xs={12} sm={4}>
       <AppSelect items={operatorList} label="Range operator" setter={filter.setOperator} value={filter.operator} /> 
     </Grid>
