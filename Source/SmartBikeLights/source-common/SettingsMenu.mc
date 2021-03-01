@@ -10,7 +10,10 @@ module Settings {
     ];
 
     function getLightData(lightType, view) {
-        return view.headlightData[0].type == lightType ? view.headlightData : view.taillightData;
+        var headlight = view.headlightData[0];
+        return headlight == null ? null // The network was disconnected
+            : headlight.type == lightType ? view.headlightData
+            : view.taillightData;
     }
 
     class LightsMenu extends WatchUi.Menu2 {
@@ -39,13 +42,17 @@ module Settings {
         function initialize(lightType, view) {
             Menu2.initialize(null);
             Menu2.setTitle(lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? view.headlightSettings[0] : view.taillightSettings[0]);
+            _lightType = lightType;
+            _view = view.weak();
             var lightData = getLightData(lightType, view);
+            if (lightData == null) {
+                return;
+            }
+
             var lightSettings = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? view.headlightSettings : view.taillightSettings;
             var modeIndex = lightSettings.indexOf(lightData[2]);
             Menu2.addItem(new WatchUi.MenuItem("Control mode", controlModeNames[lightData[4]], 0, null));
             Menu2.addItem(new WatchUi.MenuItem("Light modes", modeIndex < 0 ? null : lightSettings[modeIndex - 1], 1, null));
-            _lightType = lightType;
-            _view = view.weak();
         }
 
         function onSelect(id, menuItem) {
@@ -78,6 +85,11 @@ module Settings {
 
         function onSelect(controlMode, menuItem) {
             var lightData = getLightData(_lightType, _view.get());
+            if (lightData == null) {
+                WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+                return;
+            }
+
             var oldControlMode = lightData[4];
             if (oldControlMode != controlMode) {
                 // Set new control mode
@@ -115,6 +127,11 @@ module Settings {
 
         function onSelect(mode, menuItem) {
             var lightData = getLightData(_lightType, _view.get());
+            if (lightData == null) {
+                WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+                return;
+            }
+
             // Set light mode
             var newControlMode = lightData[4] != 2 /* MANUAL */ ? 2 : null;
             var view = _view.get();

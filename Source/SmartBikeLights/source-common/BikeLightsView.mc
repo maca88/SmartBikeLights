@@ -332,12 +332,13 @@ class BikeLightsView extends BaseView {
     }
 
     function updateLight(light, mode) {
-        if (_initializedLights == 0) {
+        var lightType = light.type;
+        if (_initializedLights == 0 || (lightType != 0 /* LIGHT_TYPE_HEADLIGHT */ && lightType != 2 /* LIGHT_TYPE_TAILLIGHT */)) {
             //System.println("skip updateLight light=" + light.type + " mode=" + mode + " timer=" + System.getTimer());
             return;
         }
 
-        var lightData = _initializedLights == 1 || light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? headlightData : taillightData;
+        var lightData = _initializedLights == 1 || lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? headlightData : taillightData;
         lightData[0] = light;
         var nextMode = lightData[7];
         if (mode == lightData[2] && nextMode == null) {
@@ -783,11 +784,13 @@ class BikeLightsView extends BaseView {
     }
 
     protected function getSunriseSet(sunrise, jd, position) {
-        return getSecondsOfDay(Math.round(calcSunriseSetUTC(sunrise, jd, position[0], position[1]) * 60).toNumber());
+        var value = calcSunriseSetUTC(sunrise, jd, position[0].toFloat(), position[1].toFloat());
+        return getSecondsOfDay(value * 60);
     }
 
     protected function getSecondsOfDay(value) {
-        return value == null ? null : (value < 0 ? value + 86400 : value) % 86400;
+        value = value.toNumber();
+        return (value < 0 ? value + 86400 : value) % 86400;
     }
 
     private function getLightFilters(light) {
