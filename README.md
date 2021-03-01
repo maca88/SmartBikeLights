@@ -33,6 +33,23 @@ Smart Bike Lights is a [data field](https://developer.garmin.com/connect-iq/conn
 | Network (**N**) | ![Network](/Images/SmallNetwork.png?raw=true) | Light is controlled by the Garmin [Light mode](https://www8.garmin.com/manuals/webhelp/variabikelights/EN-US/GUID-73B08487-BA57-4EF0-A253-D226E229BC68.html) |
 | Manual (**M**) | ![Manual](/Images/SmallManual.png?raw=true) | Light is controlled by the user |
 
+## Changing control modes
+
+For Edge touch screen devices (Edge 1030/1000/Explore/820/830):
+- Full screen: The control mode can be changed by tapping on the top left button which contains one character (M, N or S).
+- Non full screen: The control mode can be changed by tapping on the light icon
+
+For devices with CIQ 3.2 and more than 32KB memory (Fenix 6 Pro/X Pro/S Pro, Forerunner 245 Music/745/945, MARQ, Edge 530, Descent Mk2):
+1. Make sure that the lights are paired and connected with your Garmin device
+2. On the data screen where you have the data field hold the Menu button until a menu shows up (make sure that you have a recent firmware installed)
+3. In the menu select "Smart Bike Lights" -> "Control mode" and change to the desired mode
+
+For other devices:
+
+The initial control mode will be determined based on the configuration from the [Lights Configurator](https://maca88.github.io/SmartBikeLights/). When using a configuration where only the lights were selected (without any filters), the initial control mode will be set to Network (N) otherwise it will be set to Smart (S). When in Smart mode the following can be done to switch control modes: 
+- To go into Manual control mode, use the physical button on the light to switch the light mode. For restoring back to the Smart mode, switch to a different data screen and then back to the original one.
+- To go into Network control mode, change the Garmin [Light mode](https://www8.garmin.com/manuals/webhelp/variabikelights/EN-US/GUID-73B08487-BA57-4EF0-A253-D226E229BC68.html) to a different one by using the Garmin menu (e.g. from Auto to Individual). For restoring back to the Smart mode, switch to a different data screen and then back to the original one.
+
 ## Icons
 
 | Icon | Description |
