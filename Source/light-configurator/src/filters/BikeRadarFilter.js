@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import AppSelect from '../inputs/AppSelect';
-import Typography from '@material-ui/core/Typography';
 import AppTextInput from '../inputs/AppTextInput';
 import AppSlider from '../inputs/AppSlider';
 import { AppContext } from '../AppContext';

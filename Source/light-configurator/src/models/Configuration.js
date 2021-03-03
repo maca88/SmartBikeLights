@@ -6,6 +6,7 @@ import LightPanel from './LightPanel';
 import LightButtonGroup from './LightButtonGroup';
 import LightButton from './LightButton';
 import LightSettings from './LightSettings';
+import { getLightModes } from '../constants';
 
 const defaultFilter = new Filter();
 defaultFilter.type = 'D';
@@ -42,12 +43,12 @@ const parseNumber = (chars, index, resultIndex) => {
 };
 
 const parseNumberArray = (chars, index, resultIndex) => {
-  var left = parseNumber(chars, index, resultIndex);
+  const left = parseNumber(chars, index, resultIndex);
   if (left === null) {
     return null;
   }
 
-  var right = parseNumber(chars, resultIndex[0] + 1, resultIndex);
+  const right = parseNumber(chars, resultIndex[0] + 1, resultIndex);
   return [left, right];
 };
 
@@ -135,7 +136,7 @@ const parseLightPanel = (chars, i, filterResult) => {
   panel.lightName = parseTitle(chars, filterResult[0] + 1, filterResult);
   i = filterResult[0];
   while (i < chars.length) {
-    var char = chars[i];
+    const char = chars[i];
     if (char === '#') {
         break;
     }
@@ -161,7 +162,7 @@ const parseLightPanel = (chars, i, filterResult) => {
 }
 
 const parseLightSettings = (totalButtons, chars, filterResult) => {
-  var settings = new LightSettings();
+  const settings = new LightSettings();
   settings.lightName = parseTitle(chars, filterResult[0] + 1, filterResult);
   for (let j = 0; j < totalButtons; j++) {
     let lightButton = new LightButton();
@@ -224,6 +225,7 @@ const parseFilters = (chars, i, lightMode, filterResult) => {
 
 const parseToFilter = (type, operator, value) => {
   let filter = new Filter();
+  filter.open = false;
   filter.type = type;
   filter.operator = operator;
   if (type === 'E' /* Timespan */) {
@@ -268,11 +270,12 @@ const parseToFilterGroups = (chars, i, hasLightMode, filterResult) => {
 
   for (let i = 0; i < values.length;) {
     let filterGroup = new FilterGroup(hasLightMode);
+    filterGroup.open = false;
     filterGroup.name = values[i++];
     let totalFilters = values[i++];
     if (hasLightMode) {
       filterGroup.lightMode = values[i++];
-      var minActiveTime = values[i++];
+      const minActiveTime = values[i++];
       filterGroup.minActiveTime = minActiveTime !== null && minActiveTime > 1 ? minActiveTime : null;
     }
 
@@ -340,7 +343,7 @@ export default class Configuration {
 
     configuration.taillightFilterGroups = filterGroups;
 
-    var panel = parseLightPanel(value, filterResult[0] + 1, filterResult);
+    let panel = parseLightPanel(value, filterResult[0] + 1, filterResult);
     if (panel instanceof LightSettings) {
       configuration.headlightSettings = panel;
     } else {
@@ -366,10 +369,10 @@ export default class Configuration {
   isValid(deviceList) {
     const device = deviceList.find(l => l.id === this.device);
     return device &&
-      this.globalFilterGroups.every(g => g.isValid(device)) && (
+      this.globalFilterGroups.every(g => g.isValid(device, null)) && (
         (this.headlight !== null || this.taillight !== null) &&
-        this.islightValid(this.headlight, this.headlightFilterGroups, this.headlightDefaultMode, device) &&
-        this.islightValid(this.taillight, this.taillightFilterGroups, this.taillightDefaultMode, device)
+        this.islightValid(this.headlight, false, this.headlightFilterGroups, this.headlightDefaultMode, device) &&
+        this.islightValid(this.taillight, true, this.taillightFilterGroups, this.taillightDefaultMode, device)
       ) &&
       this.isItemValid(this.headlightPanel, device.touchScreen) &&
       this.isItemValid(this.taillightPanel, device.touchScreen) &&
@@ -381,12 +384,13 @@ export default class Configuration {
     return !validate || item == null || item.isValid();
   }
 
-  islightValid(light, lightFilterGroups, lightDefaultMode, device) {
+  islightValid(light, taillight, lightFilterGroups, lightDefaultMode, device) {
     if (light === null) {
       return true;
     }
 
-    return lightFilterGroups.every(g => g.isValid(device)) &&
+    const lightModes = getLightModes(taillight, light);
+    return lightModes != null && lightFilterGroups.every(g => g.isValid(device, lightModes)) &&
           (
             (!lightFilterGroups.length && !this.globalFilterGroups.length) ||
             lightDefaultMode !== null

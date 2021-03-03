@@ -308,6 +308,11 @@ export const taillightList = [
   }
 ];
 
+export const getLightModes = (taillight, light) => {
+  const lights = taillight ? taillightList : headlightList;
+  return lights.find(l => l.id === light)?.modes;
+};
+
 export const getBatteryOperator = (operator) => {
   return operator === '<' ? '>'
     : operator === '>' ? '<'
@@ -316,4 +321,36 @@ export const getBatteryOperator = (operator) => {
 
 export const getBatteryValue = (value) => {
   return 6 - value;
+};
+
+export const arrayMove = (array, oldIndex, newIndex) => {
+  if (newIndex >= array.length) {
+      let k = newIndex - array.length + 1;
+      while (k--) {
+        array.push(undefined);
+      }
+  }
+
+  array.splice(newIndex, 0, array.splice(oldIndex, 1)[0]);
+  return true;
+};
+
+export const arrayMoveUp = (array, element) => {
+  const index = array.indexOf(element);
+  const newIndex = index - 1;
+  if (newIndex < 0) {
+    return false;
+  }
+
+  return arrayMove(array, index, newIndex);
+};
+
+export const arrayMoveDown = (array, element) => {
+  const index = array.indexOf(element);
+  const newIndex = index + 1;
+  if (index < 0 || newIndex >= array.length) {
+    return false;
+  }
+
+  return arrayMove(array, index, newIndex);
 };

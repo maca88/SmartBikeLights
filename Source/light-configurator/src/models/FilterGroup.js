@@ -37,8 +37,8 @@ export default class FilterGroup {
     return config;
   }
 
-  isValid(device) {
-    if ((this._hasLightMode && this.lightMode === null) || !this.filters.length) {
+  isValid(device, lightModes) {
+    if ((this._hasLightMode && (this.lightMode === null || !lightModes.some(o => o.id === this.lightMode))) || !this.filters.length) {
       return false;
     }
 
@@ -66,7 +66,7 @@ export default class FilterGroup {
   }
 
   getDisplayName(lightModes) {
-    var name = 'Group';
+    let name = 'Group';
     if (this.name) {
       name += ' Name: ' + this.name;
     }

@@ -138,7 +138,7 @@ export default class Filter {
         name += this.polygons.length + ' polygons';
       }
     } else if (this.type === 'I' /* Bike radar */) {
-      var isRangeValid = this.isValidOperator(this.operator, this.value);
+      const isRangeValid = this.isValidOperator(this.operator, this.value);
       if (isRangeValid) {
         name += `Range ${this.operator} ${getDistanceName(this.value, context.units)} `;
       }

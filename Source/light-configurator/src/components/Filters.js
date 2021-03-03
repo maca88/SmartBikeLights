@@ -15,6 +15,7 @@ import PositionFilter from '../filters/PositionFilter';
 import BikeRadarFilter from '../filters/BikeRadarFilter';
 import { AppContext } from '../AppContext';
 import { action } from 'mobx';
+import { arrayMoveUp, arrayMoveDown } from '../constants';
 
 export default observer(({ filters, filterTypes, device }) => {
   const removeFilter = action((filter) => {
@@ -23,6 +24,18 @@ export default observer(({ filters, filterTypes, device }) => {
   const handleChange = (filter) => {
     filter.setOpen(!filter.open);
   };
+  const canMoveUpFilter = (filter) => {
+    return filters.indexOf(filter) > 0;
+  };
+  const moveUpFilter = action((filter) => {
+    arrayMoveUp(filters, filter);
+  });
+  const canMoveDownFilter = (filter) => {
+    return filters.indexOf(filter) < (filters.length - 1);
+  };
+  const moveDownFilter = action((filter) => {
+    arrayMoveDown(filters, filter);
+  });
 
   return filters.map(filter => (
     <Accordion key={filter.id}
@@ -37,6 +50,10 @@ export default observer(({ filters, filterTypes, device }) => {
             removeLabel="Remove filter"
             removeCallback={removeFilter}
             validationParameter={device}
+            canMoveUpCallback={canMoveUpFilter}
+            moveUpCallback={moveUpFilter}
+            canMoveDownCallback={canMoveDownFilter}
+            moveDownCallback={moveDownFilter}
           />
         )}
       </AppContext.Consumer>

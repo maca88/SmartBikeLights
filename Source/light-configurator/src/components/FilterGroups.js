@@ -15,7 +15,7 @@ import AppSelect from '../inputs/AppSelect';
 import FilterGroup from '../models/FilterGroup';
 import Filter from '../models/Filter';
 import Filters from '../components/Filters';
-import { filterList } from '../constants';
+import { filterList, arrayMoveUp, arrayMoveDown } from '../constants';
 
 const filtersWoRadar = filterList.filter(o => o.id !== 'I');
 const filtersWoPositionAndRadar = filtersWoRadar.filter(o => o.id !== 'F');
@@ -53,6 +53,18 @@ export default observer(({ filterGroups, lightModes, device }) => {
   const handleChange = (filterGroup) => {
     filterGroup.setOpen(!filterGroup.open);
   };
+  const canMoveUpFilterGroup = (filterGroup) => {
+    return filterGroups.indexOf(filterGroup) > 0;
+  };
+  const moveUpFilterGroup = action((filterGroup) => {
+    arrayMoveUp(filterGroups, filterGroup);
+  });
+  const canMoveDownFilterGroup = (filterGroup) => {
+    return filterGroups.indexOf(filterGroup) < (filterGroups.length - 1);
+  };
+  const moveDownFilterGroup = action((filterGroup) => {
+    arrayMoveDown(filterGroups, filterGroup);
+  });
 
   useEffect(
     () => {
@@ -75,6 +87,11 @@ export default observer(({ filterGroups, lightModes, device }) => {
             removeLabel="Remove group"
             removeCallback={removeFilterGroup}
             validationParameter={device}
+            validationParameter2={lightModes}
+            canMoveUpCallback={canMoveUpFilterGroup}
+            moveUpCallback={moveUpFilterGroup}
+            canMoveDownCallback={canMoveDownFilterGroup}
+            moveDownCallback={moveDownFilterGroup}
           />
           <AccordionDetails>
             <Grid container spacing={3}>

@@ -1,6 +1,9 @@
+import React from 'react';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -40,8 +43,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default observer(({ item, param1, removeLabel, removeCallback, validationParameter }) => {
+export default observer(({ item, param1, removeLabel, removeCallback, moveUpCallback, canMoveUpCallback,
+  canMoveDownCallback, moveDownCallback, validationParameter, validationParameter2 }) => {
   const classes = useStyles();
+  const isValid = validationParameter2
+    ? item.isValid(validationParameter, validationParameter2)
+    : item.isValid(validationParameter);
+
   return <AccordionSummary
     expandIcon={<ExpandMoreIcon />}
     aria-controls={item.id}
@@ -49,23 +57,52 @@ export default observer(({ item, param1, removeLabel, removeCallback, validation
   >
     <div style={{ width: '100%' }}>
       <Grid container>
-        <Grid item xs={2} sm={1}>
+        <Grid item xs={9} sm={3}>
           <FormControlLabel
             aria-label={removeLabel}
             onClick={(event) => event.stopPropagation()}
             onFocus={(event) => event.stopPropagation()}
             control={
-            <IconButton edge="end" aria-label="delete" onClick={() => removeCallback(item)}>
-              <DeleteIcon />
-            </IconButton>
+              <IconButton aria-label="delete" onClick={() => removeCallback(item)}>
+                <DeleteIcon />
+              </IconButton>
             }
           />
+          {
+            canMoveUpCallback(item)
+            ? <FormControlLabel
+                onClick={(event) => event.stopPropagation()}
+                onFocus={(event) => event.stopPropagation()}
+                control={
+                  <IconButton onClick={() => moveUpCallback(item)}>
+                    <ArrowUpwardIcon />
+                  </IconButton>
+                } />
+            : null
+          }
+          {
+            canMoveDownCallback(item)
+            ? <FormControlLabel
+                onClick={(event) => event.stopPropagation()}
+                onFocus={(event) => event.stopPropagation()}
+                control={
+                  <IconButton edge="end" onClick={() => moveDownCallback(item)}>
+                    <ArrowDownwardIcon />
+                  </IconButton>
+                } />
+            : null
+          }
         </Grid>
-        <Grid item xs={9} sm={10} className={classes.name} >
-          <Typography >{item.getDisplayName(param1)}</Typography>
-        </Grid>
-        <Grid item xs={1} sm={1} className={classes.error} >
-        { item.isValid(validationParameter) ? null : <ErrorOutlineIcon /> }
+        {
+          isValid
+          ? <Grid item xs={10} sm={8} className={classes.name} >
+              <Typography>{item.getDisplayName(param1)}</Typography>
+            </Grid>
+          : <Grid item xs={1} sm={8} className={classes.name} >
+            </Grid>
+        }
+        <Grid item xs={2} sm={1} className={classes.error} >
+        { isValid ? null : <ErrorOutlineIcon /> }
         </Grid>
       </Grid>
     </div>
