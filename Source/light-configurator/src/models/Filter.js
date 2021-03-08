@@ -1,6 +1,9 @@
 import { nanoid } from 'nanoid';
 import { makeAutoObservable } from 'mobx';
-import { filterMap, batteryStateList, gpsAccuracyList, timerStateList, timespanTypeMap, speedUnitList, getBatteryOperator, getBatteryValue, vehicleThreatList, distanceUnitList } from '../constants';
+import { 
+  filterMap, batteryStateList, gpsAccuracyList, timerStateList, timespanTypeMap, speedUnitList, getBatteryOperator, 
+  getBatteryValue, vehicleThreatList, distanceUnitList, setList
+} from '../constants';
 import addSeconds from 'date-fns/addSeconds';
 import startOfToday from 'date-fns/startOfToday';
 import format from 'date-fns/format';
@@ -175,6 +178,9 @@ export default class Filter {
         case 'H': // Timer state
           name += ((this.operator || '') + ' ');
           name += timerStateList[this.value];
+          break;
+        case 'J': // Start location
+          name += setList.find(o => o.id === this.value)?.name;
           break;
         default:
           break;

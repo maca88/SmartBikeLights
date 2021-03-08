@@ -1,6 +1,10 @@
 using Toybox.WatchUi;
 using Toybox.AntPlus;
+using Toybox.Math;
+using Toybox.System;
+using Toybox.Application;
 using Toybox.Lang;
+using Toybox.Time;
 using Toybox.Time.Gregorian;
 using Toybox.Application.Properties as Properties;
 
@@ -126,7 +130,7 @@ class BikeLightsView extends BaseView {
 
         // In order to avoid calling Gregorian.utcInfo every second, calcualate Unix Timestamp of today
         var now = Time.now();
-        var time = Gregorian.utcInfo(now, Time.FORMAT_SHORT);
+        var time = Gregorian.utcInfo(now, 0 /* FORMAT_SHORT */);
         _todayMoment = now.value() - ((time.hour * 3600) + (time.min * 60) + time.sec);
 
         onSettingsChanged();
@@ -208,6 +212,7 @@ class BikeLightsView extends BaseView {
     // Overrides DataField.compute
     (:dataField)
     function compute(activityInfo) {
+        //System.println("usedMemory=" + System.getSystemStats().usedMemory);
         // NOTE: Use only for testing purposes when using TestLightNetwork
         //if (_lightNetwork != null && _lightNetwork has :update) {
         //    _lightNetwork.update();
@@ -225,7 +230,7 @@ class BikeLightsView extends BaseView {
             : null;
         if (_sunsetTime == null && activityInfo.currentLocation != null) {
             var position = activityInfo.currentLocation.toDegrees();
-            var time = Gregorian.utcInfo(Time.now(), Time.FORMAT_SHORT);
+            var time = Gregorian.utcInfo(Time.now(), 0 /* FORMAT_SHORT */);
             var jd = getJD(time.year, time.month, time.day);
             _sunriseTime = getSunriseSet(true, jd, position);
             _sunsetTime = getSunriseSet(false, jd, position);
@@ -1314,11 +1319,12 @@ class BikeLightsView extends BaseView {
 
     (:dataField)
     private function checkGenericFilter(activityInfo, filterType, operator, filterValue, lightData) {
-        var value = filterType == 'C' ? activityInfo.currentSpeed
-            : filterType == 'A' ? _acceleration
+        var value = filterType == 'A' ? _acceleration
             : filterType == 'B' ? lightData != null ? getLightBatteryStatus(lightData) : null
+            : filterType == 'C' ? activityInfo.currentSpeed
             : filterType == 'G' ? (activityInfo.currentLocationAccuracy == null ? 0 : activityInfo.currentLocationAccuracy)
             : filterType == 'H' ? activityInfo.timerState
+            : filterType == 'J' ? activityInfo.startLocation == null ? 0 : 1
             : null;
         if (value == null) {
             return false;

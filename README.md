@@ -103,6 +103,7 @@ The initial control mode will be determined based on the configuration from the 
 - Timer state
 - Position (only for devices with more that 32KB memory)
 - Bike radar (only for devices with more that 32KB memory and with CIQ 3.0+)
+- Start location
 
 ## Error codes
 

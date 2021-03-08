@@ -7,6 +7,7 @@ export const filterList = [
   { id: 'G', name: 'GPS accuracy' },
   { id: 'H', name: 'Timer state' },
   { id: 'I', name: 'Bike radar' },
+  { id: 'J', name: 'Start location' }
 ];
 
 let map = {};
@@ -49,6 +50,11 @@ export const operatorList = [
   { id: '=', name: 'Equal to' },
   { id: '>', name: 'Greater than' },
   { id: '<', name: 'Lower than' }
+];
+
+export const setList = [
+  { id: 0, name: 'Not set' },
+  { id: 1, name: 'Is set' }
 ];
 
 export const batteryStateList = [
