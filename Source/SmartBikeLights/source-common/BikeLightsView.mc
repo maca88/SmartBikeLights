@@ -809,7 +809,7 @@ class BikeLightsView extends BaseView {
 
     protected function getSecondsOfDay(value) {
         value = value.toNumber();
-        return (value < 0 ? value + 86400 : value) % 86400;
+        return value == null ? null : (value < 0 ? value + 86400 : value) % 86400;
     }
 
     private function getLightFilters(light) {
@@ -839,7 +839,7 @@ class BikeLightsView extends BaseView {
             return null;
         }
 
-        var modes = light.getCapableModes();
+        var modes = getLightModes(light);
         var data = new [2 * modes.size() + 1];
         var dataIndex = 1;
         data[0] = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? "Headlight" : "Taillight";
@@ -1213,7 +1213,7 @@ class BikeLightsView extends BaseView {
             return true;
         }
 
-        var capableModes = light.getCapableModes();
+        var capableModes = getLightModes(light);
         for (var i = 2; i < settings.size(); i += 2) {
             if (capableModes.indexOf(settings[i]) < 0) {
                 _errorCode = 4;
