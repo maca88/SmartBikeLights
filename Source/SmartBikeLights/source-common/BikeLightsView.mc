@@ -1210,7 +1210,7 @@ class BikeLightsView extends BaseView {
     (:settings)
     private function validateSettingsLightModes(light) {
         if (light == null) {
-            return false;
+            return true; // In case only one light is connected
         }
 
         var settings = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? headlightSettings : taillightSettings;
