@@ -117,6 +117,7 @@ class BikeLightsView extends BaseView {
     (:polygons) private var _bikeRadar;
 
     private var _lastUpdateTime = 0;
+    private var _lastOnShowCallTime = 0;
 
     // Used as an out parameter for getting the group filter title
     private var _filterResult = [null /* Title */, 0 /* Filter timeout */];
@@ -182,9 +183,11 @@ class BikeLightsView extends BaseView {
     (:deviceNetwork)
     function onShow() {
         //System.println("onShow=" + _lastUpdateTime  + " timer=" + System.getTimer());
+        var timer = System.getTimer();
+        _lastOnShowCallTime = timer;
         // When start button is pressed onShow is called, skip re-initialization in such case. This also prevents
         // a re-initialization when switching between two data screens that both contain this data field.
-        if (_initializedLights > 0 && System.getTimer() - _lastUpdateTime < 1500) {
+        if (_initializedLights > 0 && timer - _lastUpdateTime < 1500) {
             initializeLights(null, false);
             return;
         }
@@ -199,7 +202,9 @@ class BikeLightsView extends BaseView {
 
     (:testNetwork)
     function onShow() {
-        if (_initializedLights > 0 && System.getTimer() - _lastUpdateTime < 1500) {
+        var timer = System.getTimer();
+        _lastOnShowCallTime = timer;
+        if (_initializedLights > 0 && timer - _lastUpdateTime < 1500) {
             initializeLights(null, false);
             return;
         }
@@ -293,7 +298,29 @@ class BikeLightsView extends BaseView {
 
     // Overrides DataField.onUpdate
     function onUpdate(dc) {
-        _lastUpdateTime = System.getTimer();
+        var timer = System.getTimer();
+        var lastUpdateTime = _lastUpdateTime;
+        // In case the device woke up from a sleep, set the control mode that was used before it went to sleep. When
+        // a device goes to sleep, it turns off the lights which triggers onExternalLightModeChange method in case
+        // the light are turned on and sets the control mode to manual. In such case, we store the control mode that
+        // was used before the external change so that we can restore it when the device wakes up. Idealy we would not
+        // change the control mode before a sleep, but as there is no way to detect when the device goes to sleep we
+        // cannot do that. We are able to detect only when the device woke up by checking whether onShow method was called
+        // prior calling onUpdate method. This will work only if the device went to sleep on the data screen were this
+        // data field is displayed, otherwise it will not work as onUpdate will not be called.
+        if (lastUpdateTime > 0 && (timer - lastUpdateTime) > 2000 && (timer - _lastOnShowCallTime) > 2000) {
+            //System.println("WAKE UP lastOnShowCallTime=" + _lastOnShowCallTime  + " timer=" + System.getTimer());
+            for (var i = 0; i < 3; i += 2) {
+                var prevControlMode = getLightProperty("PCM", i, null);
+                if (prevControlMode != null) {
+                    setLightProperty("CM", i, prevControlMode);
+                }
+            }
+
+            onShow();
+        }
+
+        _lastUpdateTime = timer;
         var width = dc.getWidth();
         var height = dc.getHeight();
         var bgColor = getBackgroundColor();
@@ -377,7 +404,12 @@ class BikeLightsView extends BaseView {
             lightData[5] = null;
         }
 
-        if (updateLightTextAndMode(lightData, mode) && nextMode != mode && controlMode != 1 /* NETWORK */) {
+        if (updateLightTextAndMode(lightData, mode) &&
+            nextMode != mode && controlMode != 1 /* NETWORK */ &&
+            // In the first few seconds during and after the network formation the lights may automatically switch to different
+            // light modes, which can change their control mode to manual. In order to avoid changing the control mode, we
+            // ignore initial light mode changes. This mostly helps when a device wakes up after only a few seconds of sleep.
+            (System.getTimer() - _lastOnShowCallTime) > 5000) {
             // Change was done outside the data field.
             onExternalLightModeChange(lightData, mode);
         }
@@ -678,11 +710,15 @@ class BikeLightsView extends BaseView {
     (:lightButtons)
     protected function onExternalLightModeChange(lightData, mode) {
         //System.println("onExternalLightModeChange mode=" + mode + " lightType=" + lightData[0].type  + " timer=" + System.getTimer());
-        setLightAndControlMode(lightData, lightData[0].type, mode, lightData[4] != 2 ? 2 /* MANUAL */ : null);
+        var controlMode = lightData[4];
+        var lightType = lightData[0].type;
+        setLightProperty("PCM", lightType, controlMode);
+        setLightAndControlMode(lightData, lightType, mode, controlMode != 2 ? 2 /* MANUAL */ : null);
     }
 
     (:noLightButtons)
     protected function onExternalLightModeChange(lightData, mode) {
+        var controlMode = lightData[4];
         lightData[4] = 2; /* MANUAL */
         lightData[5] = null;
         // As onHide is never called, we use the last update time in order to determine whether the data field is currently
@@ -697,6 +733,7 @@ class BikeLightsView extends BaseView {
         // onNetworkStateUpdate method.
         if (System.getTimer() > _lastUpdateTime + 1500) {
             var lightType = lightData[0].type;
+            setLightProperty("PCM", lightType, controlMode);
             // Assume that the change was done either by Garmin lights menu or a CIQ application
             setLightProperty("CM", lightType, 2 /* MANUAL */);
             setLightProperty("MM", lightType, mode);
@@ -1121,7 +1158,11 @@ class BikeLightsView extends BaseView {
     protected function getLightProperty(id, lightType, defaultValue) {
         var key = id + lightType;
         var value = Application.Storage.getValue(key);
-        if (value == null) {
+        if (value != null && defaultValue == null) {
+            Application.Storage.deleteValue(key);
+        }
+
+        if (value == null && defaultValue != null) {
             // First application startup
             value = defaultValue;
             Application.Storage.setValue(key, value);
