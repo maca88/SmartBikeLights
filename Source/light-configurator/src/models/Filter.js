@@ -113,16 +113,24 @@ export default class Filter {
     }
 
     if (this.type === 'I') {
-      config += this.operator ? `${(this.operator)}${(this.value)}` : '>-1';
-      config += this.threatOperator ? `${(this.threatOperator)}${(this.threat)}` : '>-1';
+      config += this.operator ? `${this.getOperatorValue(this.operator)}${(this.value)}` : ']-1';
+      config += this.threatOperator ? `${this.getOperatorValue(this.threatOperator)}${(this.threat)}` : ']-1';
       return config;
     }
 
-    return `${config}${this.operator}${this.value}`;
+    return `${config}${this.getOperatorValue(this.operator)}${this.value}`;
   }
 
   get hasOperator() {
     return this.type && this.type !== 'E' /* Timespan */ && this.type !== 'F' /* Position */;
+  }
+
+  getOperatorValue(operator) {
+    // Due to the Garmin Connect Mobile iOS bug for < and > characters we have to replace them:
+    // https://forums.garmin.com/developer/connect-iq/i/bug-reports/garmin-connect-mobile-ios-does-not-accept-and-characters-for-an-alphanumeric-app-setting
+    return operator === '<' ? '['
+      : operator === '>' ? ']'
+      : operator;
   }
 
   getDisplayName(context) {
@@ -195,7 +203,9 @@ export default class Filter {
   }
 
   setOperator = (value) => {
-    this.operator = value;
+    this.operator = value === '[' ? '<'
+      : value === ']' ? '>'
+      : value;
   }
 
   setValue = (value) => {

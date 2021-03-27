@@ -1410,8 +1410,8 @@ class BikeLightsView extends BaseView {
             return false;
         }
 
-        return operator == '<' ? value < filterValue
-            : operator == '>' ? value > filterValue
+        return operator == '<' || operator == '[' ? value < filterValue
+            : operator == '>' || operator == ']' ? value > filterValue
             : operator == '=' ? value == filterValue
             : false;
     }
@@ -1495,8 +1495,8 @@ class BikeLightsView extends BaseView {
             return filterValue < 0;
         }
 
-        return operator == '<' ? value < filterValue
-            : operator == '>' ? value > filterValue
+        return operator == '<' || operator == '[' ? value < filterValue
+            : operator == '>' || operator == ']' ? value > filterValue
             : operator == '=' ? value == filterValue
             : false;
     }

@@ -13,11 +13,15 @@ import AppTextInput from '../inputs/AppTextInput';
 const useStyles = makeStyles((theme) => ({
   copyButton: {
     marginTop: theme.spacing(4),
+  },
+  note: {
+    fontWeight: 'bold'
   }
 }));
 
 export default observer(({ className, headerClassName, configuration, deviceList }) => {
   const classes = useStyles();
+  const configurationValue = configuration.isValid(deviceList) ? configuration.getConfigurationValue(deviceList) : null;
 
   return (
     <Card className={className}>
@@ -31,19 +35,26 @@ export default observer(({ className, headerClassName, configuration, deviceList
         When the lights are configured copy the below value and paste it in the Smart Light Bike application setting 'Lights Configuration' by using 
         Garmin Connect Mobile or Garmin Express.
         </Typography>
-        {configuration.isValid(deviceList) ?
-        <React.Fragment>
+        {
+          configurationValue && configurationValue.length > 256 ?
+            <Typography color="textPrimary" className={classes.note} gutterBottom>
+            NOTE: Do not use Garmin Express Mac as it is limited to 256 characters.
+            </Typography>
+          : null
+        }
+        { configurationValue ?
+          <React.Fragment>
+            <Grid item xs={12} sm={12}>
+              <AppTextInput value={configurationValue} />
+            </Grid>
+            <Grid item className={classes.copyButton} xs={12} sm={12}>
+              <Button variant="contained" onClick={() => {navigator.clipboard.writeText(configurationValue)}}>Copy to clipboard</Button>
+            </Grid>
+          </React.Fragment>
+          :
           <Grid item xs={12} sm={12}>
-            <AppTextInput value={configuration.getConfigurationValue(deviceList)} />
+            <Alert severity="error">Please fill the missing fields.</Alert>
           </Grid>
-          <Grid item className={classes.copyButton} xs={12} sm={12}>
-            <Button variant="contained" onClick={() => {navigator.clipboard.writeText(configuration.getConfigurationValue(deviceList))}}>Copy to clipboard</Button>
-          </Grid>
-        </React.Fragment>
-        :
-        <Grid item xs={12} sm={12}>
-          <Alert severity="error">Please fill the missing fields.</Alert>
-        </Grid>
         }
       </CardContent>
     </Card>

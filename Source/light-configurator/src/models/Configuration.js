@@ -227,7 +227,7 @@ const parseToFilter = (type, operator, value) => {
   let filter = new Filter();
   filter.open = false;
   filter.type = type;
-  filter.operator = operator;
+  filter.setOperator(operator);
   if (type === 'E' /* Timespan */) {
     filter.fromType = value[0];
     filter.fromValue = value[1];
