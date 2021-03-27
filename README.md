@@ -39,10 +39,15 @@ For Edge touch screen devices (Edge 1030/1000/Explore/820/830):
 - Full screen: The control mode can be changed by tapping on the top left button which contains one character (M, N or S).
 - Non full screen: The control mode can be changed by tapping on the light icon
 
-For devices with CIQ 3.2 and more than 32KB memory (Fenix 6 Pro/X Pro/S Pro, Forerunner 245 Music/745/945, MARQ, Edge 530, Descent Mk2):
+For Edge 530:
 1. Make sure that the lights are paired and connected with your Garmin device
-2. On the data screen where you have the data field hold the Menu button until a menu shows up (make sure that you have a recent firmware installed)
-3. In the menu select "Smart Bike Lights" -> "Control mode" and change to the desired mode
+2. On the data screen where you have the data field press the Menu button to open the menu
+3. Navigate to "Data Fields" -> "Connect IQ data fields" -> "Smart Bike Lights" -> "Control mode" and change to the desired mode
+
+For watches with CIQ 3.2 and more than 32KB memory (Fenix 6 Pro/X Pro/S Pro, Forerunner 245 Music/745/945, MARQ, Descent Mk2):
+1. Make sure that the lights are paired and connected with your Garmin device
+2. On the data screen where you have the data field hold the Up button until a menu shows up (make sure that you have a recent firmware installed)
+3. Navigate to "Smart Bike Lights" -> "Control mode" and change to the desired mode
 
 For other devices:
 
