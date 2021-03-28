@@ -247,11 +247,11 @@ const parseToFilter = (type, operator, value) => {
     if (value[0] >= 0) {
       filter.value = value[0];
     } else {
-      filter.operator = null;
+      filter.setOperator(null);
     }
 
     if (value[2] >= 0) {
-      filter.threatOperator = value[1];
+      filter.setThreatOperator(value[1]);
       filter.threat = value[2];
     }
   } else {
