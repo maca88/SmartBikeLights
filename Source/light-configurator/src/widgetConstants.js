@@ -57,7 +57,7 @@ export const deviceList = [
   { id: 'B3066', name: 'vívoactive 3 Music LTE', touchScreen: false, settings: true },
   { id: 'B3225', name: 'vívoactive 4', touchScreen: false, settings: true },
   { id: 'B3224', name: 'vívoactive 4S', touchScreen: false, settings: true },
-  { id: 'B2337', name: 'vívoactive HR', touchScreen: false, settings: true }
+  { id: 'B2337', name: 'vívoactive HR', touchScreen: true, settings: false }
 ];
 
 let map = {};
