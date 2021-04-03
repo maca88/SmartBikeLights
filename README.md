@@ -44,7 +44,7 @@ For Edge 530:
 2. On the data screen where you have the data field press the Menu button to open the menu
 3. Navigate to "Data Fields" -> "Connect IQ data fields" -> "Smart Bike Lights" -> "Control mode" and change to the desired mode
 
-For watches with CIQ 3.2 and more than 32KB memory (Fenix 6 Pro/X Pro/S Pro, Forerunner 245 Music/745/945, MARQ, Descent Mk2):
+For watches with CIQ 3.2 and more than 32KB memory (Fenix 5 Plus/5S Plus/5X Plus, Fenix 6 Pro/6X Pro/6S Pro, Forerunner 245 Music/645 Music/745/945, MARQ, Descent Mk2):
 1. Make sure that the lights are paired and connected with your Garmin device
 2. On the data screen where you have the data field hold the Up button until a menu shows up (make sure that you have a recent firmware installed)
 3. Navigate to "Smart Bike Lights" -> "Control mode" and change to the desired mode
