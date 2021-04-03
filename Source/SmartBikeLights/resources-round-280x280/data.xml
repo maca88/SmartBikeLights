@@ -1,9 +1,9 @@
 <resources>
-    <!-- Format [[:colorScreen:, :titleFont:, :titleFontTopPadding:, :displayOffsetX:]
-        :colorScreen: = true / false
+    <!-- Format [[:separatorWidth:, :titleFont:, :titleFontTopPadding:, :displayOffsetX:]
+        :separatorWidth: = Number
         :titleFont: = 0-8
         :titleFontTopPadding: = Number
         :displayOffsetX: = Number
     -->
-    <jsonData id="Settings">[true, 1, 0, 14]</jsonData>
+    <jsonData id="Settings">[2, 1, 0, 14]</jsonData>
 </resources>

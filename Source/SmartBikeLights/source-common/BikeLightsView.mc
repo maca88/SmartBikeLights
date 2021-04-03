@@ -78,7 +78,7 @@ class BikeLightsView extends BaseView {
     protected var _errorCode;
 
     // Settings
-    protected var _monochrome;
+    protected var _separatorWidth;
     protected var _titleTopPadding;
     protected var _titleFont;
     protected var _activityColor;
@@ -124,9 +124,10 @@ class BikeLightsView extends BaseView {
 
     function initialize() {
         BaseView.initialize();
-        _lightsFont = getFont(:lightsFont);
-        _batteryFont = getFont(:batteryFont);
-        _controlModeFont = getFont(:controlModeFont);
+        var fonts = Rez.Fonts;
+        _lightsFont = WatchUi.loadResource(fonts[:lightsFont]);
+        _batteryFont = WatchUi.loadResource(fonts[:batteryFont]);
+        _controlModeFont = WatchUi.loadResource(fonts[:controlModeFont]);
         _lightNetworkListener = new BikeLightNetworkListener(self);
 
         // In order to avoid calling Gregorian.utcInfo every second, calcualate Unix Timestamp of today
@@ -512,7 +513,7 @@ class BikeLightsView extends BaseView {
         var deviceSettings = System.getDeviceSettings();
         var padding = height - 55 < 0 ? 0 : 3;
         var settings = WatchUi.loadResource(Rez.JsonData.Settings);
-        _monochrome = !settings[0];
+        _separatorWidth = settings[0];
         _titleFont = settings[1];
         _titleTopPadding = settings[2];
         _offsetX = settings[3];
@@ -527,7 +528,7 @@ class BikeLightsView extends BaseView {
     protected function preCalculate(dc, width, height) {
         var flags = getObscurityFlags();
         var settings = WatchUi.loadResource(Rez.JsonData.Settings);
-        _monochrome = !settings[0];
+        _separatorWidth = settings[0];
         _titleFont = settings[1];
         _titleTopPadding = settings[2];
         var titleHeight = dc.getFontHeight(_titleFont) + _titleTopPadding;
@@ -879,18 +880,16 @@ class BikeLightsView extends BaseView {
         var y = Math.tan(ec/2.0);
         y *= y;
         var sinm = Math.sin(mrad);
-        var eTime = y * Math.sin(2.0 * l0) - 2.0 * e * sinm + 4.0 * e * y * sinm * Math.cos(2.0 * l0) - 0.5 * y * y * Math.sin(4.0 * l0) - 1.25 * e * e * Math.sin(2.0 * mrad);
-        var eqTime = radToDeg(eTime) * 4.0; // in minutes of time
+        var eqTime = (180.0 * (y * Math.sin(2.0 * l0) - 2.0 * e * sinm + 4.0 * e * y * sinm * Math.cos(2.0 * l0) - 0.5 * y * y * Math.sin(4.0 * l0) - 1.25 * e * e * Math.sin(2.0 * mrad)) / 3.141593) * 4.0; // in minutes of time
         var sunEq = sinm * (1.914602 - t * (0.004817 + 0.000014 * t)) + Math.sin(mrad + mrad) * (0.019993 - 0.000101 * t) + Math.sin(mrad + mrad + mrad) * 0.000289; // in degrees
-        var solarDec = radToDeg(Math.asin(Math.sin(ec) * Math.sin(degToRad((l1 + sunEq) - 0.00569 - 0.00478 * Math.sin(omega)))));
         var latRad = degToRad(position[0].toFloat() /* latitude */);
-        var sdRad  = degToRad(solarDec);
+        var sdRad  = degToRad(180.0 * (Math.asin(Math.sin(ec) * Math.sin(degToRad((l1 + sunEq) - 0.00569 - 0.00478 * Math.sin(omega))))) / 3.141593);
         var hourAngle = Math.acos((Math.cos(degToRad(90.833)) / (Math.cos(latRad) * Math.cos(sdRad)) - Math.tan(latRad) * Math.tan(sdRad))); // in radians (for sunset, use -HA)
         if (!rise) {
             hourAngle = -hourAngle;
         }
 
-        return getSecondsOfDay((720 - (4.0 * (position[1].toFloat() /* longitude */ + radToDeg(hourAngle))) - eqTime) * 60); // timeUTC in seconds
+        return getSecondsOfDay((720 - (4.0 * (position[1].toFloat() /* longitude */ + (180.0 * hourAngle / 3.141593))) - eqTime) * 60); // timeUTC in seconds
     }
 
     private function getLightFilters(light) {
@@ -962,7 +961,7 @@ class BikeLightsView extends BaseView {
 
         // Draw separator
         setTextColor(dc, _activityColor);
-        dc.setPenWidth(_monochrome ? 1 : 2);
+        dc.setPenWidth(_separatorWidth);
         dc.drawLine(width / 2 + _offsetX, 0, width / 2 + _offsetX, height);
         drawLight(headlightData, 1, dc, width, fgColor, bgColor);
         drawLight(taillightData, 3, dc, width, fgColor, bgColor);
@@ -982,7 +981,7 @@ class BikeLightsView extends BaseView {
 
         // Draw separator
         setTextColor(dc, _activityColor);
-        dc.setPenWidth(_monochrome ? 1 : 2);
+        dc.setPenWidth(_separatorWidth);
         dc.drawLine(width / 2 + _offsetX, 0, width / 2 + _offsetX, height);
         drawLight(headlightData, 1, dc, width, fgColor, bgColor);
         drawLight(taillightData, 3, dc, width, fgColor, bgColor);
@@ -1226,8 +1225,14 @@ class BikeLightsView extends BaseView {
             : getLightProperty("MM", light.type, 0 /* LIGHT_MODE_OFF */);
     }
 
+    (:colorScreen)
     private function setTextColor(dc, color) {
-        dc.setColor(_monochrome ? 0x000000 /* COLOR_BLACK */ : color, -1 /* COLOR_TRANSPARENT */);
+        dc.setColor(color, -1 /* COLOR_TRANSPARENT */);
+    }
+
+    (:monochromeScreen)
+    private function setTextColor(dc, color) {
+        dc.setColor(0x000000, -1 /* COLOR_TRANSPARENT */);
     }
 
     private function setNetworkMode(lightData, networkMode) {
@@ -1257,10 +1262,6 @@ class BikeLightsView extends BaseView {
         }
 
         return lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? lightModeCharacter + ">" : "<" + lightModeCharacter;
-    }
-
-    private function getFont(key) {
-        return WatchUi.loadResource(Rez.Fonts[key]);
     }
 
     private function validateLightModes(light) {
@@ -1800,10 +1801,6 @@ class BikeLightsView extends BaseView {
     }
 
     private function degToRad(angleDeg) {
-        return Math.PI * angleDeg / 180.0;
-    }
-
-    private function radToDeg(angleRad) {
-        return 180.0 * angleRad / Math.PI;
+        return 3.141593 * angleDeg / 180.0;
     }
 }

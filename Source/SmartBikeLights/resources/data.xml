@@ -1,10 +1,10 @@
 <resources>
-    <!-- Format [[:colorScreen:, :titleFont:, :titleFontTopPadding:, :displayOffsetX:]
-        :colorScreen: = true / false
+    <!-- Format [[:separatorWidth:, :titleFont:, :titleFontTopPadding:, :displayOffsetX:]
+        :separatorWidth: = Number
         :titleFont: = 0-8
         :titleFontTopPadding: = Number
         :displayOffsetX: = Number
     -->
-    <jsonData id="Settings">[true, 2, 0, 0]</jsonData>
+    <jsonData id="Settings">[2, 2, 0, 0]</jsonData>
     <jsonData id="FontTopPaddings">[0]</jsonData>
 </resources>

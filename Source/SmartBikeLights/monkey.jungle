@@ -4,23 +4,24 @@ excludeBase=testNetwork;widget
 
 lowMemory = $(excludeBase);touchScreen;polygons;settings;lightButtons
 
-roundLowMemory = $(lowMemory);rectangle
-roundNoSettings = $(excludeBase);touchScreen;noPolygons;settings;lightButtons;rectangle
+roundLowMemory = $(lowMemory);rectangle;monochromeScreen
+roundNoSettings = $(excludeBase);touchScreen;noPolygons;settings;lightButtons;rectangle;monochromeScreen
 
-rectangleLowMemory = $(lowMemory);round
-rectangleNoSettings = $(excludeBase);touchScreen;noPolygons;settings;lightButtons;round
-rectangleNonTouchScreen = $(excludeBase);touchScreen;noPolygons;noLightButtons;round
+rectangleLowMemory = $(lowMemory);round;monochromeScreen
+rectangleMonochromeLowMemory = $(lowMemory);round;colorScreen
+rectangleNoSettings = $(excludeBase);touchScreen;noPolygons;settings;lightButtons;round;monochromeScreen
+rectangleNonTouchScreen = $(excludeBase);touchScreen;noPolygons;noLightButtons;round;monochromeScreen
 
 # maps default
-rectangle.excludeAnnotations = $(excludeBase);nonTouchScreen;noPolygons;noLightButtons;round;settings
-round.excludeAnnotations = $(excludeBase);touchScreen;noPolygons;noLightButtons;rectangle
+rectangle.excludeAnnotations = $(excludeBase);nonTouchScreen;noPolygons;noLightButtons;round;settings;monochromeScreen
+round.excludeAnnotations = $(excludeBase);touchScreen;noPolygons;noLightButtons;rectangle;monochromeScreen
 base.excludeAnnotations = $(rectangle.excludeAnnotations)
 #base.resourcePath = $(base.resourcePath);resources-touchscreen
 
 # Non touch screen devices with 32KB memory
   # Rectangle screen devices
-edge130.excludeAnnotations = $(rectangleLowMemory)
-edge130plus.excludeAnnotations = $(rectangleLowMemory)
+edge130.excludeAnnotations = $(rectangleMonochromeLowMemory)
+edge130plus.excludeAnnotations = $(rectangleMonochromeLowMemory)
 edge_520.excludeAnnotations = $(rectangleLowMemory)
   # Round screen devices
 fenix5.excludeAnnotations = $(roundLowMemory)
