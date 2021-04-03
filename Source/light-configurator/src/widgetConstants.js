@@ -14,7 +14,6 @@ export const deviceList = [
   { id: 'B3570', name: 'Edge 1030 Plus', touchScreen: true, settings: false },
   { id: 'B2067', name: 'Edge 520', touchScreen: false, settings: true },
   { id: 'B3112', name: 'Edge 520 Plus', touchScreen: false, settings: true },
-  { id: 'B3121', name: 'Edge 530', touchScreen: false, settings: true },
   { id: 'B2530', name: 'Edge 820 / Explore', touchScreen: true, settings: false },
   { id: 'B3122', name: 'Edge 830', touchScreen: true, settings: false },
   { id: 'B3011', name: 'Edge Explore', touchScreen: true, settings: false },
@@ -56,8 +55,7 @@ export const deviceList = [
   { id: 'B2988', name: 'vívoactive 3 Music', touchScreen: false, settings: true },
   { id: 'B3066', name: 'vívoactive 3 Music LTE', touchScreen: false, settings: true },
   { id: 'B3225', name: 'vívoactive 4', touchScreen: false, settings: true },
-  { id: 'B3224', name: 'vívoactive 4S', touchScreen: false, settings: true },
-  { id: 'B2337', name: 'vívoactive HR', touchScreen: true, settings: false }
+  { id: 'B3224', name: 'vívoactive 4S', touchScreen: false, settings: true }
 ];
 
 let map = {};
