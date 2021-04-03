@@ -17,13 +17,32 @@ import Filter from '../models/Filter';
 import Filters from '../components/Filters';
 import { filterList, arrayMoveUp, arrayMoveDown } from '../constants';
 
-const filtersWoRadar = filterList.filter(o => o.id !== 'I');
-const filtersWoPositionAndRadar = filtersWoRadar.filter(o => o.id !== 'F');
+const emptyFilters = [];
 const getFilterTypes = (hasLightModes, device) => {
-  let list = device?.polygons && device?.bikeRadar ? filterList
-    : device?.polygons ? filtersWoRadar
-    : filtersWoPositionAndRadar;
-  return hasLightModes ? list : list.filter(o => o.id !== 'B');
+  if (!device) {
+    return emptyFilters;
+  }
+
+  const excludeList = [];
+  if (!hasLightModes) {
+    excludeList.push('B');
+  }
+
+  if (!device.polygons){
+    excludeList.push('F');
+  }
+
+  if (!device.bikeRadar){
+    excludeList.push('I');
+  }
+
+  if (!device.profileName){
+    excludeList.push('K');
+  }
+
+  return !excludeList.length
+    ? filterList
+    : filterList.filter(f => excludeList.indexOf(f.id) < 0);
 };
 const useStyles = makeStyles((theme) => ({
   list: {

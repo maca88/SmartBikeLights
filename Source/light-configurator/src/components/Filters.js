@@ -14,6 +14,7 @@ import TimespanFilter from '../filters/TimespanFilter';
 import PositionFilter from '../filters/PositionFilter';
 import BikeRadarFilter from '../filters/BikeRadarFilter';
 import StartLocationFilter from '../filters/StartLocationFilter';
+import ProfileNameFilter from '../filters/ProfileNameFilter';
 import { AppContext } from '../AppContext';
 import { action } from 'mobx';
 import { arrayMoveUp, arrayMoveDown } from '../constants';
@@ -74,6 +75,7 @@ export default observer(({ filters, filterTypes, device }) => {
               : filter.type === 'H' ? <TimerStateFilter filter={filter} />
               : filter.type === 'I' ? <BikeRadarFilter filter={filter} />
               : filter.type === 'J' ? <StartLocationFilter filter={filter} />
+              : filter.type === 'K' ? <ProfileNameFilter filter={filter} />
               : null
             }
           </Grid>

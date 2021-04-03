@@ -1405,6 +1405,7 @@ class BikeLightsView extends BaseView {
             : filterType == 'G' ? (activityInfo.currentLocationAccuracy == null ? 0 : activityInfo.currentLocationAccuracy)
             : filterType == 'H' ? activityInfo.timerState
             : filterType == 'J' ? activityInfo.startLocation == null ? 0 : 1
+            : filterType == 'K' && Activity has :getProfileInfo ? Activity.getProfileInfo().name
             : null;
         if (value == null) {
             return false;
@@ -1412,7 +1413,9 @@ class BikeLightsView extends BaseView {
 
         return operator == '<' || operator == '[' ? value < filterValue
             : operator == '>' || operator == ']' ? value > filterValue
-            : operator == '=' ? value == filterValue
+            // Use equals method only for string values as it checks also the type. When comparing
+            // numeric values we want to ignore the type (e.g. 0 == 0f), so == operator is used instead.
+            : operator == '=' ? value instanceof String ? value.equals(filterValue) : value == filterValue
             : false;
     }
 
@@ -1678,7 +1681,9 @@ class BikeLightsView extends BaseView {
                 dataIndex += 3;
                 i = filterResult[0];
             } else {
+                // Skip any extra characters (e.g. character : for a string generic filter)
                 i++;
+                filterResult[0] = i;
             }
         }
 
@@ -1688,7 +1693,7 @@ class BikeLightsView extends BaseView {
     (:noPolygons)
     private function parseFilter(charNumber, chars, i, filterResult) {
         return charNumber == 69 /* E */ ? parseTimespan(chars, i, filterResult)
-            : parseGenericFilter(chars, i, filterResult);
+            : parseGenericFilter(charNumber, chars, i, filterResult);
     }
 
     (:polygons)
@@ -1696,7 +1701,7 @@ class BikeLightsView extends BaseView {
         return charNumber == 69 /* E */ ? parseTimespan(chars, i, filterResult)
             : charNumber == 70 /* F */? parsePolygons(chars, i, filterResult)
             : charNumber == 73 /* I */ ? parseBikeRadar(chars, i, filterResult)
-            : parseGenericFilter(chars, i, filterResult);
+            : parseGenericFilter(charNumber, chars, i, filterResult);
     }
 
     // E<?FromType><FromValue>,<?ToType><ToValue> (Es45,r-45 E35645,8212)
@@ -1711,10 +1716,12 @@ class BikeLightsView extends BaseView {
     }
 
     (:dataField)
-    private function parseGenericFilter(chars, index, filterResult) {
+    private function parseGenericFilter(charNumber, chars, index, filterResult) {
         filterResult[1] = chars[index]; // Filter operator
-
-        return parse(1 /* NUMBER */, chars, index + 1, filterResult);
+        // In case of a string value, the last character will be a : character in order to know where the next filter starts.
+        // The : character will be automatically skipped by the parseFilters method, so we do not have to increment the
+        // filterResult index here.
+        return parse(charNumber == 75 /* Profile name */ ? 0 /* STRING */ : 1 /* NUMBER */, chars, index + 1, filterResult);
     }
 
     (:dataField)

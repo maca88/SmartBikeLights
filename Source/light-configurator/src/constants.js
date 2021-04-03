@@ -7,7 +7,8 @@ export const filterList = [
   { id: 'G', name: 'GPS accuracy' },
   { id: 'H', name: 'Timer state' },
   { id: 'I', name: 'Bike radar' },
-  { id: 'J', name: 'Start location' }
+  { id: 'J', name: 'Start location' },
+  { id: 'K', name: 'Profile name' }
 ];
 
 let map = {};

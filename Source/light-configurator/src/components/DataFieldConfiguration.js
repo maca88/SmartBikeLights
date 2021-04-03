@@ -74,7 +74,7 @@ export default observer(() => {
     <AppContext.Provider value={state.context}>
       <Grid container spacing={2} justify="center">
         <Grid item xs={8} sm={10}>
-          <AppTextInput label="Existing configuration" value={state.existingConfigurationValue} setter={setExistingConfigurationValue} />
+          <AppTextInput label="Existing configuration" value={state.existingConfigurationValue} setter={setExistingConfigurationValue} allowAllCharacters={true} />
         </Grid>
         <Grid item xs={4} sm={2} className={classes.parseButtonCell}>
           <Button className={classes.parseButton} variant="contained" onClick={() => {parse(state.existingConfigurationValue, deviceList)}}>Parse</Button>

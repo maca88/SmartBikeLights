@@ -106,10 +106,12 @@ const parseBikeRadar = (chars, index, filterResult) => {
   return data;
 };
 
-const parseGenericFilter = (chars, index, filterResult) => {
+const parseGenericFilter = (charNumber, chars, index, filterResult) => {
   filterResult[1] = chars[index]; // Filter operator
 
-  return parseNumber(chars, index + 1, filterResult);
+  return charNumber === 75 /* Profile name */
+    ? parseTitle(chars, index + 1, filterResult)
+    : parseNumber(chars, index + 1, filterResult);
 };
 
 const parseTimespan = (chars, index, filterResult) => {
@@ -208,7 +210,7 @@ const parseFilters = (chars, i, lightMode, filterResult) => {
       const filterValue = charNumber === 69 /* E */ ? parseTimespan(chars, i + 1, filterResult)
           : charNumber === 70 /* F */ ? parsePolygons(chars, i + 1, filterResult)
           : charNumber === 73 /* I */ ? parseBikeRadar(chars, i + 1, filterResult)
-          : parseGenericFilter(chars, i + 1, filterResult);
+          : parseGenericFilter(charNumber, chars, i + 1, filterResult);
 
       data[dataIndex] = chars[i]; // Filter type
       data[dataIndex + 1] = filterResult[1]; // Filter operator
@@ -217,6 +219,7 @@ const parseFilters = (chars, i, lightMode, filterResult) => {
       i = filterResult[0];
     } else {
       i++;
+      filterResult[0] = i;
     }
   }
 

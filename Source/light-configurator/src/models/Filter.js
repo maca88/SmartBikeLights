@@ -132,7 +132,7 @@ export default class Filter {
       return config;
     }
 
-    return `${config}${getOperatorValue(this.operator)}${this.value}`;
+    return `${config}${getOperatorValue(this.operator)}${this.value}${this.getEndCharacter()}`;
   }
 
   get hasOperator() {
@@ -196,12 +196,20 @@ export default class Filter {
         case 'J': // Start location
           name += setList.find(o => o.id === this.value)?.name;
           break;
+        case 'K': // Profile name
+          name += ((this.operator || '') + ' ');
+          name += (this.value);
+          break;
         default:
           break;
       }
     }
 
     return name;
+  }
+
+  getEndCharacter() {
+    return this.type === 'K' /* Profile name */ ? ':' : '';
   }
 
   setType = (value) => {

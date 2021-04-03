@@ -9,12 +9,23 @@ const textInputUseStyles = makeStyles((theme) => ({
   },
 }));
 
-export default observer(({ type, label, value, setter, required }) => {
+const removeInvalidCharacters = (value) => {
+  if (!value){
+    return value;
+  }
+
+  return value.replace(/[:|#]/g, '');
+};
+
+export default observer(({ type, label, value, setter, required, allowAllCharacters }) => {
   const id = nanoid();
   const classes = textInputUseStyles();
   const handleChange = (event) => {
     let newValue = event.target.value;
-    setter(type === 'number' ? parseFloat(newValue) : newValue);
+    setter(type === 'number'
+      ? parseFloat(newValue)
+      : !allowAllCharacters ? removeInvalidCharacters(newValue)
+      : newValue);
   };
 
   if (value === null || Number.isNaN(value)) {

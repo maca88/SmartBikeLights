@@ -106,9 +106,10 @@ The initial control mode will be determined based on the configuration from the 
 - Light battery state
 - GPS accuracy
 - Timer state
+- Start location
 - Position (only for devices with more that 32KB memory)
 - Bike radar (only for devices with more that 32KB memory and with CIQ 3.0+)
-- Start location
+- Profile name (only for devices with CIQ 3.2+ that support multiple profiles)
 
 ## Error codes
 

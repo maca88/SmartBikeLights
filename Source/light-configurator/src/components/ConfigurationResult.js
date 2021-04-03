@@ -32,7 +32,7 @@ export default observer(({ className, headerClassName, configuration, deviceList
       />
       <CardContent>
         <Typography color="textPrimary" gutterBottom>
-        When the lights are configured copy the below value and paste it in the Smart Light Bike application setting 'Lights Configuration' by using 
+        When the lights are configured copy the below value and paste it in the application setting "Lights Configuration" by using 
         Garmin Connect Mobile or Garmin Express.
         </Typography>
         {
@@ -45,7 +45,7 @@ export default observer(({ className, headerClassName, configuration, deviceList
         { configurationValue ?
           <React.Fragment>
             <Grid item xs={12} sm={12}>
-              <AppTextInput value={configurationValue} />
+              <AppTextInput value={configurationValue} allowAllCharacters={true} />
             </Grid>
             <Grid item className={classes.copyButton} xs={12} sm={12}>
               <Button variant="contained" onClick={() => {navigator.clipboard.writeText(configurationValue)}}>Copy to clipboard</Button>
