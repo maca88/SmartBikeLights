@@ -18,6 +18,7 @@ export default observer(() => {
   const classes = useStyles();
 
   var appType = process.env.REACT_APP_TYPE;
+  var appTitle = process.env.REACT_APP_TITLE;
   const DataField = React.lazy(() => import('./components/DataFieldConfiguration'));
   const Widget = React.lazy(() => import('./components/WidgetConfiguration'));
 
@@ -27,7 +28,7 @@ export default observer(() => {
       <AppBar position="relative">
         <Toolbar>
           <Typography variant="h6" color="inherit" noWrap>
-            Lights Configurator
+            Lights Configurator ({appTitle})
           </Typography>
         </Toolbar>
       </AppBar>
