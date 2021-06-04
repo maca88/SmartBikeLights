@@ -1,0 +1,5 @@
+project.manifest = manifest.xml
+#excludeBase=deviceNetwork
+excludeBase=testNetwork
+
+base.excludeAnnotations = $(excludeBase)
