@@ -700,7 +700,19 @@ class BikeLightsView extends BaseView {
 
     protected function getLightModes(light) {
         var modes = light.getCapableModes();
-        return modes == null ? [0] : modes;
+        if (modes == null) {
+            return [0];
+        }
+
+        // LightNetwork supports up to five custom modes, any custom mode beyond the fifth one will be set to NULL.
+        // Cycliq lights FLY6 CE and Fly12 CE have the following modes: [0, 1, 2, 3, 6, 7, 63, 62, 61, 60, 59, null]
+        // In such case we need to remove the NULL values from the array.
+        if (modes.indexOf(null) > -1) {
+            modes = modes.slice(0, null);
+            modes.removeAll(null);
+        }
+
+        return modes;
     }
 
     protected function setLightProperty(id, lightType, value) {
