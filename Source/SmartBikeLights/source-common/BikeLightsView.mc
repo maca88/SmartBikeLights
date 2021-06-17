@@ -198,7 +198,7 @@ class BikeLightsView extends BaseView {
         // create a new LightNetwork.
         releaseLights();
         _lightNetwork = null; // Release light network
-        _lightNetwork = new AntPlus.LightNetwork(_lightNetworkListener);
+        _lightNetwork = new IndividualLightNetwork(_lightNetworkListener);
     }
 
     (:testNetwork)
@@ -752,10 +752,21 @@ class BikeLightsView extends BaseView {
         }
     }
 
+    (:nonTouchScreen)
     protected function releaseLights() {
         _initializedLights = 0;
         headlightData[0] = null;
         taillightData[0] = null;
+    }
+
+    (:touchScreen)
+    protected function releaseLights() {
+        _initializedLights = 0;
+        headlightData[0] = null;
+        taillightData[0] = null;
+        _panelInitialized = false;
+        _headlightPanel = null;
+        _taillightPanel = null;
     }
 
     (:settings)
