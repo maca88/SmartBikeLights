@@ -60,6 +60,11 @@ class SmartBikeLightsApp extends Application.AppBase {
         return [_view, new BikeLightsViewDelegate(_view)];
     }
 
+    (:highMemory)
+    function onStop(state) {
+        _view.release();
+    }
+
     (:settings)
     function getSettingsView() {
         return _view.getSettingsView();

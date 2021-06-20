@@ -32,7 +32,7 @@ export default observer(({ className, headerClassName, configuration, deviceList
       />
       <CardContent>
         <Typography color="textPrimary" gutterBottom>
-        When the lights are configured copy the below value and paste it in the application setting "Lights Configuration" by using 
+        When the lights are configured, copy the below value and paste it in the application setting "Lights Configuration" by using 
         Garmin Connect Mobile or Garmin Express.
         </Typography>
         {

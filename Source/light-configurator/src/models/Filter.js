@@ -86,7 +86,7 @@ export default class Filter {
         return this.fromType && this.fromValue !== null && !Number.isNaN(this.fromValue) && 
           this.toType && this.toValue !== null && !Number.isNaN(this.toValue);
       case 'F':
-        return device.polygons && this.polygons.length;
+        return device.highMemory && this.polygons.length;
       case 'I':
         return (!this.operator || this.isValidOperator(this.operator, this.value)) &&
           (!this.threatOperator || this.isValidOperator(this.threatOperator, this.threat));
