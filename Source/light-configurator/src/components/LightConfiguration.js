@@ -101,7 +101,7 @@ export default observer(({
                       <li><Typography>Open the Garmin menu and go to Sensors -&gt; Add Sensor -&gt; Light</Typography></li>
                       <li><Typography>The light with its device number (ID) should be displayed on the list</Typography></li>
                     </ol>
-                    <img src="/DeviceNumber.png" alt="Example" />
+                    <img src="./DeviceNumber.png" alt="Example" />
                   </React.Fragment>
                 }
               />
