@@ -133,6 +133,19 @@ const garminVariaUt800 = [
   { id: 7, name: 'Day Flash' }
 ];
 
+const cycliqFly12Ce = [
+  { id: 0, name: 'Off' },
+  { id: 1, name: 'Constant High' },
+  { id: 2, name: 'Constant Medium' },
+  { id: 3, name: 'Constant Low' },
+  { id: 6, name: 'Pulse High' },
+  { id: 7, name: 'Flash High' },
+  { id: 59, name: 'Pulse Medium' },
+  { id: 60, name: 'Pulse Low' },
+  { id: 61, name: 'Flash Medium' },
+  { id: 62, name: 'Flash Low' }
+];
+
 export const controlMode = {id: -1, name: "Control mode"};
 
 export const headlightList = [
@@ -209,6 +222,28 @@ export const headlightList = [
     }
   },
   {
+    id: 5,
+    name: 'Cycliq Fly12 CE',
+    modes: cycliqFly12Ce,
+    individualNetworkOnly: true,
+    lightModes: [415312, 71303969], // 1783751528940321
+    defaultLightPanel: {
+      shortName: 'Fly12 CE',
+      buttonGroups: [
+        [controlMode, cycliqFly12Ce[0]],
+        [cycliqFly12Ce[1]],
+        [cycliqFly12Ce[2]],
+        [cycliqFly12Ce[3]],
+        [cycliqFly12Ce[5]],
+        [cycliqFly12Ce[8]],
+        [cycliqFly12Ce[9]],
+        [cycliqFly12Ce[4]],
+        [cycliqFly12Ce[6]],
+        [cycliqFly12Ce[7]]
+      ]
+    }
+  },
+  {
     id: 99,
     name: 'Unknown',
     modes: lightModes,
@@ -257,6 +292,19 @@ const seeSenseIcon2 = [
   { id: 5, name: 'Steady 20%' },
   { id: 6, name: 'Night Flash' },
   { id: 7, name: 'Day Flash' }
+];
+
+const cycliqFly6Ce = [
+  { id: 0, name: 'Off' },
+  { id: 1, name: 'Constant High' },
+  { id: 2, name: 'Constant Medium' },
+  { id: 3, name: 'Constant Low' },
+  { id: 6, name: 'Pulse High' },
+  { id: 7, name: 'Flash High' },
+  { id: 59, name: 'Pulse Medium' },
+  { id: 60, name: 'Pulse Low' },
+  { id: 61, name: 'Flash Medium' },
+  { id: 62, name: 'Flash Low' }
 ];
 
 export const taillightList = [
@@ -343,6 +391,28 @@ export const taillightList = [
         [seeSenseIcon2[5]],
         [seeSenseIcon2[6]],
         [seeSenseIcon2[7]]
+      ]
+    }
+  },
+  {
+    id: 6,
+    name: 'Cycliq Fly6 CE',
+    modes: cycliqFly6Ce,
+    individualNetworkOnly: true,
+    lightModes: [415312, 71303969], // 1783751528940321
+    defaultLightPanel: {
+      shortName: 'Fly6 CE',
+      buttonGroups: [
+        [controlMode, cycliqFly6Ce[0]],
+        [cycliqFly6Ce[1]],
+        [cycliqFly6Ce[2]],
+        [cycliqFly6Ce[3]],
+        [cycliqFly6Ce[5]],
+        [cycliqFly6Ce[8]],
+        [cycliqFly6Ce[9]],
+        [cycliqFly6Ce[4]],
+        [cycliqFly6Ce[6]],
+        [cycliqFly6Ce[7]]
       ]
     }
   },
