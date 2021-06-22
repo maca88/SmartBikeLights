@@ -1,6 +1,6 @@
 using Toybox.AntPlus;
 
-(:testNetwork :polygons)
+(:testNetwork :highMemory)
 module TestAntPlus {
     class BikeRadar {
         private var target;
@@ -61,7 +61,7 @@ module TestNetwork {
             var delta = System.getTimer() - lastUpdate;
             lastUpdate = System.getTimer();
             if (delta < 1000) {
-                return;
+                return null;
             }
 
             updateBattery += _lights.size();
@@ -78,6 +78,8 @@ module TestNetwork {
                 mode = mode != null ? (mode + 1) % 4 : 0;
                 mode = mode == 3 ? null : mode; // Simulate TRAIL mode that is not in the API
             }
+
+            return null;
         }
 
         function getManufacturerInfo(identifier) {

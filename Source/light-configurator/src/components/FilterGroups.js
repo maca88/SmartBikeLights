@@ -28,7 +28,7 @@ const getFilterTypes = (hasLightModes, device) => {
     excludeList.push('B');
   }
 
-  if (!device.polygons){
+  if (!device.highMemory){
     excludeList.push('F');
   }
 

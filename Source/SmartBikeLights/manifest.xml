@@ -53,6 +53,7 @@
             <iq:product id="vivoactive4"/>
         </iq:products>
         <iq:permissions>
+            <iq:uses-permission id="Ant"/>
             <iq:uses-permission id="FitContributor"/>
             <iq:uses-permission id="Positioning"/>
         </iq:permissions>

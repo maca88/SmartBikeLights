@@ -8,17 +8,19 @@ import Grid from '@material-ui/core/Grid';
 import { observer } from 'mobx-react-lite';
 import FilterGroups from './FilterGroups';
 import AppSelect from '../inputs/AppSelect';
+import AppTextInput from '../inputs/AppTextInput';
+import ElementWithHelp from './ElementWithHelp';
 import LightPanel from './LightPanel';
 import LightSettings from './LightSettings';
 import LightPanelModel from '../models/LightPanel';
 import LightSettingsModel from '../models/LightSettings';
 
 const getModes = (value, lights) => {
-  return value !== null ? lights.find(l => l.id === value).modes : null;
+  return value !== null ? lights.find(l => l.id === value)?.modes : null;
 };
 
 const getDefaultPanel = (value, lights) => {
-  return value !== null ? lights.find(l => l.id === value).defaultLightPanel : null;
+  return value !== null ? lights.find(l => l.id === value)?.defaultLightPanel : null;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -29,8 +31,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default observer(({
-  className, headerClassName, device, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
-  setLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel, lightSettings, setLightSettings }) => {
+  className, headerClassName, device, useIndividualNetwork, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
+  setLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel, lightSettings, setLightSettings, deviceNumber, setDeviceNumber }) => {
   const classes = useStyles();
   const [modes, setModes] = React.useState(getModes(light, lightList));
   const setValue = (value) => {
@@ -65,21 +67,6 @@ export default observer(({
         className={headerClassName}
       />
       <CardContent>
-        {
-          hasFilters
-          ?
-          <Typography color="textPrimary" gutterBottom>
-          In order to configure the light, the correct light should be selected as every light supports only a few modes from the "ANT+ Bike Lights Device Profile" 
-          and may differ from light to light. In case your light is not on the list, please feel free to open an issue on GitHub or select "Unknown" option. The 
-          "Unknown" option includes all the available options from the ANT+ profile and should only be used to test which modes your light supports. In case an 
-          unsupported mode is selected, the application will display an error code on the screen. When the correct light is selected, then you can define filters that 
-          triggers a certain light mode and set the default mode, which will be used when none of the defined filters evaluate to true. The filter logic is the same 
-          as for global filters, where all filters inside a filter group need to be true in order the filter group light mode to be used. In case having multiple 
-          filter groups, the light mode of the first filter group to be evaluated to true, will be used.
-          </Typography>
-          : null
-        }
-
         <Grid container spacing={3} justify="center">
           <Grid item xs={12} sm={4}>
             <AppSelect items={lightList} label={lightType} setter={setValue} value={light} />
@@ -97,11 +84,45 @@ export default observer(({
             </Grid>
             : null
           }
+          {
+            useIndividualNetwork && light && device?.highMemory
+            ?
+            <Grid item xs={12} sm={4}>
+              <AppTextInput required label="Device number" type="number"
+                setter={setDeviceNumber} 
+                value={deviceNumber}
+                help={
+                  <React.Fragment>
+                    <Typography color="textPrimary">
+                      The light device number is a unique number that is required by the Individual Light Network. To obtain the device number:
+                    </Typography>
+                    <ol>
+                      <li><Typography>Put the ANT+ light near the Garmin device</Typography></li>
+                      <li><Typography>Open the Garmin menu and go to Sensors -&gt; Add Sensor -&gt; Light</Typography></li>
+                      <li><Typography>The light with its device number (ID) should be displayed on the list</Typography></li>
+                    </ol>
+                    <img src="./DeviceNumber.png" alt="Example" />
+                  </React.Fragment>
+                }
+              />
+            </Grid>
+            : null
+          }
         </Grid>
         {
           modes && hasFilters
           ? <React.Fragment>
-              <Typography variant="h5" className={classes.sectionTitle} color="textPrimary">Filter groups</Typography>
+              <ElementWithHelp
+                rootClass={classes.sectionTitle}
+                element={<Typography variant="h5" color="textPrimary">Filter groups</Typography>}
+                help={
+                  <Typography color="textPrimary">
+                    Filter groups contains a group of filters, which are used by the Smart mode to determine the light mode. Every filter group defines 
+                    a light mode, which will be used when every filter condition inside the group is met. The order of filter groups is important
+                    as in case multiple groups meet all their filters conditions, only the light mode of the first group will be used.
+                  </Typography>
+                }
+              />
               <FilterGroups filterGroups={lightFilterGroups} lightModes={modes} device={device} />
           </React.Fragment>
           : null

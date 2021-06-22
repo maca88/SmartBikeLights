@@ -98,6 +98,9 @@ class BikeLightsView extends BaseView {
     protected var _headlightFilters;
     protected var _taillightFilters;
 
+    (:touchScreen) private var _headlightPanelSettings;
+    (:touchScreen) private var _taillightPanelSettings;
+
     // Pre-calculated light panel values
     (:touchScreen) private var _headlightPanel;
     (:touchScreen) private var _taillightPanel;
@@ -107,6 +110,7 @@ class BikeLightsView extends BaseView {
     (:settings) var headlightSettings;
     (:settings) var taillightSettings;
     (:settings) private var _settingsInitialized;
+    (:highMemory) private var _individualNetwork;
 
     // Fields used to evaluate filters
     protected var _todayMoment;
@@ -114,7 +118,7 @@ class BikeLightsView extends BaseView {
     protected var _sunriseTime;
     (:dataField) private var _lastSpeed;
     (:dataField) private var _acceleration;
-    (:polygons) private var _bikeRadar;
+    (:highMemory) private var _bikeRadar;
 
     private var _lastUpdateTime = 0;
     private var _lastOnShowCallTime = 0;
@@ -140,13 +144,13 @@ class BikeLightsView extends BaseView {
 
     // Called from SmartBikeLightsApp.onSettingsChanged()
     function onSettingsChanged() {
+        //System.println("onSettingsChanged" + " timer=" + System.getTimer());
         var errorCode = _errorCode;
-        if (errorCode == 3 || errorCode == 4) {
-            errorCode = null;
-        } else if (errorCode != null) {
+        if (errorCode != null && errorCode < 3) {
             return;
         }
 
+        errorCode = null;
         _activityColor = getPropertyValue("AC");
         try {
             // Free memory before parsing to avoid out of memory exception
@@ -180,29 +184,24 @@ class BikeLightsView extends BaseView {
         _lightY = null; // Force to pre-calculate again
     }
 
-    // onShow() is called when this View is brought to the foreground
-    (:deviceNetwork)
+    (:lowMemory :deviceNetwork)
     function onShow() {
         //System.println("onShow=" + _lastUpdateTime  + " timer=" + System.getTimer());
         var timer = System.getTimer();
         _lastOnShowCallTime = timer;
-        // When start button is pressed onShow is called, skip re-initialization in such case. This also prevents
-        // a re-initialization when switching between two data screens that both contain this data field.
         if (_initializedLights > 0 && timer - _lastUpdateTime < 1500) {
             initializeLights(null, false);
             return;
         }
 
-        // In case the user modifies the network mode outside the data field by using the built-in Garmin lights menu,
-        // the LightNetwork mode will not be updated (LightNetwork.getNetworkMode). The only way to update it is to
-        // create a new LightNetwork.
         releaseLights();
         _lightNetwork = null; // Release light network
         _lightNetwork = new AntPlus.LightNetwork(_lightNetworkListener);
     }
 
-    (:testNetwork)
+    (:lowMemory :testNetwork)
     function onShow() {
+        //System.println("onShow=" + _lastUpdateTime  + " timer=" + System.getTimer());
         var timer = System.getTimer();
         _lastOnShowCallTime = timer;
         if (_initializedLights > 0 && timer - _lastUpdateTime < 1500) {
@@ -215,14 +214,47 @@ class BikeLightsView extends BaseView {
         _lightNetwork = new TestNetwork.TestLightNetwork(_lightNetworkListener);
     }
 
+    (:highMemory)
+    function onShow() {
+        //System.println("onShow=" + _lastUpdateTime  + " timer=" + System.getTimer());
+        var timer = System.getTimer();
+        _lastOnShowCallTime = timer;
+        if (_lightNetwork instanceof AntLightNetwork.IndividualLightNetwork) {
+            // We don't need to recreate IndividualLightNetwork as the network mode does not change
+            return;
+        }
+
+        // When start button is pressed onShow is called, skip re-initialization in such case. This also prevents
+        // a re-initialization when switching between two data screens that both contain this data field.
+        if (_initializedLights > 0 && timer - _lastUpdateTime < 1500) {
+            initializeLights(null, false);
+            return;
+        }
+
+        // In case the user modifies the network mode outside the data field by using the built-in Garmin lights menu,
+        // the LightNetwork mode will not be updated (LightNetwork.getNetworkMode). The only way to update it is to
+        // create a new LightNetwork.
+        recreateLightNetwork();
+    }
+
+    (:highMemory)
+    function release() {
+        releaseLights();
+        if (_lightNetwork != null && _lightNetwork has :release) {
+            _lightNetwork.release();
+        }
+
+        _lightNetwork = null; // Release light network
+    }
+
     // Overrides DataField.compute
     (:dataField)
     function compute(activityInfo) {
         //System.println("usedMemory=" + System.getSystemStats().usedMemory);
-        // NOTE: Use only for testing purposes when using TestLightNetwork
-        //if (_lightNetwork != null && _lightNetwork has :update) {
-        //    _lightNetwork.update();
-        //}
+        // Needed for TestLightNetwork and IndividualLightNetwork
+        if (_errorCode == null && _lightNetwork != null && _lightNetwork has :update) {
+            _errorCode = _lightNetwork.update();
+        }
 
         var initializedLights = _initializedLights;
         if (initializedLights == 0 || _errorCode != null) {
@@ -752,10 +784,21 @@ class BikeLightsView extends BaseView {
         }
     }
 
+    (:nonTouchScreen)
     protected function releaseLights() {
         _initializedLights = 0;
         headlightData[0] = null;
         taillightData[0] = null;
+    }
+
+    (:touchScreen)
+    protected function releaseLights() {
+        _initializedLights = 0;
+        headlightData[0] = null;
+        taillightData[0] = null;
+        _panelInitialized = false;
+        _headlightPanel = null;
+        _taillightPanel = null;
     }
 
     (:settings)
@@ -945,16 +988,28 @@ class BikeLightsView extends BaseView {
         return data;
     }
 
-    (:noLightButtons)
+    (:noLightButtons :lowMemory)
     private function setupLightButtons(configuration) {
+    }
+
+    (:noLightButtons :highMemory)
+    private function setupLightButtons(configuration) {
+        _individualNetwork = configuration[7];
+        if (_individualNetwork != null /* Is enabled */ || _lightNetwork instanceof AntLightNetwork.IndividualLightNetwork) {
+            recreateLightNetwork();
+        }
     }
 
     (:touchScreen)
     private function setupLightButtons(configuration) {
         _controlModeOnly = getPropertyValue("CMO");
         _panelInitialized = false;
-        _headlightPanel = configuration[5];
-        _taillightPanel = configuration[6];
+        _headlightPanelSettings = configuration[5];
+        _taillightPanelSettings = configuration[6];
+        _individualNetwork = configuration[7];
+        if (_individualNetwork != null /* Is enabled */ || _lightNetwork instanceof AntLightNetwork.IndividualLightNetwork) {
+            recreateLightNetwork();
+        }
     }
 
     (:settings)
@@ -962,6 +1017,26 @@ class BikeLightsView extends BaseView {
         _settingsInitialized = false;
         headlightSettings = configuration[5];
         taillightSettings = configuration[6];
+        _individualNetwork = configuration[7];
+        if (_individualNetwork != null /* Is enabled */ || _lightNetwork instanceof AntLightNetwork.IndividualLightNetwork) {
+            recreateLightNetwork();
+        }
+    }
+
+    (:highMemory :deviceNetwork)
+    private function recreateLightNetwork() {
+        release();
+        _lightNetwork = _individualNetwork != null
+            ? new AntLightNetwork.IndividualLightNetwork(_individualNetwork[0], _individualNetwork[1], _lightNetworkListener)
+            : new AntPlus.LightNetwork(_lightNetworkListener);
+    }
+
+    (:highMemory :testNetwork)
+    private function recreateLightNetwork() {
+        release();
+        _lightNetwork = _individualNetwork != null
+            ? new AntLightNetwork.IndividualLightNetwork(_individualNetwork[0], _individualNetwork[1], _lightNetworkListener)
+            : new TestNetwork.TestLightNetwork(_lightNetworkListener);
     }
 
     (:nonTouchScreen)
@@ -1021,24 +1096,26 @@ class BikeLightsView extends BaseView {
     }
 
     (:touchScreen)
-    private function getDefaultLightPanelData(lightType, capableModes) {
+    private function getDefaultLightPanelSettings(lightType, capableModes) {
         var totalButtonGroups = capableModes.size();
-        var data = new  [6 + (8 * (totalButtonGroups + 1 /* For control mode button */)) + totalButtonGroups];
-        data[0] = totalButtonGroups; // Total button groups
-        data[1] = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? "Headlight" : "Taillight"; // Light name
-        var dataIndex = 6;
+        var totalButtons = totalButtonGroups + 1 /* For control mode button */;
+        var data = new [3 + (2 * totalButtons) + totalButtonGroups];
+        data[0] = totalButtonGroups + 1; // Total buttons
+        data[1] = totalButtonGroups; // Total button groups
+        data[2] = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? "Headlight" : "Taillight"; // Light name
+        var dataIndex = 3;
         for (var i = 0; i < totalButtonGroups; i++) {
             var mode = capableModes[i];
-            var totalButtons = mode == 0 /* Off */ ? 2 : 1; // Number of buttons;
-            data[dataIndex] = totalButtons; // Total buttons in the group
+            var totalGroupButtons = mode == 0 /* Off */ ? 2 : 1; // Number of buttons;
+            data[dataIndex] = totalGroupButtons; // Total buttons in the group
             data[dataIndex + 1] = mode == 0 ? -1 : mode; // Light mode
             data[dataIndex + 2] = mode == 0 ? null : mode.toString(); // Mode name
             if (mode == 0 /* Off */) {
-                data[dataIndex + 9] = mode;
-                data[dataIndex + 10] = "Off";
+                data[dataIndex + 3] = mode;
+                data[dataIndex + 4] = "Off";
             }
 
-            dataIndex += 1 + (totalButtons * 8);
+            dataIndex += 1 + (totalGroupButtons * 2);
         }
 
         return data;
@@ -1065,43 +1142,40 @@ class BikeLightsView extends BaseView {
         var light = lightData[0];
         var capableModes = getLightModes(light);
         var fontTopPaddings = WatchUi.loadResource(Rez.JsonData.FontTopPaddings)[0];
+        var panelSettings = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightPanelSettings : _taillightPanelSettings;
+        if (panelSettings == null) {
+            panelSettings = getDefaultLightPanelSettings(light.type, capableModes);
+        }
+
+        var i;
+        var totalButtonGroups = panelSettings[1];
         // [:TotalButtonGroups:, :LightName:, :LightNameX:, :LightNameY:, :BatteryX:, :BatteryY:, (<ButtonGroup>)+]
         // <ButtonGroup> := [:NumberOfButtons:, :Mode:, :TitleX:, :TitleFont:, (<TitlePart>)+, :ButtonLeftX:, :ButtonTopY:, :ButtonWidth:, :ButtonHeight:){:NumberOfButtons:} ]
         // <TitlePart> := [(:Title:, :TitleY:)+]
-        var panelData = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightPanel : _taillightPanel;
-        var totalButtonGroups;
-        var i;
-        if (panelData == null) {
-            totalButtonGroups = capableModes.size();
-            panelData = getDefaultLightPanelData(light.type, capableModes);
-            if (light.type == 0 /* LIGHT_TYPE_HEADLIGHT */) {
-                _headlightPanel = panelData;
-            } else {
-                _taillightPanel = panelData;
-            }
-        } else {
-            totalButtonGroups = panelData[0];
-        }
-
+        var panelData = new [6 + (8 * panelSettings[0]) + totalButtonGroups];
+        panelData[0] = totalButtonGroups;
         var buttonHeight = (height - 20 /* Battery */).toFloat() / totalButtonGroups;
         var fontResult = [0];
         var buttonPadding = margin * 2;
         var textPadding = margin * 4;
         var groupIndex = 6;
+        var settingsGroupIndex = 3;
         for (i = 0; i < totalButtonGroups; i++) {
-            var totalButtons = panelData[groupIndex];
+            var totalButtons = panelSettings[settingsGroupIndex];
             var buttonWidth = buttonGroupWidth / totalButtons;
+            panelData[groupIndex] = totalButtons; // Buttons in group
             var titleParts = null;
             for (var j = 0; j < totalButtons; j++) {
                 var buttonIndex = groupIndex + 1 + (j * 8);
+                var modeIndex = settingsGroupIndex + 1 + (j * 2);
                 var buttonX = x + (buttonWidth * j);
-                var mode = panelData[buttonIndex];
+                var mode = panelSettings[modeIndex];
                 if (mode > 0 && capableModes.indexOf(mode) < 0) {
                     _errorCode = 4;
                     return;
                 }
 
-                var modeTitle = mode < 0 ? "M" : panelData[buttonIndex + 1];
+                var modeTitle = mode < 0 ? "M" : panelSettings[modeIndex + 1];
                 var titleList = StringHelper.trimText(dc, modeTitle, 4, buttonWidth - textPadding, buttonHeight - textPadding, fontTopPaddings, fontResult);
                 var titleFont = fontResult[0];
                 var titleFontHeight = dc.getFontHeight(titleFont);
@@ -1116,6 +1190,7 @@ class BikeLightsView extends BaseView {
                 }
 
                 // Set data
+                panelData[buttonIndex] = mode; // Light mode
                 panelData[buttonIndex + 1] = buttonX + (buttonWidth / 2); // Title x
                 panelData[buttonIndex + 2] = titleFont; // Title font
                 panelData[buttonIndex + 3] = titleParts; // Title parts
@@ -1126,12 +1201,13 @@ class BikeLightsView extends BaseView {
             }
 
             groupIndex += 1 + (totalButtons * 8);
+            settingsGroupIndex += 1 + (totalButtons * 2);
             y += buttonHeight;
         }
 
         // Calculate light name and battery positions
         x = Math.round(width * 0.25f * position);
-        var lightName = StringHelper.trimTextByWidth(dc, panelData[1], 1, buttonGroupWidth - buttonPadding - _batteryWidth);
+        var lightName = StringHelper.trimTextByWidth(dc, panelSettings[2], 1, buttonGroupWidth - buttonPadding - _batteryWidth);
         var lightNameWidth = lightName != null ? dc.getTextWidthInPixels(lightName, 1) : 0;
         var lightNameHeight = dc.getFontHeight(1);
         var lightNameTopPadding = StringHelper.getFontTopPadding(1, fontTopPaddings);
@@ -1140,6 +1216,12 @@ class BikeLightsView extends BaseView {
         panelData[3] = y + ((20 - lightNameHeight - lightNameTopPadding) / 2); // Light name y
         panelData[4] = x + (lightNameWidth / 2) + (margin / 2); // Battery x
         panelData[5] = y - 1; // Battery y
+
+        if (light.type == 0 /* LIGHT_TYPE_HEADLIGHT */) {
+            _headlightPanel = panelData;
+        } else {
+            _taillightPanel = panelData;
+        }
     }
 
     (:touchScreen)
@@ -1375,7 +1457,7 @@ class BikeLightsView extends BaseView {
         return 0;
     }
 
-    (:polygons)
+    (:dataField :highMemory)
     private function checkFilter(filterType, activityInfo, filters, i, filterValue, lightData) {
         return filterType == 'E' ? isWithinTimespan(filters, i, filterValue)
             : filterType == 'F' ? isInsideAnyPolygon(activityInfo, filterValue)
@@ -1384,7 +1466,7 @@ class BikeLightsView extends BaseView {
             : checkGenericFilter(activityInfo, filterType, filters[i + 1], filterValue, lightData);
     }
 
-    (:noPolygons)
+    (:dataField :lowMemory)
     private function checkFilter(filterType, activityInfo, filters, i, filterValue, lightData) {
         return filterType == 'E' ? isWithinTimespan(filters, i, filterValue)
             : filterType == 'D' ? true
@@ -1432,7 +1514,7 @@ class BikeLightsView extends BaseView {
             : false;
     }
 
-    (:polygons)
+    (:dataField :highMemory)
     private function isInsideAnyPolygon(activityInfo, filterValue) {
         if (activityInfo.currentLocation == null) {
             return false;
@@ -1449,7 +1531,7 @@ class BikeLightsView extends BaseView {
     }
 
     // Code ported from https://stackoverflow.com/a/14998816
-    (:polygons)
+    (:dataField :highMemory)
     private function isPointInPolygon(x, y, points, index) {
         var result = false;
         var pointX;
@@ -1476,7 +1558,7 @@ class BikeLightsView extends BaseView {
         return result;
     }
 
-    (:polygons)
+    (:dataField :highMemory)
     private function isTargetBehind(activityInfo, operator, filterValue) {
         if (_bikeRadar == null) {
             if (Toybox.AntPlus has :BikeRadar) {
@@ -1505,7 +1587,7 @@ class BikeLightsView extends BaseView {
         return false;
     }
 
-    (:polygons)
+    (:dataField :highMemory)
     private function checkOperatorValue(operator, value, filterValue) {
         if (value == null) {
             return filterValue < 0;
@@ -1541,7 +1623,7 @@ class BikeLightsView extends BaseView {
     }
 
     // <GlobalFilters>#<HeadlightModes>#<HeadlightFilters>#<TaillightModes>#<TaillightFilters>
-    (:noLightButtons)
+    (:noLightButtons :lowMemory)
     private function parseConfiguration(value) {
         if (value == null || value.length() == 0) {
             return new [5];
@@ -1558,10 +1640,30 @@ class BikeLightsView extends BaseView {
         ];
     }
 
+    (:noLightButtons :highMemory)
+    private function parseConfiguration(value) {
+        if (value == null || value.length() == 0) {
+            return new [8];
+        }
+
+        var filterResult = [0 /* next index */, 0 /* operator type */];
+        var chars = value.toCharArray();
+        return [
+            parseFilters(chars, 0, false, filterResult),                      // Global filter
+            parseLong(chars, filterResult[0] + 1, filterResult),              // Headlight modes
+            parseFilters(chars, filterResult[0] + 1, true, filterResult),     // Headlight filters
+            parseLong(chars, filterResult[0] + 1, filterResult),              // Taillight modes
+            parseFilters(chars, filterResult[0] + 1, true, filterResult),     // Taillight filters
+            null,                                                             // Headlight panel/settings buttons (will be always empty)
+            null,                                                             // Taillight panel/settings buttons (will be always empty)
+            parseIndividualNetwork(chars, filterResult[0] + 3, filterResult)  // Individual network settings
+        ];
+    }
+
     (:lightButtons)
     private function parseConfiguration(value) {
         if (value == null || value.length() == 0) {
-            return new [7];
+            return new [8];
         }
 
         var filterResult = [0 /* next index */, 0 /* operator type */];
@@ -1573,7 +1675,20 @@ class BikeLightsView extends BaseView {
             parseLong(chars, filterResult[0] + 1, filterResult),              // Taillight modes
             parseFilters(chars, filterResult[0] + 1, true, filterResult),     // Taillight filters
             parseLightButtons(chars, filterResult[0] + 1, filterResult),      // Headlight panel/settings buttons
-            parseLightButtons(chars, filterResult[0] + 1, filterResult)       // Taillight panel/settings buttons
+            parseLightButtons(chars, filterResult[0] + 1, filterResult),      // Taillight panel/settings buttons
+            parseIndividualNetwork(chars, filterResult[0] + 1, filterResult)  // Individual network settings
+        ];
+    }
+
+    (:highMemory)
+    private function parseIndividualNetwork(chars, i, filterResult) {
+        if (parse(1 /* NUMBER */, chars, i, filterResult) != 1) {
+            return null;
+        }
+
+        return [
+            parse(1 /* NUMBER */, chars, filterResult[0] + 1, filterResult), // Headlight device number
+            parse(1 /* NUMBER */, chars, filterResult[0] + 1, filterResult)  // Taillight device number
         ];
     }
 
@@ -1613,14 +1728,15 @@ class BikeLightsView extends BaseView {
         }
 
         var totalButtonGroups = parse(1 /* NUMBER */, chars, filterResult[0] + 1, filterResult);
-        // [:TotalButtonGroups:, :LightName:, :LightNameX:, :LightNameY:, :BatteryX:, :BatteryY:, (<ButtonGroup>)+]
-        // <ButtonGroup> := [:NumberOfButtons:, :Mode:, :TitleX:, :TitleFont:, (<TitlePart>)+, :ButtonLeftX:, :ButtonTopY:, :ButtonWidth:, :ButtonHeight:){:NumberOfButtons:} ]
-        // <TitlePart> := [(:Title:, :TitleY:)+]
-        var data = new [6 + (8 * totalButtons) + totalButtonGroups];
-        data[0] = totalButtonGroups;
-        data[1] = parse(0 /* STRING */, chars, filterResult[0] + 1, filterResult);
+        // [:TotalButtons:, :TotalButtonGroups:, :LightName:, (<ButtonGroup>)+]
+        // <ButtonGroup> = :NumberOfButtons:, (<Button>){:NumberOfButtons:})
+        // <Button> = :Mode:, :Title:
+        var data = new [3 + (2 * totalButtons) + totalButtonGroups];
+        data[0] = totalButtons;
+        data[1] = totalButtonGroups;
+        data[2] = parse(0 /* STRING */, chars, filterResult[0] + 1, filterResult);
         i = filterResult[0];
-        var dataIndex = 6;
+        var dataIndex = 3;
 
         while (i < chars.size()) {
             var char = chars[i];
@@ -1633,9 +1749,9 @@ class BikeLightsView extends BaseView {
                 data[dataIndex] = numberOfButtons;
                 dataIndex++;
                 for (var j = 0; j < numberOfButtons; j++) {
-                    data[dataIndex + 1] = parse(0 /* STRING */, chars, filterResult[0] + 1, filterResult); // Will be transformed to titleX later
+                    data[dataIndex + 1] = parse(0 /* STRING */, chars, filterResult[0] + 1, filterResult);
                     data[dataIndex] = parse(1 /* NUMBER */, chars, filterResult[0] + 1, filterResult);
-                    dataIndex += 8;
+                    dataIndex += 2;
                 }
 
                 i = filterResult[0];
@@ -1703,13 +1819,13 @@ class BikeLightsView extends BaseView {
         return data;
     }
 
-    (:noPolygons)
+    (:lowMemory)
     private function parseFilter(charNumber, chars, i, filterResult) {
         return charNumber == 69 /* E */ ? parseTimespan(chars, i, filterResult)
             : parseGenericFilter(charNumber, chars, i, filterResult);
     }
 
-    (:polygons)
+    (:highMemory)
     private function parseFilter(charNumber, chars, i, filterResult) {
         return charNumber == 69 /* E */ ? parseTimespan(chars, i, filterResult)
             : charNumber == 70 /* F */? parsePolygons(chars, i, filterResult)
@@ -1751,7 +1867,7 @@ class BikeLightsView extends BaseView {
         data[dataIndex + 1] = parse(1 /* NUMBER */, chars, index, filterResult);
     }
 
-    (:polygons)
+    (:highMemory)
     private function parsePolygons(chars, index, filterResult) {
         filterResult[1] = null; /* Filter operator */
         // The first value represents the total number of polygons
@@ -1768,7 +1884,7 @@ class BikeLightsView extends BaseView {
     }
 
     // I<300>0
-    (:polygons)
+    (:highMemory)
     private function parseBikeRadar(chars, index, filterResult) {
         filterResult[1] = chars[index]; // Filter operator
         var data = new [3];

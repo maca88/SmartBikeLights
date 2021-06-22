@@ -24,7 +24,7 @@ export default observer(({ items, label, value, setter, required }) => {
 
   useEffect(
     () => {
-      if (value === null || value === ''){
+      if (value === null || value === '') {
         return;
       }
 
@@ -35,7 +35,7 @@ export default observer(({ items, label, value, setter, required }) => {
     [items, value, setter]
   );
 
-  if (value === null || !items.find(i => i.id === value)) {
+  if (value === null) {
     value = '';
   }
 

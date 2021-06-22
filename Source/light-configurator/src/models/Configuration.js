@@ -6,7 +6,7 @@ import LightPanel from './LightPanel';
 import LightButtonGroup from './LightButtonGroup';
 import LightButton from './LightButton';
 import LightSettings from './LightSettings';
-import { getLightModes } from '../constants';
+import { getLight } from '../constants';
 
 const defaultFilter = new Filter();
 defaultFilter.type = 'D';
@@ -312,6 +312,9 @@ export default class Configuration {
   taillightDefaultMode = null;
   taillightPanel = null;
   taillightSettings = null;
+  useIndividualNetwork = false;
+  headlightDeviceNumber = null;
+  taillightDeviceNumber = null;
 
   constructor() {
     makeAutoObservable(this, {
@@ -360,7 +363,17 @@ export default class Configuration {
       configuration.taillightPanel = panel;
     }
 
-    configuration.device = parseTitle(value, filterResult[0] + 1, filterResult);
+    const useIndividualNetwork = parseNumber(value, filterResult[0] + 1, filterResult);
+    if (useIndividualNetwork === null) {
+      // This is an old configuration
+      configuration.device = parseTitle(value, filterResult[0], filterResult);
+    } else {
+      configuration.useIndividualNetwork = useIndividualNetwork === 1;
+      configuration.headlightDeviceNumber = parseNumber(value, filterResult[0] + 1, filterResult);
+      configuration.taillightDeviceNumber = parseNumber(value, filterResult[0] + 1, filterResult);
+      configuration.device = parseTitle(value, filterResult[0] + 1, filterResult);
+    }
+
     configuration.headlight = parseNumber(value, filterResult[0] + 1, filterResult);
     configuration.taillight = parseNumber(value, filterResult[0] + 1, filterResult);
     configuration.units = parseNumber(value, filterResult[0] + 1, filterResult);
@@ -380,7 +393,17 @@ export default class Configuration {
       this.isItemValid(this.headlightPanel, device.touchScreen) &&
       this.isItemValid(this.taillightPanel, device.touchScreen) &&
       this.isItemValid(this.headlightSettings, device.settings) &&
-      this.isItemValid(this.taillightSettings, device.settings);
+      this.isItemValid(this.taillightSettings, device.settings) &&
+      this.isIndividualNetworkValid(device);
+  }
+
+  isIndividualNetworkValid(device) {
+    if (!this.useIndividualNetwork || !device.highMemory) {
+      return true;
+    }
+
+    return (this.headlight === null || this.headlightDeviceNumber !== null) && 
+      (this.taillight === null || this.taillightDeviceNumber !== null);
   }
 
   isItemValid(item, validate) {
@@ -392,8 +415,12 @@ export default class Configuration {
       return true;
     }
 
-    const lightModes = getLightModes(taillight, light);
-    return lightModes != null && lightFilterGroups.every(g => g.isValid(device, lightModes)) &&
+    const lightData = getLight(taillight, light);
+    if (lightData.individualNetworkOnly && (!this.useIndividualNetwork || !device.highMemory)) {
+      return false;
+    }
+
+    return lightData.modes != null && lightFilterGroups.every(g => g.isValid(device, lightData.modes)) &&
           (
             (!lightFilterGroups.length && !this.globalFilterGroups.length) ||
             lightDefaultMode !== null
@@ -405,13 +432,15 @@ export default class Configuration {
       return null;
     }
 
+    const device = deviceList.find(l => l.id === this.device);
     let config = `${this.getFilterGroupsConfigurationValue(this.globalFilterGroups, null)}`;
     config += `#${this.getNumberArray(this.headlightModes)}`;
     config += `#${this.headlight === null ? '' : this.getFilterGroupsConfigurationValue(this.headlightFilterGroups, this.headlightDefaultMode)}`;
     config += `#${this.getNumberArray(this.taillightModes)}`;
     config += `#${this.taillight === null ? '' : this.getFilterGroupsConfigurationValue(this.taillightFilterGroups, this.taillightDefaultMode)}`;
-    config += `#${this.getLightPanelOrSettingsConfigurationValue(this.headlightPanel, this.headlightSettings, this.device, deviceList)}`;
-    config += `#${this.getLightPanelOrSettingsConfigurationValue(this.taillightPanel, this.taillightSettings, this.device, deviceList)}`;
+    config += `#${this.getLightPanelOrSettingsConfigurationValue(this.headlightPanel, this.headlightSettings, device)}`;
+    config += `#${this.getLightPanelOrSettingsConfigurationValue(this.taillightPanel, this.taillightSettings, device)}`;
+    config += `#${this.getIndividualNetworkConfigurationValue(device)}`;
     config += `#${(this.device)}`;
     config += `#${(this.headlight === null ? '' : this.headlight)}`;
     config += `#${(this.taillight === null ? '' : this.taillight)}`;
@@ -429,8 +458,21 @@ export default class Configuration {
     return `${value[0]},${value[1]}`;
   }
 
-  getLightPanelOrSettingsConfigurationValue(lightPanel, lightSettings, deviceId, deviceList) {
-    const device = deviceList.find(l => l.id === deviceId);
+  getIndividualNetworkConfigurationValue(device) {
+    if (!device || !device.highMemory || !this.useIndividualNetwork) {
+      return '0::';
+    }
+
+    let config = this.useIndividualNetwork ? '1' : '0';
+    config += ':';
+    config += this.headlight === null || this.headlightDeviceNumber === null ? '' : this.headlightDeviceNumber;
+    config += ':';
+    config += this.taillight === null || this.taillightDeviceNumber === null ? '' : this.taillightDeviceNumber;
+
+    return config;
+  }
+
+  getLightPanelOrSettingsConfigurationValue(lightPanel, lightSettings, device) {
     if (!device) {
       return '';
     }
@@ -548,5 +590,17 @@ export default class Configuration {
 
   setTaillightSettings = (value) => {
     this.taillightSettings = value;
+  }
+
+  setUseIndividualNetwork = (value) => {
+    this.useIndividualNetwork = value;
+  }
+
+  setHeadlightDeviceNumber = (value) => {
+    this.headlightDeviceNumber = Number.isNaN(value) ? null : value;
+  }
+
+  setTaillightDeviceNumber = (value) => {
+    this.taillightDeviceNumber = Number.isNaN(value) ? null : value;
   }
 }

@@ -13,7 +13,8 @@ Smart Bike Lights is a [data field](https://developer.garmin.com/connect-iq/conn
 - Configurable full screen light panel for fast switching modes (only for Edge devices with touch screen)
 - Support up to one headlight and one taillight that can be displayed on the smallest data field
 - Switching light mode by tapping on the light icon (only for Edge devices with touch screen)
-- Switching modes by holding the up/menu button (only for devices without touch screen that have CIQ 3.2 and more than 32KB memory)
+- Switching modes by holding the up/menu button (only for devices without touch screen that have CIQ 3.2 and with more than 32KB memory)
+- Has an alternative light network implementation that can be used for lights with partial ANT+ support (only for devices with more than 32KB memory)
 
 ## How to use
 
@@ -87,8 +88,24 @@ The initial control mode will be determined based on the configuration from the 
 - Garmin Varia RTL515
 - Garmin Varia HL500
 - Garmin Varia UT800
+- Cycliq Fly12 CE (supported only by using Individual Light Network)
+- Cycliq Fly6 CE (supported only by using Individual Light Network)
+- See Sense ICON2 (supported only by using Individual Light Network)
 
 **NOTE:** In case your ANT+ light is not on the list, please check the following garmin thread: https://forums.garmin.com/developer/connect-iq/f/showcase/248492/data-field-smart-bike-lights
+
+## Individual Light Network
+
+Individal Light Network is an alternative light network implementation for connecting and controlling ANT+ lights. In comparison to the Garmin built-in light network, 
+this network does not form a light network when two lights are connected, but instead it establish a separate connection for every light. This mode needs 
+to be used for lights that have issues with the built-in light network (See Sense and Cycliq lights).
+
+**NOTE:** Lights in Garmin Sensors menu need to be disabled or removed in order to use this feature!
+
+Known limitations:
+- It requires to manually set the device numbers for the lights
+- It will not turn off the lights when the device goes to sleep
+- It uses one ANT channel per light
 
 ## Currently tested Garmin devices:
 
@@ -118,3 +135,6 @@ The following errors can be displayed:
 - **Error 2:** Two or more lights of the same type are connected to the network, which is not supported.
 - **Error 3:** Configuration value is invalid.
 - **Error 4:** Light panel contains a light mode that the connected light does not support.
+- **Error 5:** The device does not have enough free ANT channels to be used by the Individual Light Network. Try to disable some sensors from the Garmin Sensors menu.
+- **Error 6:** One of the ANT channels used by the Individual Light Network could not be opened. Make sure that the lights are removed/disabled from the Garmin Sensors menu.
+- **Error 7:** The light with the provided device number does not support the configured light type (headlight/taillight). Make sure that the "Device number" setting on the configured light is not of another light.
