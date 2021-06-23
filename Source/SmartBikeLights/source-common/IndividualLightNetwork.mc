@@ -128,7 +128,6 @@ module AntLightNetwork {
         private var _channel;
         private var _lastMessageTime = 0;
         private var _listener;
-
         private var _retryTimes;
         private var _retry = false;
         private var _commandData = new [8];
@@ -136,7 +135,10 @@ module AntLightNetwork {
         private var _lastCommandTime = 0;
         private var _connectionState = 0;
         private var _initialMode;
-
+        private var _mainLight;
+        private var _lightIndex = 0;
+        private var _disconnectedTime = 0;
+        // Readonly fields
         private var _lightType;
         private var _deviceNumber;
         private var _transmissionType;
@@ -147,7 +149,6 @@ module AntLightNetwork {
         public var light;
         public var batteryStatus;
         public var capableModes;
-        public var lightIndex = 0;
 
         function initialize(identifier, lightType, deviceNumber, listener) {
             _lightType = lightType;
@@ -199,7 +200,7 @@ module AntLightNetwork {
         function close() {
             //System.println("close DN=" + _deviceNumber);
             errorCode = null;
-            lightIndex = 0;
+            _lightIndex = 0;
             state = 0;
             _lastMessageTime = 0;
             _lastCommandTime = 0;
@@ -228,6 +229,7 @@ module AntLightNetwork {
 
             var payload = message.getPayload();
             if (0x4E /* MSG_ID_BROADCAST_DATA */ == message.messageId) {
+                //System.println("BROADCAST=" + payload);
                 if (searching) {
                     searching = false;
                     if (state == 2 && _listener != null) {
@@ -242,19 +244,45 @@ module AntLightNetwork {
                     return;
                 }
 
-                // Each ANT+ controller that is connected to the main ANT+ bike light should send a message to the ANT+ bike light at least once every 30 seconds
-                if (_connectionState > 2 && (System.getTimer() - _lastCommandTime) > 20000) {
-                    // If the ANT+ controller does not have any new commands or other messages to send within a given 30 second period, then 
-                    // the main light’s channel ID (page 18) should be sent instead
-                    requestPage(18);
-                    return;
+                var page = (payload[0] & 0xFF);
+                if (page < 3) {
+                    var lightIndex = payload[1];
+                    if (_connectionState > 2 && lightIndex == 0) {
+                        //System.println("LT=" + _lightType + " light disconnected");
+                        // The light was disconnected
+                        _lightIndex = 0;
+                        _connectionState = 0 /* NOT_CONNECTED */;
+                        _retry = false;
+                        _mainLight = null;
+                        _disconnectedTime = _lastMessageTime;
+                    }
+
+                    if (_mainLight == null && lightIndex > 0) {
+                        // We need to find out whether the page belongs to the light that we are connected. In case we are connected
+                        // to a main light that has one or more secondary lights, the page that we received may belong to a different light.
+                        requestPage(18, lightIndex);
+                        return;
+                    // In case of a main light, we need to skip processing pages of secondary lights
+                    } else if (_mainLight == true && lightIndex > 1) {
+                        return;
+                    }
                 }
 
-                var page = (payload[0] & 0xFF);
+                // Each ANT+ controller that is connected to the main ANT+ bike light should send a message to the ANT+ bike light at least once every 30 seconds
+                if (_mainLight == true && _connectionState > 2 && (System.getTimer() - _lastCommandTime) > 20000) {
+                    // If the ANT+ controller does not have any new commands or other messages to send within a given 30 second period, then 
+                    // the main light’s channel ID (page 18) should be sent instead
+                    requestPage(18, _lightIndex);
+                }
+
                 if (page == 1) {
                     decodePage1(payload);
                 } else if (page == 2) {
                     decodePage2(payload);
+                } else if (page == 18) {
+                    decodePage18(payload);
+                } else {
+                    return;
                 }
 
                 // The controller is initialized when it is connected to the light and data page 1 and 2 were retrieved
@@ -273,33 +301,40 @@ module AntLightNetwork {
                 }
 
                 // Page 2 is optional when the light is connected
-                if (capableModes == null && lightIndex > 0) {
-                    requestPage(2);
+                if (capableModes == null && _lightIndex > 0) {
+                    requestPage(2, _lightIndex);
                     return;
                 }
 
                 if (_connectionState == 0 && capableModes != null) {
-                    if (lightIndex > 0) {
+                    if (_lightIndex > 0) {
                         _connectionState = 4 /* CONNECTED_SLAVE */;
                     } else {
+                        // In case another ANT+ controller triggered a disconnect command wait in case it will form a new network. We want to avoid sending
+                        // the connect command simultaneously with another ANT+ controller.
+                        if ((System.getTimer() - _disconnectedTime) < 10000 && payload[4] != controllerId && payload[4] != _commandSequenceNumber) {
+                            //System.println("LT=" + _lightType + " disconnected by another ANT+ controller Last command id:" +  payload[4] + " commandSequenceNumber=" + _commandSequenceNumber);
+                            return;
+                        }
+
                         _connectionState = 1 /* SENDING_CONNECT_COMMAND */;
                         _initialMode = light.mode;
                         connect();
                     }
 
-                    //System.println("connectionState=" + _connectionState);
+                    //System.println("LT=" + _lightType + " connectionState=" + _connectionState);
                 }
             } else if (0x40 /* MSG_ID_CHANNEL_RESPONSE_EVENT */ == message.messageId) {
-                //System.println("MESSAGE:" + payload);
+                //System.println("LT=" + _lightType + " RESPONSE=" + payload);
                 if (0x01 /* MSG_ID_RF_EVENT */ == (payload[0] & 0xFF)) {
                     var eventCode = payload[1] & 0xFF;
                     if (0x05 /* MSG_CODE_EVENT_TRANSFER_TX_COMPLETED */ == eventCode) {
                         if (_connectionState == 1 /* SENDING_CONNECT_COMMAND */) {
                             _connectionState = 2 /* CONNECT_COMMAND_SENT */;
-                            //System.println("connectionState=" + _connectionState);
+                            //System.println("LT=" + _lightType + " connectionState=" + _connectionState);
                         }
                     } else if (0x06 /* MSG_CODE_EVENT_TRANSFER_TX_FAILED */ == eventCode) {
-                        //System.println("MSG_CODE_EVENT_TRANSFER_TX_FAILED");
+                        //System.println("LT=" + _lightType + " MSG_CODE_EVENT_TRANSFER_TX_FAILED");
                         if (!_retry) { // First time
                             _retry = true;
                             _retryTimes = retryTimes;
@@ -310,17 +345,17 @@ module AntLightNetwork {
 
                         if (!_retry && _connectionState == 1 /* SENDING_CONNECT_COMMAND */) {
                             _connectionState = 0 /* NOT_CONNECTED */;
-                            //System.println("connectionState=" + _connectionState);
+                            //System.println("LT=" + _lightType + " connectionState=" + _connectionState);
                         }
                     } else if (0x07 /* MSG_CODE_EVENT_CHANNEL_CLOSED */ == eventCode) {
-                        //System.println("MSG_CODE_EVENT_CHANNEL_CLOSED DN=" + _deviceNumber);
+                        //System.println("LT=" + _lightType + " MSG_CODE_EVENT_CHANNEL_CLOSED DN=" + _deviceNumber);
                         // Channel closed, re-open only when the channel was not manually closed
                         _connectionState = 0 /* NOT_CONNECTED */;
                         if (_channel != null) {
                             open(true);
                         }
                     } else if (0x08 /* MSG_CODE_EVENT_RX_FAIL_GO_TO_SEARCH */ == eventCode) {
-                        //System.println("MSG_CODE_EVENT_RX_FAIL_GO_TO_SEARCH");
+                        //System.println("LT=" + _lightType + " MSG_CODE_EVENT_RX_FAIL_GO_TO_SEARCH");
                         searching = true;
                         _connectionState = 0 /* NOT_CONNECTED */;
                     }
@@ -334,7 +369,7 @@ module AntLightNetwork {
         function setMode(newMode) {
             var command = _commandData;
             command[0] = 34; // Page number
-            command[1] = lightIndex; // Light index
+            command[1] = _lightIndex; // Light index
             command[2] = light.type << 4; /// Light type
             _commandSequenceNumber = (_commandSequenceNumber + 1) % 255;
             command[3] = _commandSequenceNumber; // Sequence number
@@ -342,11 +377,11 @@ module AntLightNetwork {
             command[5] = 1 << 4;
             command[6] = newMode == 0 ? 1 /* Off */ : (newMode << 2);
             command[7] = 0xFF; // Beam adjustment
-            //System.println("setMode=" + command);
+            //System.println("LT=" + _lightType + " setMode=" + command);
             sendCommand();
         }
 
-        private function requestPage(pageNumber) {
+        private function requestPage(pageNumber, lightIndex) {
             var command = _commandData;
             command[0] = 70; // Page number
             command[1] = lightIndex; // Light index
@@ -356,7 +391,7 @@ module AntLightNetwork {
             command[5] = 1; // Repeat once
             command[6] = pageNumber; // Requested Page Number
             command[7] = 1; // Command type
-            //System.println("requestPage=" + command);
+            //System.println("LT=" + _lightType + " requestPage=" + command);
             sendCommand();
         }
 
@@ -370,11 +405,15 @@ module AntLightNetwork {
             command[5] = _deviceNumber & 0xFF;
             command[6] = (_deviceNumber >> 8) & 0xFF;
             command[7] = _transmissionType;
-            //System.println("connect=" + command);
+            //System.println("LT=" + _lightType + " connect=" + command);
             sendCommand();
         }
 
         private function sendCommand() {
+            if (_channel == null || searching) {
+                return;
+            }
+
             _lastCommandTime = System.getTimer();
             var message = new Ant.Message();
             message.setPayload(_commandData);
@@ -382,7 +421,7 @@ module AntLightNetwork {
         }
 
         private function decodePage1(payload) {
-            lightIndex = payload[1];
+            _lightIndex = payload[1];
             light.type = (payload[2] >> 2) & 0x07;
             batteryStatus.batteryStatus = (payload[2] >> 5) & 0x07;
             var oldMode = light.mode;
@@ -391,21 +430,24 @@ module AntLightNetwork {
                 // Check whether we were the one to establish the connection
                 _connectionState = payload[4] /* Last command number */ == controllerId
                     ? 3 /* CONNECTED_MASTER */
-                    : lightIndex > 0 ? 4 /* CONNECTED_SLAVE */
+                    : _lightIndex > 0 ? 4 /* CONNECTED_SLAVE */
                     : 0 /* NOT_CONNECTED */;
-                //System.println("connectionState=" + _connectionState);
-                // Some lights will be turned off after a connect command, restore to the initial light mode
+                if (_connectionState == 3) {
+                    _mainLight = true;
+                }
+
+                //System.println("LT=" + _lightType + " connectionState=" + _connectionState);
+                // Some lights can turn off after a connect command, restore to the initial light mode
                 if (newMode != _initialMode) {
-                    //System.println("initialMode=" + _initialMode + " mode=" + newMode);
+                    //System.println("LT=" + _lightType + " initialMode=" + _initialMode + " mode=" + newMode);
                     setMode(_initialMode);
                     return;
                 }
             }
 
             light.mode = newMode;
-            //System.println("T=" + light.type + " BS=" + batteryStatus.batteryStatus + " M=" + light.mode + " I=" + lightIndex);
             if (state == 2 && oldMode != newMode && _listener != null) {
-                //System.println("oldMode=" + oldMode + " newMode=" + newMode);
+                //System.println("LT=" + _lightType + " oldMode=" + oldMode + " newMode=" + newMode);
                 _listener.onBikeLightUpdate(light);
             }
         }
@@ -417,6 +459,7 @@ module AntLightNetwork {
 
             if (((payload[7] >> _lightType) & 0x01) == 0) {
                 errorCode = 7;
+                return;
             }
 
             var standardModes = (payload[6] << 8) | payload[5];
@@ -434,6 +477,12 @@ module AntLightNetwork {
             }
 
             //System.println("CM=" + capableModes + " TM=" + totalSupportedModes);
+        }
+
+        private function decodePage18(payload) {
+            var deviceNumber = (payload[6] /* DN MSB */ << 8) | payload[5] /* DN LSB */;
+            _mainLight = _deviceNumber == deviceNumber && _transmissionType == payload[7] /* Transmission Type */;
+            //System.println("LT=" + _lightType + " mainLight=" + _mainLight);
         }
     }
 }
