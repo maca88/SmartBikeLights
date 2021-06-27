@@ -329,6 +329,7 @@ class BikeLightsView extends BaseView {
     }
 
     // Overrides DataField.onUpdate
+    (:dataField)
     function onUpdate(dc) {
         var timer = System.getTimer();
         var lastUpdateTime = _lastUpdateTime;
@@ -372,6 +373,35 @@ class BikeLightsView extends BaseView {
             : null;
         if (text != null) {
             drawCenterText(dc, text, fgColor, width, height);
+            return;
+        }
+
+        draw(dc, width, height, fgColor, bgColor);
+    }
+
+    (:widget)
+    function onUpdate(dc) {
+        _lastUpdateTime = System.getTimer();
+        var width = dc.getWidth();
+        var height = dc.getHeight();
+        var bgColor = getBackgroundColor();
+        var fgColor = 0x000000; /* COLOR_BLACK */
+        if (bgColor == 0x000000 /* COLOR_BLACK */) {
+            fgColor = 0xFFFFFF; /* COLOR_WHITE */
+        }
+
+        dc.setColor(fgColor, bgColor);
+        dc.clear();
+        if (_lightY == null) {
+            preCalculate(dc, width, height);
+        }
+
+        var text = _errorCode != null ? "Error " + _errorCode
+            : _initializedLights == 0 ? "No network"
+            : null;
+        if (text != null) {
+            setTextColor(dc, fgColor);
+            dc.drawText(width / 2, height / 2, 2, text, 1 /* TEXT_JUSTIFY_CENTER */ | 4 /* TEXT_JUSTIFY_VCENTER */);
             return;
         }
 
@@ -453,9 +483,10 @@ class BikeLightsView extends BaseView {
             return null;
         }
 
+        var menuContext = [headlightSettings, taillightSettings];
         var menu = _initializedLights > 1
-            ? new Settings.LightsMenu(self)
-            : new Settings.LightMenu(headlightData[0].type, self);
+            ? new Settings.LightsMenu(self, menuContext)
+            : new Settings.LightMenu(headlightData[0].type, self, menuContext);
 
         return [menu, new Settings.MenuDelegate(menu)];
     }
@@ -887,13 +918,13 @@ class BikeLightsView extends BaseView {
         dc.drawText(x, y, _batteryFont, batteryStatus.toString(), 1 /* TEXT_JUSTIFY_CENTER */);
     }
 
-    (:rectangle)
+    (:dataField :rectangle)
     protected function drawCenterText(dc, text, color, width, height) {
         setTextColor(dc, color);
         dc.drawText(width / 2, height / 2, 2, text, 1 /* TEXT_JUSTIFY_CENTER */ | 4 /* TEXT_JUSTIFY_VCENTER */);
     }
 
-    (:round)
+    (:dataField :round)
     protected function drawCenterText(dc, text, color, width, height) {
         setTextColor(dc, color);
         dc.drawText(width / 2, height / 2, 0, text, 1 /* TEXT_JUSTIFY_CENTER */ | 4 /* TEXT_JUSTIFY_VCENTER */);

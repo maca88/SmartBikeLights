@@ -3,7 +3,7 @@ using Toybox.Ant;
 using Toybox.AntPlus;
 using Toybox.Lang;
 
-(:highMemory)
+(:glance :highMemory)
 module AntLightNetwork {
     const retryTimes = 2;
     const controllerId = 99;
@@ -223,7 +223,8 @@ module AntLightNetwork {
 
         function onMessage(message) {
             _lastMessageTime = System.getTimer();
-            if (errorCode != null) {
+            // This method can potentially be called after release method, return in case the network is released.
+            if (errorCode != null || light == null) {
                 return;
             }
 
