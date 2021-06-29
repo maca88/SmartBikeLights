@@ -3,7 +3,7 @@ import { action } from 'mobx';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import { observer } from 'mobx-react-lite';
-import { headlightList, taillightList } from '../constants';
+import { headlightList, taillightList, getDeviceLights } from '../constants';
 import { getDevice, deviceList } from '../widgetConstants';
 import AppSelect from '../inputs/AppSelect';
 import Configuration from '../models/Configuration';
@@ -54,7 +54,7 @@ export default observer(() => {
             useIndividualNetwork={configuration.useIndividualNetwork}
             device={device}
             lightType="Headlight"
-            lightList={headlightList}
+            lightList={getDeviceLights(device, headlightList, configuration.useIndividualNetwork)}
             light={configuration.headlight}
             setLight={configuration.setHeadlight}
             setLightModes={configuration.setHeadlightModes}
@@ -71,7 +71,7 @@ export default observer(() => {
             useIndividualNetwork={configuration.useIndividualNetwork}
             device={device}
             lightType="Taillight"
-            lightList={taillightList}
+            lightList={getDeviceLights(device, taillightList, configuration.useIndividualNetwork)}
             light={configuration.taillight}
             setLight={configuration.setTaillight}
             setLightModes={configuration.setTaillightModes}
