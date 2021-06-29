@@ -146,6 +146,17 @@ const cycliqFly12Ce = [
   { id: 62, name: 'Flash Low' }
 ];
 
+const seeSenseBeam = [
+  { id: 0, name: 'Off' },
+  { id: 1, name: 'Steady 100%' },
+  { id: 2, name: 'Steady 80%' },
+  { id: 3, name: 'Steady 60%' },
+  { id: 4, name: 'Steady 40%' },
+  { id: 5, name: 'Steady 20%' },
+  { id: 6, name: 'Night Flash' },
+  { id: 7, name: 'Day Flash' }
+];
+
 export const controlMode = {id: -1, name: "Control mode"};
 
 export const headlightList = [
@@ -186,6 +197,28 @@ export const headlightList = [
     }
   },
   {
+    id: 5,
+    name: 'Cycliq Fly12 CE',
+    modes: cycliqFly12Ce,
+    individualNetworkOnly: true,
+    lightModes: [415312, 71303969], // 1783751528940321
+    defaultLightPanel: {
+      shortName: 'Fly12 CE',
+      buttonGroups: [
+        [controlMode, cycliqFly12Ce[0]],
+        [cycliqFly12Ce[1]],
+        [cycliqFly12Ce[2]],
+        [cycliqFly12Ce[3]],
+        [cycliqFly12Ce[5]],
+        [cycliqFly12Ce[8]],
+        [cycliqFly12Ce[9]],
+        [cycliqFly12Ce[4]],
+        [cycliqFly12Ce[6]],
+        [cycliqFly12Ce[7]]
+      ]
+    }
+  },
+  {
     id: 3,
     name: 'Garmin Varia HL500',
     modes: garminVariaHl500,
@@ -222,24 +255,22 @@ export const headlightList = [
     }
   },
   {
-    id: 5,
-    name: 'Cycliq Fly12 CE',
-    modes: cycliqFly12Ce,
+    id: 6,
+    name: 'See.Sense BEAM/BEAM+',
+    modes: seeSenseBeam,
     individualNetworkOnly: true,
-    lightModes: [415312, 71303969], // 1783751528940321
+    lightModes: [0, 73605649], // 73605649
     defaultLightPanel: {
-      shortName: 'Fly12 CE',
+      shortName: 'BEAM',
       buttonGroups: [
-        [controlMode, cycliqFly12Ce[0]],
-        [cycliqFly12Ce[1]],
-        [cycliqFly12Ce[2]],
-        [cycliqFly12Ce[3]],
-        [cycliqFly12Ce[5]],
-        [cycliqFly12Ce[8]],
-        [cycliqFly12Ce[9]],
-        [cycliqFly12Ce[4]],
-        [cycliqFly12Ce[6]],
-        [cycliqFly12Ce[7]]
+        [controlMode, seeSenseBeam[0]],
+        [seeSenseBeam[1]],
+        [seeSenseBeam[2]],
+        [seeSenseBeam[3]],
+        [seeSenseBeam[4]],
+        [seeSenseBeam[5]],
+        [seeSenseBeam[6]],
+        [seeSenseBeam[7]]
       ]
     }
   },
@@ -332,6 +363,28 @@ export const taillightList = [
     }
   },
   {
+    id: 6,
+    name: 'Cycliq Fly6 CE',
+    modes: cycliqFly6Ce,
+    individualNetworkOnly: true,
+    lightModes: [415312, 71303969], // 1783751528940321
+    defaultLightPanel: {
+      shortName: 'Fly6 CE',
+      buttonGroups: [
+        [controlMode, cycliqFly6Ce[0]],
+        [cycliqFly6Ce[1]],
+        [cycliqFly6Ce[2]],
+        [cycliqFly6Ce[3]],
+        [cycliqFly6Ce[5]],
+        [cycliqFly6Ce[8]],
+        [cycliqFly6Ce[9]],
+        [cycliqFly6Ce[4]],
+        [cycliqFly6Ce[6]],
+        [cycliqFly6Ce[7]]
+      ]
+    }
+  },
+  {
     id: 4,
     name: 'Garmin Varia RTL500',
     modes: garminVariaRtl500,
@@ -395,7 +448,7 @@ export const taillightList = [
   },
   {
     id: 5,
-    name: 'See Sense ICON2',
+    name: 'See.Sense ICON2',
     modes: seeSenseIcon2,
     individualNetworkOnly: true,
     lightModes: [0, 73605649], // 73605649
@@ -410,28 +463,6 @@ export const taillightList = [
         [seeSenseIcon2[5]],
         [seeSenseIcon2[6]],
         [seeSenseIcon2[7]]
-      ]
-    }
-  },
-  {
-    id: 6,
-    name: 'Cycliq Fly6 CE',
-    modes: cycliqFly6Ce,
-    individualNetworkOnly: true,
-    lightModes: [415312, 71303969], // 1783751528940321
-    defaultLightPanel: {
-      shortName: 'Fly6 CE',
-      buttonGroups: [
-        [controlMode, cycliqFly6Ce[0]],
-        [cycliqFly6Ce[1]],
-        [cycliqFly6Ce[2]],
-        [cycliqFly6Ce[3]],
-        [cycliqFly6Ce[5]],
-        [cycliqFly6Ce[8]],
-        [cycliqFly6Ce[9]],
-        [cycliqFly6Ce[4]],
-        [cycliqFly6Ce[6]],
-        [cycliqFly6Ce[7]]
       ]
     }
   },

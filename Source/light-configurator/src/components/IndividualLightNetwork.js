@@ -30,7 +30,7 @@ export default observer(({ device, configuration, }) => {
                       Individal Light Network is an alternative light network implementation for connecting and controlling ANT+ lights. In comparison
                       to the Garmin built-in light network, this network does not form a light network when two lights are connected, but instead it
                       establish a separate connection for every light. This mode needs to be used for lights that have issues with the built-in
-                      light network (See Sense and Cycliq lights).
+                      light network (See.Sense and Cycliq lights).
                 </Typography>
                     <Typography gutterBottom>
                       <strong>NOTE: Lights in Garmin Sensors menu need to be disabled or removed in order to use this feature!</strong>

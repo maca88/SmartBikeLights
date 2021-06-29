@@ -91,7 +91,8 @@ The initial control mode will be determined based on the configuration from the 
 - Garmin Varia UT800
 - Cycliq Fly12 CE (supported only by using Individual Light Network)
 - Cycliq Fly6 CE (supported only by using Individual Light Network)
-- See Sense ICON2 (supported only by using Individual Light Network)
+- See.Sense BEAM/BEAM+ (supported only by using Individual Light Network)
+- See.Sense ICON2 (supported only by using Individual Light Network)
 
 **NOTE:** In case your ANT+ light is not on the list, please check the following garmin thread: https://forums.garmin.com/developer/connect-iq/f/showcase/248492/data-field-smart-bike-lights
 
