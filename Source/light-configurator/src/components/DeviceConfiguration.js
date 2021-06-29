@@ -54,7 +54,7 @@ export default observer(({ configuration, device, deviceList }) => {
                     lights will be used. When all filters conditions inside a filter group is met, then the light mode will be determined by the group filters
                     defined on the light, otherwise the "Default mode" on the light will be used. Global filter are useful when we have a condition that 
                     applies to all lights. For example, in case we don't want the lights to be turned on when the timer is not recording,
-                    we can add a global filter group with a "Timer state" filter with condition "Greater than Not recoridng" and set the "Default mode"
+                    we can add a global filter group with a "Timer state" filter with condition "Greater than Not recording" and set the "Default mode"
                     to "Off" on the lights.
                   </Typography>
                 }
