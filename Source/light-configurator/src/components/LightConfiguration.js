@@ -5,6 +5,8 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import Grid from '@material-ui/core/Grid';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 import { observer } from 'mobx-react-lite';
 import FilterGroups from './FilterGroups';
 import AppSelect from '../inputs/AppSelect';
@@ -32,7 +34,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default observer(({
   className, headerClassName, device, useIndividualNetwork, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
-  setLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel, lightSettings, setLightSettings, deviceNumber, setDeviceNumber }) => {
+  setLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel, lightSettings, setLightSettings, deviceNumber, setDeviceNumber,
+  forceSmartMode, setForceSmartMode }) => {
   const classes = useStyles();
   const [modes, setModes] = React.useState(getModes(light, lightList));
   const setValue = (value) => {
@@ -107,6 +110,35 @@ export default observer(({
               />
             </Grid>
             : null
+          }
+          {
+            setForceSmartMode && light && device?.highMemory
+              ?
+              <Grid item xs={12} sm={12}>
+                <Grid container spacing={3} justify="center">
+                  <Grid item xs={12} sm={4}>
+                    <ElementWithHelp
+                      element={
+                        <FormControlLabel
+                          control={
+                            <Checkbox checked={forceSmartMode}
+                              onChange={(e) => setForceSmartMode(e.target.checked)}
+                              name="forceSmartMode" />
+                          }
+                          label="Force Smart mode"
+                        />
+                      }
+                      help={
+                        <Typography>
+                         Force Smart mode will prevent external light mode changes (e.g. pressing the button on the light) to switch from Smart 
+                         to Manual control mode. This setting works only when the light is in Smart control mode.
+                        </Typography>
+                      }
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+              : null
           }
         </Grid>
         {

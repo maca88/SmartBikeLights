@@ -9,13 +9,6 @@ module Settings {
         "Manual (M)"
     ];
 
-    function getLightData(lightType, view) {
-        var headlight = view.headlightData[0];
-        return headlight == null ? null // The network was disconnected
-            : headlight.type == lightType ? view.headlightData
-            : view.taillightData;
-    }
-
     class BaseMenu extends WatchUi.Menu2 {
         protected var context;
         protected var viewRef;
@@ -38,7 +31,7 @@ module Settings {
             var view = viewRef.get();
             return context[0] == view.headlightSettings &&
                 context[1] == view.taillightSettings &&
-                view.headlightData[0] != null; // The network was disconnected
+                view.getLightData(null)[0] != null; // The network was disconnected
         }
 
         function close() {
@@ -84,7 +77,7 @@ module Settings {
             var lightSettings = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? view.headlightSettings : view.taillightSettings;
             setTitle(lightSettings[0]);
             _lightType = lightType;
-            var lightData = getLightData(lightType, view);
+            var lightData = view.getLightData(lightType);
             var modeIndex = lightSettings.indexOf(lightData[2]);
             addItem(new WatchUi.MenuItem("Control mode", controlModeNames[lightData[4]], 0, null));
             addItem(new WatchUi.MenuItem("Light modes", modeIndex < 0 ? null : lightSettings[modeIndex - 1], 1, null));
@@ -118,7 +111,7 @@ module Settings {
 
         function onSelect(controlMode, menuItem) {
             var view = viewRef.get();
-            var lightData = getLightData(_lightType, view);
+            var lightData = view.getLightData(_lightType);
             var oldControlMode = lightData[4];
             if (oldControlMode != controlMode) {
                 // Set new control mode
@@ -154,7 +147,7 @@ module Settings {
 
         function onSelect(mode, menuItem) {
             var view = viewRef.get();
-            var lightData = getLightData(_lightType, view);
+            var lightData = view.getLightData(_lightType);
             // Set light mode
             var newControlMode = lightData[4] != 2 /* MANUAL */ ? 2 : null;
             view.setLightAndControlMode(lightData, _lightType, mode, newControlMode);

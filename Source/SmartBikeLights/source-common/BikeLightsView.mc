@@ -72,7 +72,15 @@ class BikeLightsView extends BaseView {
     // 8. Next title
     // 9. Compute setMode timeout
     // 10. Minimum active filter group time in seconds
-    var headlightData = new [11]; // Can represent a taillight in case it is the only one
+    // 11. Force Smart mode (high memory devices only)
+    (:highMemory)
+    var headlightData = new [12];
+    (:highMemory)
+    var taillightData = new [12];
+
+    (:lowMemory)
+    var headlightData = new [11];
+    (:lowMemory)
     var taillightData = new [11];
 
     protected var _errorCode;
@@ -161,13 +169,13 @@ class BikeLightsView extends BaseView {
             _globalFilters = configuration[0];
             _headlightFilters = configuration[2];
             _taillightFilters = configuration[4];
-            setupLightButtons(configuration);
+            if (self has :setupLightButtons){
+                setupLightButtons(configuration);
+            }
 
-            var headlightModes = configuration[1]; // Headlight modes
             if (validateLightModes(headlightData[0]) && validateLightModes(taillightData[0])) {
-                headlightData[3] = headlightModes;
-                var lightData = headlightModes == null ? headlightData : taillightData;
-                lightData[3] = configuration[3];
+                headlightData[3] = configuration[1]; // Headlight modes
+                taillightData[3] = configuration[3]; // Taillight modes
             } else {
                 errorCode = 4;
             }
@@ -277,7 +285,7 @@ class BikeLightsView extends BaseView {
         var filterResult = _filterResult;
         var globalFilterTitle = null;
         for (var i = 0; i < initializedLights; i++) {
-            var lightData = getLightData(i, null);
+            var lightData = getLightData(initializedLights == 1 ? null : i * 2);
             if (lightData[7] != null) {
                 if (lightData[9] <= 0) {
                     lightData[7] = null;
@@ -414,10 +422,7 @@ class BikeLightsView extends BaseView {
         if (_initializedLights > 0 && networkState != 2 /* LIGHT_NETWORK_STATE_FORMED */) {
             // Set the mode to disconnected in order to be recorded in case lights recording is enabled
             updateLightTextAndMode(headlightData, -1);
-            if (_initializedLights > 1) {
-                updateLightTextAndMode(taillightData, -1);
-            }
-
+            updateLightTextAndMode(taillightData, -1);
             // We have to reinitialize in case the light network is dropped after its formation
             releaseLights();
             return;
@@ -448,7 +453,7 @@ class BikeLightsView extends BaseView {
             return;
         }
 
-        var lightData = getLightData(lightType, _initializedLights);
+        var lightData = getLightData(lightType);
         lightData[0] = light;
         var nextMode = lightData[7];
         if (mode == lightData[2] && nextMode == null) {
@@ -486,7 +491,7 @@ class BikeLightsView extends BaseView {
         var menuContext = [headlightSettings, taillightSettings];
         var menu = _initializedLights > 1
             ? new Settings.LightsMenu(self, menuContext)
-            : new Settings.LightMenu(headlightData[0].type, self, menuContext);
+            : new Settings.LightMenu(getLightData(null)[0].type, self, menuContext);
 
         return [menu, new Settings.MenuDelegate(menu)];
     }
@@ -522,7 +527,7 @@ class BikeLightsView extends BaseView {
         }
 
         // Find which light was tapped
-        var lightData = getLightData((_fieldWidth / 2) > location[0] ? 0 : 2, _initializedLights);
+        var lightData = getLightData(_initializedLights == 1 ? null : (_fieldWidth / 2) > location[0] ? 0 : 2);
 
         if (getLightBatteryStatus(lightData) > 5) {
             return false; // Battery is disconnected
@@ -561,6 +566,12 @@ class BikeLightsView extends BaseView {
 
         setLightAndControlMode(lightData, lightType, newMode, newControlMode);
         return true;
+    }
+
+    function getLightData(lightType) {
+        return lightType == null
+            ? headlightData[0] != null ? headlightData : taillightData
+            : lightType == 0 ? headlightData : taillightData;
     }
 
     protected function getPropertyValue(key) {
@@ -646,16 +657,14 @@ class BikeLightsView extends BaseView {
                 lightMode = 0; /* LIGHT_MODE_OFF */
             }
 
-            var lightData = getLightData(lightType, totalLights);
+            var lightData = getLightData(lightType);
             if (firstTime && lightData[0] != null) {
                 errorCode = 2;
                 break;
             }
 
-            // Store fit field always on the correct light data in order avoid creating two taillight_mode fit fields
-            var fitData = getLightData(lightType, null);
-            if (recordLightModes && fitData[6] == null) {
-                fitData[6] = createField(
+            if (recordLightModes && lightData[6] == null) {
+                lightData[6] = createField(
                     lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? "headlight_mode" : "taillight_mode",
                     lightType, // Id
                     1 /*DATA_TYPE_SINT8 */,
@@ -786,6 +795,10 @@ class BikeLightsView extends BaseView {
     protected function onExternalLightModeChange(lightData, mode) {
         //System.println("onExternalLightModeChange mode=" + mode + " lightType=" + lightData[0].type  + " timer=" + System.getTimer());
         var controlMode = lightData[4];
+        if (controlMode == 0 /* SMART */ && lightData[11] == true /* Force smart mode */) {
+            return;
+        }
+
         var lightType = lightData[0].type;
         setLightProperty("PCM", lightType, controlMode);
         setLightAndControlMode(lightData, lightType, mode, controlMode != 2 ? 2 /* MANUAL */ : null);
@@ -842,16 +855,14 @@ class BikeLightsView extends BaseView {
             return false;
         }
 
-        var lightType = headlightData[0].type;
-        if (headlightSettings == null && lightType == 0 /* LIGHT_TYPE_HEADLIGHT */) {
-            headlightSettings = getDefaultLightSettings(headlightData[0]);
+        var light = headlightData[0];
+        if (light != null && headlightSettings == null) {
+            headlightSettings = getDefaultLightSettings(light);
         }
 
-        if (taillightSettings == null) {
-            var lightData = _initializedLights > 1 ? taillightData
-                : lightType == 2 ? headlightData
-                : null;
-            taillightSettings = lightData != null ? getDefaultLightSettings(lightData[0]) : null;
+        light = taillightData[0];
+        if (light != null && taillightSettings == null) {
+            taillightSettings = getDefaultLightSettings(light);
         }
 
         _settingsInitialized = true;
@@ -983,15 +994,15 @@ class BikeLightsView extends BaseView {
     }
 
     private function updateLightTextAndMode(lightData, mode) {
-        if (lightData[2] == mode) {
+        var light = lightData[0];
+        if (light == null || lightData[2] == mode) {
             return false;
         }
 
-        var lightType = lightData[0].type;
+        var lightType = light.type;
         lightData[1] = getLightText(lightType, mode, lightData[3]);
         lightData[2] = mode;
-        var fitData = getLightData(lightType, null);
-        var fitField = fitData[6];
+        var fitField = lightData[6];
         if (fitField != null) {
             fitField.setData(mode);
         }
@@ -1019,38 +1030,40 @@ class BikeLightsView extends BaseView {
         return data;
     }
 
-    (:noLightButtons :lowMemory)
-    private function setupLightButtons(configuration) {
-    }
-
+    // NOTE: has operator requires the symbol to be public
     (:noLightButtons :highMemory)
-    private function setupLightButtons(configuration) {
-        _individualNetwork = configuration[7];
-        if (_individualNetwork != null /* Is enabled */ || _lightNetwork instanceof AntLightNetwork.IndividualLightNetwork) {
-            recreateLightNetwork();
-        }
+    function setupLightButtons(configuration) {
+        setupHighMemoryConfiguration(configuration);
     }
 
     (:touchScreen)
-    private function setupLightButtons(configuration) {
+    function setupLightButtons(configuration) {
         _controlModeOnly = getPropertyValue("CMO");
         _panelInitialized = false;
         _headlightPanelSettings = configuration[5];
         _taillightPanelSettings = configuration[6];
+        setupHighMemoryConfiguration(configuration);
+    }
+
+    (:settings)
+    function setupLightButtons(configuration) {
+        _settingsInitialized = false;
+        headlightSettings = configuration[5];
+        taillightSettings = configuration[6];
+        setupHighMemoryConfiguration(configuration);
+    }
+
+    (:highMemory)
+    private function setupHighMemoryConfiguration(configuration) {
         _individualNetwork = configuration[7];
         if (_individualNetwork != null /* Is enabled */ || _lightNetwork instanceof AntLightNetwork.IndividualLightNetwork) {
             recreateLightNetwork();
         }
-    }
 
-    (:settings)
-    private function setupLightButtons(configuration) {
-        _settingsInitialized = false;
-        headlightSettings = configuration[5];
-        taillightSettings = configuration[6];
-        _individualNetwork = configuration[7];
-        if (_individualNetwork != null /* Is enabled */ || _lightNetwork instanceof AntLightNetwork.IndividualLightNetwork) {
-            recreateLightNetwork();
+        var forceSmartMode = configuration[8];
+        if (forceSmartMode != null) {
+            headlightData[11] = forceSmartMode[0] == 1;
+            taillightData[11] = forceSmartMode[1] == 1;
         }
     }
 
@@ -1073,7 +1086,7 @@ class BikeLightsView extends BaseView {
     (:nonTouchScreen)
     private function draw(dc, width, height, fgColor, bgColor) {
         if (_initializedLights == 1) {
-            drawLight(headlightData, 2, dc, width, fgColor, bgColor);
+            drawLight(getLightData(null), 2, dc, width, fgColor, bgColor);
             return;
         }
 
@@ -1093,7 +1106,7 @@ class BikeLightsView extends BaseView {
         }
 
         if (_initializedLights == 1) {
-            drawLight(headlightData, 2, dc, width, fgColor, bgColor);
+            drawLight(getLightData(null), 2, dc, width, fgColor, bgColor);
             return;
         }
 
@@ -1118,7 +1131,8 @@ class BikeLightsView extends BaseView {
 
         dc.setPenWidth(2);
         if (_initializedLights == 1) {
-            drawLightPanel(dc, headlightData, headlightData[0].type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightPanel : _taillightPanel, width, height, fgColor, bgColor);
+            var lightData = getLightData(null);
+            drawLightPanel(dc, lightData, lightData[0].type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightPanel : _taillightPanel, width, height, fgColor, bgColor);
             return;
         }
 
@@ -1155,7 +1169,7 @@ class BikeLightsView extends BaseView {
     (:touchScreen)
     private function initializeLightPanels(dc, width, height) {
         if (_initializedLights == 1) {
-            initializeLightPanel(dc, headlightData, 2, width, height);
+            initializeLightPanel(dc, getLightData(null), 2, width, height);
         } else {
             initializeLightPanel(dc, headlightData, 1, width, height);
             initializeLightPanel(dc, taillightData, 3, width, height);
@@ -1311,10 +1325,6 @@ class BikeLightsView extends BaseView {
         }
 
         drawBattery(dc, fgColor, panelData[4], panelData[5], batteryStatus);
-    }
-
-    protected function getLightData(lightType, totalLights) {
-        return lightType == 0 || totalLights == 1 ? headlightData : taillightData;
     }
 
     (:lightButtons)
@@ -1674,7 +1684,7 @@ class BikeLightsView extends BaseView {
     (:noLightButtons :highMemory)
     private function parseConfiguration(value) {
         if (value == null || value.length() == 0) {
-            return new [8];
+            return new [9];
         }
 
         var filterResult = [0 /* next index */, 0 /* operator type */];
@@ -1687,14 +1697,15 @@ class BikeLightsView extends BaseView {
             parseFilters(chars, filterResult[0] + 1, true, filterResult),     // Taillight filters
             null,                                                             // Headlight panel/settings buttons (will be always empty)
             null,                                                             // Taillight panel/settings buttons (will be always empty)
-            parseIndividualNetwork(chars, filterResult[0] + 3, filterResult)  // Individual network settings
+            parseIndividualNetwork(chars, filterResult[0] + 3, filterResult), // Individual network settings
+            parseForceSmartMode(chars, filterResult[0] + 1, filterResult)     // Force smart mode
         ];
     }
 
     (:lightButtons)
     private function parseConfiguration(value) {
         if (value == null || value.length() == 0) {
-            return new [8];
+            return new [9];
         }
 
         var filterResult = [0 /* next index */, 0 /* operator type */];
@@ -1707,7 +1718,8 @@ class BikeLightsView extends BaseView {
             parseFilters(chars, filterResult[0] + 1, true, filterResult),     // Taillight filters
             parseLightButtons(chars, filterResult[0] + 1, filterResult),      // Headlight panel/settings buttons
             parseLightButtons(chars, filterResult[0] + 1, filterResult),      // Taillight panel/settings buttons
-            parseIndividualNetwork(chars, filterResult[0] + 1, filterResult)  // Individual network settings
+            parseIndividualNetwork(chars, filterResult[0] + 1, filterResult), // Individual network settings
+            parseForceSmartMode(chars, filterResult[0] + 1, filterResult)     // Force smart mode
         ];
     }
 
@@ -1720,6 +1732,19 @@ class BikeLightsView extends BaseView {
         return [
             parse(1 /* NUMBER */, chars, filterResult[0] + 1, filterResult), // Headlight device number
             parse(1 /* NUMBER */, chars, filterResult[0] + 1, filterResult)  // Taillight device number
+        ];
+    }
+
+    (:highMemory)
+    private function parseForceSmartMode(chars, i, filterResult) {
+        var headlightForceSmartMode = parse(1 /* NUMBER */, chars, i, filterResult);
+        if (headlightForceSmartMode == null) {
+            return null;
+        }
+
+        return [
+            headlightForceSmartMode, // Headlight force smart mode
+            parse(1 /* NUMBER */, chars, filterResult[0] + 1, filterResult)  // Taillight force smart mode
         ];
     }
 
