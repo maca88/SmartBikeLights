@@ -447,6 +447,20 @@ export const taillightList = [
     }
   },
   {
+    id: 8,
+    name: 'Garmin Varia RTL516',
+    modes: garminVariaRtl511,
+    individualNetworkOnly: false,
+    lightModes: [0, 4096], // 4096
+    defaultLightPanel: {
+      shortName: 'Varia 516',
+      buttonGroups: [
+        [controlMode, garminVariaRtl511[0]],
+        [garminVariaRtl511[1]]
+      ]
+    }
+  },
+  {
     id: 5,
     name: 'See.Sense ICON2',
     modes: seeSenseIcon2,
