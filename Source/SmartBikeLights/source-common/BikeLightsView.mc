@@ -1725,7 +1725,12 @@ class BikeLightsView extends BaseView {
 
     (:highMemory)
     private function parseIndividualNetwork(chars, i, filterResult) {
-        if (parse(1 /* NUMBER */, chars, i, filterResult) != 1) {
+        var enabled = parse(1 /* NUMBER */, chars, i, filterResult);
+        if (enabled == null) { // Old configuration
+            filterResult[0] = filterResult[0] - 1; // Avoid parseForceSmartMode from parsing the next value
+            return null;
+        } else if (enabled != 1) { // 0::
+            filterResult[0] = filterResult[0] + 2;
             return null;
         }
 
