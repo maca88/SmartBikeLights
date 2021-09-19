@@ -280,6 +280,26 @@ export const headlightList = [
     }
   },
   {
+    id: 8,
+    name: 'See.Sense ACE Front',
+    modes: seeSenseBeam,
+    individualNetworkOnly: true,
+    lightModes: [0, 73605649], // 73605649
+    defaultLightPanel: {
+      shortName: 'ACE F',
+      buttonGroups: [
+        [controlMode, seeSenseBeam[0]],
+        [seeSenseBeam[1]],
+        [seeSenseBeam[2]],
+        [seeSenseBeam[3]],
+        [seeSenseBeam[4]],
+        [seeSenseBeam[5]],
+        [seeSenseBeam[6]],
+        [seeSenseBeam[7]]
+      ]
+    }
+  },
+  {
     id: 6,
     name: 'See.Sense BEAM/BEAM+',
     modes: seeSenseBeam,
@@ -482,6 +502,26 @@ export const taillightList = [
       buttonGroups: [
         [controlMode, garminVariaRtl511[0]],
         [garminVariaRtl511[1]]
+      ]
+    }
+  },
+  {
+    id: 9,
+    name: 'See.Sense ACE Rear',
+    modes: seeSenseIcon2,
+    individualNetworkOnly: true,
+    lightModes: [0, 73605649], // 73605649
+    defaultLightPanel: {
+      shortName: 'ACE R',
+      buttonGroups: [
+        [controlMode, seeSenseIcon2[0]],
+        [seeSenseIcon2[1]],
+        [seeSenseIcon2[2]],
+        [seeSenseIcon2[3]],
+        [seeSenseIcon2[4]],
+        [seeSenseIcon2[5]],
+        [seeSenseIcon2[6]],
+        [seeSenseIcon2[7]]
       ]
     }
   },
