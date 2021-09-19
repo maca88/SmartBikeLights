@@ -157,6 +157,14 @@ const seeSenseBeam = [
   { id: 7, name: 'Day Flash' }
 ];
 
+const giantReconHl1800 = [
+  { id: 0, name: 'Off' },
+  { id: 2, name: 'High' },
+  { id: 3, name: 'Medium' },
+  { id: 4, name: 'Low' },
+  { id: 8, name: 'Day Flash' }
+];
+
 export const controlMode = {id: -1, name: "Control mode"};
 
 export const headlightList = [
@@ -251,6 +259,23 @@ export const headlightList = [
         [garminVariaUt800[3]],
         [garminVariaUt800[4]],
         [garminVariaUt800[5]]
+      ]
+    }
+  },
+  {
+    id: 7,
+    name: 'Giant Recon HL1800',
+    modes: giantReconHl1800,
+    individualNetworkOnly: false,
+    lightModes: [0, 1073754640], // 1073754640
+    defaultLightPanel: {
+      shortName: 'HL 1800',
+      buttonGroups: [
+        [controlMode, giantReconHl1800[0]],
+        [giantReconHl1800[1]],
+        [giantReconHl1800[2]],
+        [giantReconHl1800[3]],
+        [giantReconHl1800[4]]
       ]
     }
   },

@@ -90,6 +90,7 @@ The initial control mode will be determined based on the configuration from the 
 - Garmin Varia RTL516
 - Garmin Varia HL500
 - Garmin Varia UT800
+- Giant Recon HL1800
 - Cycliq Fly12 CE (supported only by using Individual Light Network)
 - Cycliq Fly6 CE (supported only by using Individual Light Network)
 - See.Sense BEAM/BEAM+ (supported only by using Individual Light Network)
