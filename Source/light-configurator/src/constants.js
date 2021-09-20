@@ -344,6 +344,11 @@ const garminVariaRtl500 = [
   { id: 7, name: 'Flash' }
 ];
 
+const garminVariaRtl501 = [
+  { id: 0, name: 'Off' },
+  { id: 1, name: 'Solid' }
+];
+
 const garminVariaRtl510 = [
   { id: 0, name: 'Off' },
   { id: 4, name: 'Solid' },
@@ -441,6 +446,20 @@ export const taillightList = [
         [controlMode, garminVariaRtl500[0]],
         [garminVariaRtl500[1]],
         [garminVariaRtl500[2]]
+      ]
+    }
+  },
+  {
+    id: 10,
+    name: 'Garmin Varia RTL501',
+    modes: garminVariaRtl501,
+    individualNetworkOnly: false,
+    lightModes: [0, 1], // 1
+    defaultLightPanel: {
+      shortName: 'Varia 501',
+      buttonGroups: [
+        [controlMode, garminVariaRtl501[0]],
+        [garminVariaRtl501[1]]
       ]
     }
   },

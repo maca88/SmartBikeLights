@@ -84,6 +84,7 @@ The initial control mode will be determined based on the configuration from the 
 - Bontrager Ion 200 RT
 - Bontrager Flare RT
 - Garmin Varia RTL500
+- Garmin Varia RTL501
 - Garmin Varia RTL510
 - Garmin Varia RTL511
 - Garmin Varia RTL515
