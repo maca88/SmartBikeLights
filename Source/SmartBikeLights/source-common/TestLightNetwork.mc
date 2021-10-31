@@ -43,8 +43,8 @@ module TestNetwork {
             LightNetwork.initialize(listener);
             _listener = listener;
             _lights = [
-                new TestBikeLight(0, 0 /* LIGHT_TYPE_HEADLIGHT */, [0, 1, 2, 5, 63, 62], listener, 81 /* Bontrager */, 6 /* ION PRO RT */),
-                new TestBikeLight(1, 2 /* LIGHT_TYPE_TAILLIGHT */, [0, 1, 5, 7, 8, 63], listener, 81 /* Bontrager */, 1 /* Flare RT */)
+                new TestBikeLight(0, 0 /* LIGHT_TYPE_HEADLIGHT */, [0, 1, 2, 5, 63, 62], listener, 81 /* Bontrager */, 6 /* ION PRO RT */, 3288461872),
+                new TestBikeLight(1, 2 /* LIGHT_TYPE_TAILLIGHT */, [0, 1, 5, 7, 8, 63], listener, 81 /* Bontrager */, 1 /* Flare RT */, 2368328293)
             ];
             lastUpdate = System.getTimer();
         }
@@ -81,6 +81,10 @@ module TestNetwork {
 
             return null;
         }
+        
+        function getProductInfo(identifier) {
+            return _lights[identifier].productInfo;
+        }
 
         function getManufacturerInfo(identifier) {
             return _lights[identifier].manufacturerInfo;
@@ -99,8 +103,9 @@ module TestNetwork {
         private var _listener;
 
         public var manufacturerInfo = new AntPlus.ManufacturerInfo();
+        public var productInfo = new AntPlus.ProductInfo();
 
-        function initialize(id, lightType, modes, listener, manufacturerId, modelNumber) {
+        function initialize(id, lightType, modes, listener, manufacturerId, modelNumber, serial) {
             BikeLight.initialize();
             identifier = id;
             type = lightType;
@@ -110,6 +115,7 @@ module TestNetwork {
             _batteryStatus.batteryStatus = 1;
             manufacturerInfo.manufacturerId = manufacturerId;
             manufacturerInfo.modelNumber = modelNumber;
+            productInfo.serial = serial;
         }
 
         function getCapableModes() {
@@ -125,6 +131,8 @@ module TestNetwork {
             if (updateBattery == 0) {
                 return _batteryStatus;
             }
+            
+            return _batteryStatus;
 
             updateBattery--;
             _batteryCounter++;

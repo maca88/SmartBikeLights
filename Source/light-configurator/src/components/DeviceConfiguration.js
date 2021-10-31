@@ -84,6 +84,8 @@ export default observer(({ configuration, device, deviceList }) => {
           setLightSettings={configuration.setHeadlightSettings}
           deviceNumber={configuration.headlightDeviceNumber}
           setDeviceNumber={configuration.setHeadlightDeviceNumber}
+          serialNumber={configuration.headlightSerialNumber}
+          setSerialNumber={configuration.setHeadlightSerialNumber}
           forceSmartMode={configuration.headlightForceSmartMode}
           setForceSmartMode={configuration.setHeadlightForceSmartMode}
         />
@@ -107,6 +109,8 @@ export default observer(({ configuration, device, deviceList }) => {
           setLightSettings={configuration.setTaillightSettings}
           deviceNumber={configuration.taillightDeviceNumber}
           setDeviceNumber={configuration.setTaillightDeviceNumber}
+          serialNumber={configuration.taillightSerialNumber}
+          setSerialNumber={configuration.setTaillightSerialNumber}
           forceSmartMode={configuration.taillightForceSmartMode}
           setForceSmartMode={configuration.setTaillightForceSmartMode}
         />

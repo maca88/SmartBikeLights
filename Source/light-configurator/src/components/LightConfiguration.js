@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
 export default observer(({
   className, headerClassName, device, useIndividualNetwork, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
   setLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel, lightSettings, setLightSettings, deviceNumber, setDeviceNumber,
-  forceSmartMode, setForceSmartMode }) => {
+  serialNumber, setSerialNumber, forceSmartMode, setForceSmartMode }) => {
   const classes = useStyles();
   const [modes, setModes] = React.useState(getModes(light, lightList));
   const setValue = (value) => {
@@ -88,7 +88,9 @@ export default observer(({
             : null
           }
           {
-            useIndividualNetwork && light && device?.highMemory
+            !light
+            ? null
+            : useIndividualNetwork && device?.highMemory
             ?
             <Grid item xs={12} sm={4}>
               <AppTextInput required label="Device number" type="number"
@@ -109,7 +111,25 @@ export default observer(({
                 }
               />
             </Grid>
-            : null
+            : 
+            <Grid item xs={12} sm={4}>
+            <AppTextInput label="Serial number" type="number"
+              setter={setSerialNumber} 
+              value={serialNumber}
+              help={
+                <React.Fragment>
+                  <Typography color="textPrimary">
+                    The light serial number which required only when multiple lights of the same type are paired (e.g. two headlights). To obtain the serial number:
+                  </Typography>
+                  <ol>
+                    <li><Typography>Open the Garmin menu and go to Sensors -&gt; Lights</Typography></li>
+                    <li><Typography>Select the desired light from the list and open About</Typography></li>
+                    <li><Typography>The serial should be displayed with the label <b>Serial #</b></Typography></li>
+                  </ol>
+                </React.Fragment>
+              }
+            />
+          </Grid>
           }
           {
             setForceSmartMode && light && device?.highMemory

@@ -94,6 +94,17 @@ module AntLightNetwork {
             return !lightController.searching ? lightController.batteryStatus : null;
         }
 
+        function getProductInfo(identifier) {
+            var lightController = _lightControllers != null && identifier < _lightControllers.size()
+                ? _lightControllers[identifier]
+                : null;
+            if (lightController == null) {
+                return null;
+            }
+
+            return !lightController.searching ? lightController.productInfo : null;
+        }
+
         function update() {
             if (_lightControllers == null) {
                 return null;
@@ -143,6 +154,7 @@ module AntLightNetwork {
         private var _deviceNumber;
         private var _transmissionType;
 
+        public var productInfo;
         public var state = 0 /* LIGHT_NETWORK_STATE_NOT_FORMED */;
         public var searching = true;
         public var errorCode;
@@ -158,6 +170,8 @@ module AntLightNetwork {
             light = new BikeLight(self);
             light.identifier = identifier;
             batteryStatus = new AntPlus.BatteryStatus();
+            productInfo = new AntPlus.ProductInfo();
+            productInfo.serial = _deviceNumber;
             open(false);
         }
 

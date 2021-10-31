@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+import bigint from 'big-integer';
 import FilterGroup from './FilterGroup';
 import Filter from './Filter';
 import Polygon from './Polygon';
@@ -40,6 +41,12 @@ const parseNumber = (chars, index, resultIndex) => {
   return stringValue === null ? null
     : isFloat ? parseFloat(stringValue)
     : parseInt(stringValue);
+};
+
+const parseLong = (chars, index, resultIndex) => {
+  var array = parseNumberArray(chars, index, resultIndex);
+  console.log(bigint(array[0]).shiftLeft(31).or(bigint(array[1])));
+  return !array ? null : bigint(array[0]).shiftLeft(31).or(bigint(array[1]));
 };
 
 const parseNumberArray = (chars, index, resultIndex) => {
@@ -317,6 +324,8 @@ export default class Configuration {
   useIndividualNetwork = false;
   headlightDeviceNumber = null;
   taillightDeviceNumber = null;
+  headlightSerialNumber = null;
+  taillightSerialNumber = null;
 
   constructor() {
     makeAutoObservable(this, {
@@ -333,6 +342,9 @@ export default class Configuration {
     configuration.globalFilterGroups = parseToFilterGroups(value, 0, false, filterResult);
 
     configuration.headlightModes = parseNumberArray(value, filterResult[0] + 1, filterResult);
+    configuration.headlightSerialNumber = value[filterResult[0]] === ':'
+      ? parseLong(value, filterResult[0] + 1, filterResult)
+      : null;
     let filterGroups = parseToFilterGroups(value, filterResult[0] + 1, true, filterResult);
     let defaultGroup;
     if (filterGroups.length) {
@@ -343,6 +355,9 @@ export default class Configuration {
     configuration.headlightFilterGroups = filterGroups;
 
     configuration.taillightModes = parseNumberArray(value, filterResult[0] + 1, filterResult);
+    configuration.taillightSerialNumber = value[filterResult[0]] === ':'
+      ? parseLong(value, filterResult[0] + 1, filterResult)
+      : null;
     filterGroups = parseToFilterGroups(value, filterResult[0] + 1, true, filterResult);
     if (filterGroups.length) {
       defaultGroup = filterGroups.splice(filterGroups.length - 1, 1)[0];
@@ -448,9 +463,9 @@ export default class Configuration {
 
     const device = deviceList.find(l => l.id === this.device);
     let config = `${this.getFilterGroupsConfigurationValue(this.globalFilterGroups, null)}`;
-    config += `#${this.getNumberArray(this.headlightModes)}`;
+    config += this.getLightInfo(this.headlightModes, this.headlightSerialNumber);
     config += `#${this.headlight === null ? '' : this.getFilterGroupsConfigurationValue(this.headlightFilterGroups, this.headlightDefaultMode)}`;
-    config += `#${this.getNumberArray(this.taillightModes)}`;
+    config += this.getLightInfo(this.taillightModes, this.taillightSerialNumber);
     config += `#${this.taillight === null ? '' : this.getFilterGroupsConfigurationValue(this.taillightFilterGroups, this.taillightDefaultMode)}`;
     config += `#${this.getLightPanelOrSettingsConfigurationValue(this.headlightPanel, this.headlightSettings, device)}`;
     config += `#${this.getLightPanelOrSettingsConfigurationValue(this.taillightPanel, this.taillightSettings, device)}`;
@@ -461,6 +476,16 @@ export default class Configuration {
     config += `#${(this.taillight === null ? '' : this.taillight)}`;
     config += `#${(this.units)}`;
     config += `#${(this.timeFormat)}`;
+
+    return config;
+  }
+
+  getLightInfo(lightModes, serialNumber) {
+    let config = `#${this.getNumberArray(lightModes)}`;
+    if (serialNumber && !this.useIndividualNetwork) {
+      var long = bigint(serialNumber);
+      config += `:${long.shiftRight(31)},${long.and(0x7FFFFFFF)}`;
+    }
 
     return config;
   }
@@ -635,6 +660,14 @@ export default class Configuration {
 
   setTaillightDeviceNumber = (value) => {
     this.taillightDeviceNumber = Number.isNaN(value) ? null : value;
+  }
+
+  setHeadlightSerialNumber = (value) => {
+    this.headlightSerialNumber = Number.isNaN(value) ? null : value;
+  }
+
+  setTaillightSerialNumber = (value) => {
+    this.taillightSerialNumber = Number.isNaN(value) ? null : value;
   }
 
   setTaillightForceSmartMode = (value) => {

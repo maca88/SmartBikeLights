@@ -139,8 +139,8 @@ Known limitations:
 The following errors can be displayed:
 - **Error 1:** A not supported light type is connected, only headlights and taillights are supported.
 - **Error 2:** Two or more lights of the same type are connected to the network, which is not supported.
-- **Error 3:** Configuration value is invalid.
-- **Error 4:** Light panel contains a light mode that the connected light does not support.
+- **Error 3:** Light panel contains a light mode that the connected light does not support.
+- **Error 4:** Configuration value is invalid.
 - **Error 5:** The device does not have enough free ANT channels to be used by the Individual Light Network. Try to disable some sensors from the Garmin Sensors menu.
 - **Error 6:** One of the ANT channels used by the Individual Light Network could not be opened. Make sure that the lights are removed/disabled from the Garmin Sensors menu.
 - **Error 7:** The light with the provided device number does not support the configured light type (headlight/taillight). Make sure that the "Device number" setting on the configured light is not of another light.

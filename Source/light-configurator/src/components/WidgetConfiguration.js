@@ -64,6 +64,8 @@ export default observer(() => {
             setLightSettings={configuration.setHeadlightSettings}
             deviceNumber={configuration.headlightDeviceNumber}
             setDeviceNumber={configuration.setHeadlightDeviceNumber}
+            serialNumber={configuration.headlightSerialNumber}
+            setSerialNumber={configuration.setHeadlightSerialNumber}
           />
           <LightConfiguration
             className={classes.card}
@@ -81,6 +83,8 @@ export default observer(() => {
             setLightSettings={configuration.setTaillightSettings}
             deviceNumber={configuration.taillightDeviceNumber}
             setDeviceNumber={configuration.setTaillightDeviceNumber}
+            serialNumber={configuration.taillightSerialNumber}
+            setSerialNumber={configuration.setTaillightSerialNumber}
           />
           <ConfigurationResult 
             className={classes.card}
