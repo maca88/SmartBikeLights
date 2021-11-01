@@ -17,8 +17,5 @@
         <setting propertyKey="@Properties.RL" title="@Strings.RL">
             <settingConfig type="boolean" />
         </setting>
-        <setting propertyKey="@Properties.LC" title="@Strings.LC">
-            <settingConfig type="alphaNumeric" maxLength="100000" />
-        </setting>
     </settings>
 </resources>

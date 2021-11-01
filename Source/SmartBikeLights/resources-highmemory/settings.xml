@@ -1,0 +1,20 @@
+<resources>
+    <settings>
+        <setting propertyKey="@Properties.CC" title="@Strings.CC">
+            <settingConfig type="list">
+                <listEntry value="1">@Strings.Primary</listEntry>
+                <listEntry value="2">@Strings.Secondary</listEntry>
+                <listEntry value="3">@Strings.Tertiary</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.LC" title="@Strings.LC">
+            <settingConfig type="alphaNumeric" maxLength="100000" />
+        </setting>
+        <setting propertyKey="@Properties.LC2" title="@Strings.LC2">
+            <settingConfig type="alphaNumeric" maxLength="100000" />
+        </setting>
+        <setting propertyKey="@Properties.LC3" title="@Strings.LC3">
+            <settingConfig type="alphaNumeric" maxLength="100000" />
+        </setting>
+    </settings>
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <settings>
+        <setting propertyKey="@Properties.LC" title="@Strings.LC">
+            <settingConfig type="alphaNumeric" maxLength="100000" />
+        </setting>
+    </settings>
+</resources>

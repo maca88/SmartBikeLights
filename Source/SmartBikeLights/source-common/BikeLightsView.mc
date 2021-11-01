@@ -160,7 +160,7 @@ class BikeLightsView extends BaseView {
             _globalFilters = null;
             hlData[12] = null; // Headlight filters
             tlData[12] = null; // Taillight filters
-            var configuration = parseConfiguration(getPropertyValue("LC"));
+            var configuration = parseConfiguration();
             _globalFilters = configuration[0];
             hlData[12] = configuration[3]; // Headlight filters
             tlData[12] = configuration[6]; // Taillight filters
@@ -1653,7 +1653,8 @@ class BikeLightsView extends BaseView {
 
     // <GlobalFilters>#<HeadlightModes>:<HeadlightSerialNumber>#<HeadlightFilters>#<TaillightModes>:<TaillightSerialNumber>#<TaillightFilters>
     (:lowMemory)
-    private function parseConfiguration(value) {
+    private function parseConfiguration() {
+        var value = getPropertyValue("LC");
         if (value == null || value.length() == 0) {
             return new [7];
         }
@@ -1672,7 +1673,12 @@ class BikeLightsView extends BaseView {
     }
 
     (:highMemory)
-    private function parseConfiguration(value) {
+    private function parseConfiguration() {
+        var currentConfig = getPropertyValue("CC");
+        var configKey = currentConfig != null && currentConfig > 1
+            ? "LC" + currentConfig
+            : "LC";
+        var value = getPropertyValue(configKey);
         if (value == null || value.length() == 0) {
             return new [11];
         }

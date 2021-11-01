@@ -1,0 +1,8 @@
+<resources>
+    <properties>
+        <!-- Configuration -->
+        <property id="CC" type="number">1</property>
+        <property id="LC2" type="string"></property>
+        <property id="LC3" type="string"></property>
+    </properties>
+</resources>
