@@ -1,3 +1,4 @@
 bin/
 .metadata/
 Build/
+/Source/light-configurator/*.log

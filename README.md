@@ -16,6 +16,7 @@ Smart Bike Lights is a [data field](https://developer.garmin.com/connect-iq/conn
 - Switching modes by holding the up/menu button (only for devices without touch screen that have CIQ 3.2 and with more than 32KB memory)
 - Has an alternative light network implementation that can be used for lights with partial ANT+ support (only for devices with more than 32KB memory)
 - Support multiple light configurations (only for devices with more than 32KB memory)
+- Support controlling multiple headlights/taillights at once (only for devices with more than 32KB memory)
 
 ## How to use
 

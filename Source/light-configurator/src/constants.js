@@ -89,21 +89,21 @@ export const vehicleThreatList = [
 ];
 
 const lightModes = [
-  { id: 0, name: 'Off' },
-  { id: 1, name: 'Steady beam 81-100% intensity' },
-  { id: 2, name: 'Steady beam 61-80% intensity' },
-  { id: 3, name: 'Steady beam 41-60% intensity' },
-  { id: 4, name: 'Steady beam 21-40% intensity' },
-  { id: 5, name: 'Steady beam 0-20% intensity' },
-  { id: 6, name: 'Slow flash mode' },
-  { id: 7, name: 'Fast flash mode' },
-  { id: 8, name: 'Randomly timed flash mode' },
-  { id: 9, name: 'Auto' },
-  { id: 59, name: 'Custom mode 1 (manufacturer-defined)' },
-  { id: 60, name: 'Custom mode 2 (manufacturer-defined)' },
-  { id: 61, name: 'Custom mode 3 (manufacturer-defined)' },
-  { id: 62, name: 'Custom mode 4 (manufacturer-defined)' },
-  { id: 63, name: 'Custom mode 5 (manufacturer-defined)' }
+  { id: 0, name: 'Off - 0' },
+  { id: 1, name: 'Steady beam 81-100% intensity - 1' },
+  { id: 2, name: 'Steady beam 61-80% intensity - 2' },
+  { id: 3, name: 'Steady beam 41-60% intensity - 3' },
+  { id: 4, name: 'Steady beam 21-40% intensity - 4' },
+  { id: 5, name: 'Steady beam 0-20% intensity - 5' },
+  { id: 6, name: 'Slow flash mode - 6' },
+  { id: 7, name: 'Fast flash mode - 7' },
+  { id: 8, name: 'Randomly timed flash mode - 8' },
+  { id: 9, name: 'Auto - 9' },
+  { id: 59, name: 'Custom mode 1 (manufacturer-defined) - 59' },
+  { id: 60, name: 'Custom mode 2 (manufacturer-defined) - 60' },
+  { id: 61, name: 'Custom mode 3 (manufacturer-defined) - 61' },
+  { id: 62, name: 'Custom mode 4 (manufacturer-defined) - 62' },
+  { id: 63, name: 'Custom mode 5 (manufacturer-defined) - 63' }
 ];
 
 const bontragerIonProRtModes = [

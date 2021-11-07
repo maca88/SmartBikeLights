@@ -445,6 +445,10 @@ class BikeLightsView extends BaseView {
         }
 
         var lightData = getLightData(lightType);
+        if (self has :tryUpdateMultiBikeLight) {
+            light = tryUpdateMultiBikeLight(lightData, light);
+        }
+
         var oldLight = lightData[0];
         if (oldLight == null || oldLight.identifier != light.identifier) {
             return;
@@ -570,6 +574,27 @@ class BikeLightsView extends BaseView {
             : lightType == 0 ? headlightData : taillightData;
     }
 
+    (:highMemory)
+    function tryUpdateMultiBikeLight(lightData, newLight) {
+        var oldLight = lightData[0];
+        if (oldLight == null || !(oldLight has :updateLight)) {
+            return newLight;
+        }
+
+        return oldLight.updateLight(newLight, lightData[7]);
+    }
+
+    (:highMemory)
+    function combineLights(lightData, light) {
+        var currentLight = lightData[0];
+        if (currentLight has :addLight) {
+            currentLight.addLight(light);
+            return currentLight;
+        }
+
+        return new MultiBikeLight(currentLight, light);
+    }
+
     protected function getPropertyValue(key) {
         return Properties.getValue(key);
     }
@@ -652,8 +677,13 @@ class BikeLightsView extends BaseView {
             }
 
             if (lightData[0] != null) {
-                errorCode = 2;
-                break;
+                if (self has :combineLights) {
+                    light = combineLights(lightData, light);
+                    initializedLights--;
+                } else {
+                    errorCode = 2;
+                    break;
+                }
             }
 
             var filters = lightData[12];
@@ -776,8 +806,23 @@ class BikeLightsView extends BaseView {
         lightData[0].setMode(mode);
     }
 
+    (:lowMemory)
     protected function getLightBatteryStatus(lightData) {
         var status = _lightNetwork.getBatteryStatus(lightData[0].identifier);
+        if (status == null) { /* Disconnected */
+            updateLightTextAndMode(lightData, -1);
+            return 6;
+        }
+
+        return status.batteryStatus;
+    }
+
+    (:highMemory)
+    protected function getLightBatteryStatus(lightData) {
+        var light = lightData[0];
+        var status = light has :getBatteryStatus
+            ? light.getBatteryStatus(_lightNetwork)
+            : _lightNetwork.getBatteryStatus(light.identifier);
         if (status == null) { /* Disconnected */
             updateLightTextAndMode(lightData, -1);
             return 6;
