@@ -64,7 +64,7 @@ const parseTitle = (chars, index, resultIndex) => {
   let i;
   for (i = index; i < chars.length; i++) {
     const char = chars[i];
-    if (char === ':' || char === '#' || char === '|') {
+    if (char === ':' || char === '#' || char === '|' || char === '!') {
         break;
     }
 
@@ -150,7 +150,7 @@ const parseLightPanel = (chars, i, filterResult) => {
         break;
     }
 
-    if (char === '|') {
+    if (char === '|' || char === '!') {
         const lightButtonGroup = new LightButtonGroup();
         const numberOfButtons = parseNumber(chars, filterResult[0] + 1, filterResult); // Number of buttons in the group
         for (let j = 0; j < numberOfButtons; j++) {
@@ -201,7 +201,7 @@ const parseFilters = (chars, i, lightMode, filterResult) => {
       break;
     }
 
-    if (charNumber === 124 /* | */) {
+    if (charNumber === 124 /* | */ || charNumber === 33 /* ! */) {
       data[dataIndex] = parseTitle(chars, i + 1, filterResult); // Group title
       data[dataIndex + 1] = parseNumber(chars, filterResult[0] + 1, filterResult); // Number of filters in the group
       if (lightMode) {
@@ -548,7 +548,7 @@ export default class Configuration {
     let buttons = '';
     for (let i = 0; i < lightSettings.buttons.length; i++) {
       const button = lightSettings.buttons[i];
-      buttons += `|${button.name}:${button.mode}`;
+      buttons += `!${button.name}:${button.mode}`;
     }
 
     return `${totalButtons}:${lightName}${buttons}`;
@@ -561,7 +561,7 @@ export default class Configuration {
     for (let i = 0; i < lightPanel.buttonGroups.length; i++) {
       const buttons = lightPanel.buttonGroups[i].buttons;
       totalButtons += buttons.length;
-      buttonGroups += `|${buttons.length}`;
+      buttonGroups += `!${buttons.length}`;
       for (let j = 0; j < buttons.length; j++) {
         let button = buttons[j];
         buttonGroups += `,${(button.mode < 0 ? '' : button.name)}:${button.mode}`;
@@ -583,12 +583,12 @@ export default class Configuration {
     if (defaultMode !== null) {
       totalFilters++;
       totalGroups++;
-      defaultGroupConfig = `|${getDefaultGroupConfigurationValue(defaultMode)}`;
+      defaultGroupConfig = `!${getDefaultGroupConfigurationValue(defaultMode)}`;
     }
 
     filterGroups.forEach(g => {
       totalFilters += g.filters.length;
-      config += `|${g.getConfigurationValue()}`;
+      config += `!${g.getConfigurationValue()}`;
     });
 
     return `${totalFilters},${totalGroups}${config}${defaultGroupConfig}`;

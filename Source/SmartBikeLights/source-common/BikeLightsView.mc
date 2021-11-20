@@ -1833,7 +1833,7 @@ class BikeLightsView extends BaseView {
                 break;
             }
 
-            if (char == '|') {
+            if (char == '|' || char == '!') {
                 var numberOfButtons = parse(1 /* NUMBER */, chars, null, filterResult); // Number of buttons in the group
                 data[dataIndex] = numberOfButtons;
                 dataIndex++;
@@ -1879,7 +1879,7 @@ class BikeLightsView extends BaseView {
                 break;
             }
 
-            if (charNumber == 124 /* | */) {
+            if (charNumber == 124 /* | */ || charNumber == 33 /* ! */) {
                 data[dataIndex] = parse(0 /* STRING */, chars, i + 1, filterResult); // Group title
                 data[dataIndex + 1] = parse(1 /* NUMBER */, chars, null, filterResult); // Number of filters in the group
                 if (lightMode) {
@@ -2012,7 +2012,7 @@ class BikeLightsView extends BaseView {
                 isFloat = true;
             }
 
-            if (char == ':' || char == '|' || (type == 1 /* NUMBER */ && (char == '/' || char > 57 /* 9 */ || char < 45 /* - */))) {
+            if (char == ':' || char == '|' || char == '!' || (type == 1 /* NUMBER */ && (char == '/' || char > 57 /* 9 */ || char < 45 /* - */))) {
                 break;
             }
 
