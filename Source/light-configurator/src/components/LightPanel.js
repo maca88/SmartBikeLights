@@ -1,13 +1,11 @@
 import React, { useEffect, useCallback } from 'react';
-import AddIcon from '@material-ui/icons/Add';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@mui/material/Grid';
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import LightButtonGroup from '../models/LightButtonGroup';
 import LightButton from '../models/LightButton';
 import ButtonGroup from './ButtonGroup';
+import AddButton from './AddButton';
 import { controlMode } from '../constants';
 import AppTextInput from '../inputs/AppTextInput';
 
@@ -15,14 +13,7 @@ const getModes = (lightModes) => {
   return [controlMode].concat(lightModes);
 };
 
-const useStyles = makeStyles((theme) => ({
-  button: {
-    margin: theme.spacing(1)
-  }
-}));
-
 export default observer(({ lightPanel, lightModes, }) => {
-  const classes = useStyles();
   const [modes, setModes] = React.useState(getModes(lightModes));
   const addButtonGroup = action(() => {
     const group = new LightButtonGroup();
@@ -51,7 +42,7 @@ export default observer(({ lightPanel, lightModes, }) => {
   }, [lightModes]);
 
   return (
-    <React.Fragment>
+    <div>
       <Grid container spacing={3}>
         <Grid item xs={6} sm={4}>
           <AppTextInput label="Short light name" setter={lightPanel.setLightName} value={lightPanel.lightName} />
@@ -70,15 +61,9 @@ export default observer(({ lightPanel, lightModes, }) => {
           />
         ))}
       </div>
-      <Button
-        variant="contained"
-        color="secondary"
-        className={classes.button}
-        startIcon={<AddIcon />}
-        onClick={() => addButtonGroup()}
-      >
+      <AddButton onClick={() => addButtonGroup()}>
         Add Button Group
-      </Button>
-    </React.Fragment>
-    );
+      </AddButton>
+    </div>
+  );
 });

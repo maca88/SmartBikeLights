@@ -1,22 +1,15 @@
 import { useEffect } from 'react';
 import { nanoid } from 'nanoid';
-import TextField from '@material-ui/core/TextField';
-import MenuItem from '@material-ui/core/MenuItem';
-import Close from "@material-ui/icons/Close";
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import Close from "@mui/icons-material/Close";
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import { makeStyles } from '@material-ui/core/styles';
+import IconButton from '@mui/material/IconButton';
 import { observer } from "mobx-react-lite";
+import AppInputHelp from './AppInputHelp';
 
-const selectUseStyles = makeStyles((theme) => ({
-  input: {
-    width: '100%',
-  },
-}));
-
-export default observer(({ items, label, value, setter, required }) => {
+export default observer(({ items, label, value, setter, required, help }) => {
   const id = nanoid();
-  const classes = selectUseStyles();
   const handleChange = (event) => {
     const newValue = event.target.value;
     setter(!items.find(i => i.id === newValue) ? null : newValue);
@@ -35,13 +28,15 @@ export default observer(({ items, label, value, setter, required }) => {
     [items, value, setter]
   );
 
-  if (value === null) {
+  if (value === null || !items.find(i => i.id === value)) {
     value = '';
   }
 
   return (
     <TextField
-      className={classes.input}
+      sx={{
+        width: '100%'
+      }}
       id={id}
       select
       required={required}
@@ -58,10 +53,11 @@ export default observer(({ items, label, value, setter, required }) => {
             <IconButton
               style={{ marginRight: "1em", padding: '0' }}
               onClick={() => setter(null)}
-            >
+              size="large">
               <Close />
             </IconButton>
           </React.Fragment>
+          : help ? <AppInputHelp content={help} style={{ marginRight: "1em", padding: '0' }} />
           : null
         )
       }}

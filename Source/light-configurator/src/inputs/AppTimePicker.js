@@ -1,9 +1,11 @@
-import TimePicker from '@material-ui/lab/TimePicker';
-import TextField from '@material-ui/core/TextField';
+import TimePicker from '@mui/lab/TimePicker';
+import TextField from '@mui/material/TextField';
 import { observer } from 'mobx-react-lite';
+import { useContext } from 'react';
 import { AppContext } from '../AppContext';
 
 export default observer(({ label, value, setter }) => {
+  const context = useContext(AppContext);
   const handleChange = (newValue) => {
     setter(newValue);
   };
@@ -13,18 +15,14 @@ export default observer(({ label, value, setter }) => {
   }
 
   return (
-    <AppContext.Consumer>
-      {({timeFormat}) => (
-        <TimePicker
-          ampm={timeFormat === 1}
-          label={label}
-          value={value}
-          onChange={handleChange}
-          renderInput={(params) => (
-            <TextField {...params} margin="normal" variant="standard" />
-          )}
-        />
+    <TimePicker
+      ampm={context.configuration.timeFormat === 1}
+      label={label}
+      value={value}
+      onChange={handleChange}
+      renderInput={(params) => (
+        <TextField {...params} margin="normal" variant="standard" />
       )}
-    </AppContext.Consumer>
+    />
   );
 });

@@ -1,46 +1,46 @@
 import React from 'react';
+import { styled } from '@mui/material/styles';
 import { action } from 'mobx';
-import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@mui/material/Grid';
 import { observer } from 'mobx-react-lite';
 import { headlightList, taillightList, getDeviceLights } from '../constants';
 import { getDevice, deviceList } from '../widgetConstants';
 import AppSelect from '../inputs/AppSelect';
-import Configuration from '../models/Configuration';
 import LightConfiguration from './LightConfiguration';
 import ConfigurationResult from './ConfigurationResult';
 import IndividualLightNetwork from './IndividualLightNetwork';
 import ParseConfiguration from './ParseConfiguration';
 
-const useStyles = makeStyles((theme) => ({
-  cardHeader: {
+const Root = styled('div')(({ theme }) => ({
+  [`& .MuiCardHeader-root`]: {
     backgroundColor:
       theme.palette.mode === 'light'
         ? theme.palette.grey[200]
-        : theme.palette.grey[700],
+        : theme.palette.grey[700]
   },
-  card: {
+
+  [`& .MuiCardHeader-root .ElementWithHelp-root`]: {
+    justifyContent: 'center'
+  },
+
+  [`& .MuiCard-root`]: {
     marginTop: theme.spacing(2)
   }
 }));
 
-export default observer(() => {
-  const classes = useStyles();
-  const [configuration, setConfiguration] = React.useState(new Configuration());
-  const [device, setDevice] = React.useState(null);
-  const setNewDevice = action((device) => {
-    setDevice(getDevice(device));
-    configuration.setDevice(device);
+export default observer(({ configuration, setConfiguration }) => {
+  const device = getDevice(configuration.device);
+  const setNewDevice = action((newDevice) => {
+    configuration.setDevice(newDevice);
   });
   const setNewConfiguration = action((newConfiguration) => {
-    setDevice(getDevice(newConfiguration.device));
     setConfiguration(newConfiguration);
   });
 
   return (
-    <React.Fragment>
+    <Root>
       <ParseConfiguration setConfiguration={setNewConfiguration} deviceList={deviceList} />
-      <Grid container spacing={2} justify="center">
+      <Grid container spacing={2} justifyContent="center">
         <Grid item xs={12} sm={12}>
           <AppSelect required items={deviceList} label="Garmin device" setter={setNewDevice} value={configuration.device} />
         </Grid>
@@ -49,8 +49,6 @@ export default observer(() => {
       { device ? (
         <React.Fragment>
           <LightConfiguration
-            className={classes.card}
-            headerClassName={classes.cardHeader}
             useIndividualNetwork={configuration.useIndividualNetwork}
             device={device}
             lightType="Headlight"
@@ -68,8 +66,6 @@ export default observer(() => {
             setSerialNumber={configuration.setHeadlightSerialNumber}
           />
           <LightConfiguration
-            className={classes.card}
-            headerClassName={classes.cardHeader}
             useIndividualNetwork={configuration.useIndividualNetwork}
             device={device}
             lightType="Taillight"
@@ -87,13 +83,11 @@ export default observer(() => {
             setSerialNumber={configuration.setTaillightSerialNumber}
           />
           <ConfigurationResult 
-            className={classes.card}
-            headerClassName={classes.cardHeader}
             configuration={configuration}
             deviceList={deviceList}
           />
         </React.Fragment>
       ) : null }
-    </React.Fragment>
+    </Root>
   );
 });

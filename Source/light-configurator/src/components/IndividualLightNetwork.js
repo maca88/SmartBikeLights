@@ -1,28 +1,20 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
+import Grid from '@mui/material/Grid';
 import { observer } from 'mobx-react-lite';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Typography from '@material-ui/core/Typography';
-import Checkbox from '@material-ui/core/Checkbox';
+import Typography from '@mui/material/Typography';
 import ElementWithHelp from './ElementWithHelp';
+import AppCheckbox from '../inputs/AppCheckbox';
 
 export default observer(({ device, configuration, }) => {
   return (
     <React.Fragment>
       {
         device?.highMemory ?
-          <Grid container spacing={2} justify="center">
+          <Grid container spacing={2} justifyContent="center">
             <Grid item xs={12} sm={12}>
               <ElementWithHelp
                 element={
-                  <FormControlLabel
-                    control={
-                      <Checkbox checked={configuration.useIndividualNetwork}
-                        onChange={(e) => configuration.setUseIndividualNetwork(e.target.checked)}
-                        name="useIndividualNetwork" />
-                    }
-                    label="Use Individual Light Network"
-                  />
+                  <AppCheckbox label="Use Individual Light Network" value={configuration.useIndividualNetwork} setter={configuration.setUseIndividualNetwork} />
                 }
                 help={
                   <React.Fragment>

@@ -1,11 +1,11 @@
 import React from 'react';
 import Configuration from './models/Configuration';
 
-export const getContextValue = (configuration) => {
+export const getContextValue = (theme, configuration) => {
   return {
-    units: configuration.units,
-    timeFormat: configuration.timeFormat
+    theme: theme,
+    configuration: configuration
   };
 };
 
-export const AppContext = React.createContext(getContextValue(new Configuration()));
+export const AppContext = React.createContext(getContextValue(null, new Configuration()));

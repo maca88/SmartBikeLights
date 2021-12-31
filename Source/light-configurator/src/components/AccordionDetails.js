@@ -1,8 +1,6 @@
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import { withStyles } from '@material-ui/core/styles';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import { styled } from '@mui/material/styles';
 
-export default withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2)
-  }
-}))(AccordionDetails);
+export default styled(AccordionDetails)(({ theme }) => ({
+  padding: theme.spacing(2)
+}));

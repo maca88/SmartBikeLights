@@ -1,5 +1,5 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
+import Grid from '@mui/material/Grid';
 import AppSelect from '../inputs/AppSelect';
 import AppTextInput from '../inputs/AppTextInput';
 import AppTimePicker from '../inputs/AppTimePicker';
@@ -8,6 +8,7 @@ import { timespanTypeList } from "../constants";
 import addSeconds from "date-fns/addSeconds";
 import startOfToday from "date-fns/startOfToday";
 import { setSeconds, differenceInSeconds } from 'date-fns'
+import { Typography } from '@mui/material';
 
 export default observer(({ filter }) => {
   const getInitValue = (type, value) => {
@@ -47,31 +48,33 @@ export default observer(({ filter }) => {
   };
 
   return (
-    <React.Fragment>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
-          <AppSelect required items={timespanTypeList} label="From" setter={filter.setFromType} value={filter.fromType} />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          {
-            !filter.fromType ? null
-            : filter.fromType === '0' ? <AppTimePicker setter={setFromValue} value={state.fromValue} />
-            : <AppTextInput required label="Offset in minutes" type="number" setter={setFromValue} value={state.fromValue} />
-          }
-        </Grid>
+    <Grid container spacing={3}>
+      <Grid item xs={12} sm={12}>
+        <Typography>
+          NOTE: When using Sunset and Sunrise, the filter will start working only when a GPS position will be acquired, as it is required
+          to calculate the sunrise and sunset time.
+        </Typography>
       </Grid>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
-          <AppSelect required items={timespanTypeList} label="To" setter={filter.setToType} value={filter.toType} />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          {
-            !filter.toType ? null
-            : filter.toType === '0' ? <AppTimePicker setter={setToValue} value={state.toValue} />
-            : <AppTextInput required label="Offset in minutes" type="number" setter={setToValue} value={state.toValue} />
-          }
-        </Grid>
+      <Grid item xs={12} sm={6}>
+        <AppSelect required items={timespanTypeList} label="From" setter={filter.setFromType} value={filter.fromType} />
       </Grid>
-    </React.Fragment>
+      <Grid item xs={12} sm={6}>
+        {
+          !filter.fromType ? null
+          : filter.fromType === '0' ? <AppTimePicker setter={setFromValue} value={state.fromValue} />
+          : <AppTextInput required label="Offset in minutes" type="number" setter={setFromValue} value={state.fromValue} />
+        }
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <AppSelect required items={timespanTypeList} label="To" setter={filter.setToType} value={filter.toType} />
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        {
+          !filter.toType ? null
+          : filter.toType === '0' ? <AppTimePicker setter={setToValue} value={state.toValue} />
+          : <AppTextInput required label="Offset in minutes" type="number" setter={setToValue} value={state.toValue} />
+        }
+      </Grid>
+    </Grid>
   );
 });

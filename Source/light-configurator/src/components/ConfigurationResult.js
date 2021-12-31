@@ -1,43 +1,32 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import Alert from '@material-ui/core/Alert';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import Alert from '@mui/material/Alert';
 import { observer } from 'mobx-react-lite'
 import AppTextInput from '../inputs/AppTextInput';
 
-const useStyles = makeStyles((theme) => ({
-  copyButton: {
-    marginTop: theme.spacing(4),
-  },
-  note: {
-    fontWeight: 'bold'
-  }
-}));
-
-export default observer(({ className, headerClassName, configuration, deviceList }) => {
-  const classes = useStyles();
+export default observer(({ configuration, deviceList, ...props }) => {
   const configurationValue = configuration.isValid(deviceList) ? configuration.getConfigurationValue(deviceList) : null;
 
   return (
-    <Card className={className}>
+    <Card {...props}>
       <CardHeader
+        sx={{padding: 2}}
         title="Lights Configuration"
         titleTypographyProps={{ align: 'center' }}
-        className={headerClassName}
       />
       <CardContent>
-        <Typography color="textPrimary" gutterBottom>
+        <Typography gutterBottom>
         When the lights are configured, copy the below value and paste it in the application setting "Lights Configuration" by using 
         Garmin Connect Mobile or Garmin Express.
         </Typography>
         {
           configurationValue && configurationValue.length > 256 ?
-            <Typography color="textPrimary" className={classes.note} gutterBottom>
+            <Typography sx={{ fontWeight: 'bold' }} gutterBottom>
             NOTE: Do not use Garmin Express Mac as it is limited to 256 characters.
             </Typography>
           : null
@@ -47,7 +36,7 @@ export default observer(({ className, headerClassName, configuration, deviceList
             <Grid item xs={12} sm={12}>
               <AppTextInput value={configurationValue} allowAllCharacters={true} />
             </Grid>
-            <Grid item className={classes.copyButton} xs={12} sm={12}>
+            <Grid item sx={{ marginTop: 4 }} xs={12} sm={12}>
               <Button variant="contained" onClick={() => {navigator.clipboard.writeText(configurationValue)}}>Copy to clipboard</Button>
             </Grid>
           </React.Fragment>
@@ -58,5 +47,5 @@ export default observer(({ className, headerClassName, configuration, deviceList
         }
       </CardContent>
     </Card>
-    );
+  );
 });

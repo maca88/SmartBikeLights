@@ -1,26 +1,16 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
 import { nanoid } from 'nanoid';
-import Card from '@mui/material/Card';
 import HelpIcon from '@mui/icons-material/Help';
+import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
-import CardContent from '@mui/material/CardContent';
 import Popper from '@mui/material/Popper';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import { observer } from 'mobx-react-lite';
 
-const PREFIX = 'ElementWithHelp';
-
-const classes = {
-  root: `${PREFIX}-root`
-};
-
-const Root = styled('div')(() => ({
-  display: 'flex',
-  alignItems: 'center',
-  flexWrap: 'wrap'
-}));
-
-export default function ElementWithHelp({ element, help, className, ...props }) {
+export default observer(({ content, ...props }) => {
   const id = nanoid();
+  // Help icon constants
   const [anchorEl, setAnchorEl] = React.useState(null);
   const handleClick = (event) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -29,10 +19,9 @@ export default function ElementWithHelp({ element, help, className, ...props }) 
   const popperId = open ? `help-${id}` : undefined;
 
   return (
-    <Root {...props} className={`${classes.root} ${className ? className : ''}`}>
-      {element}
+    <InputAdornment position="end" {...props}>
       <IconButton onClick={handleClick} size="large">
-        <HelpIcon color="primary" style={{ fontSize: 30, cursor: 'pointer' }} />
+        <HelpIcon color="primary" />
         <Popper placement="bottom" id={popperId} open={open} anchorEl={anchorEl}>
           <Card
             sx={{
@@ -40,11 +29,11 @@ export default function ElementWithHelp({ element, help, className, ...props }) 
               overflow: 'auto'
             }}>
             <CardContent>
-              {help}
+              {content}
             </CardContent>
           </Card>
         </Popper>
       </IconButton>
-    </Root>
+    </InputAdornment>
   );
-}
+});

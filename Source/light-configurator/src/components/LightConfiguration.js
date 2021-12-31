@@ -1,21 +1,33 @@
 import React, { useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import Grid from '@material-ui/core/Grid';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+import { styled } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import Grid from '@mui/material/Grid';
 import { observer } from 'mobx-react-lite';
 import FilterGroups from './FilterGroups';
 import AppSelect from '../inputs/AppSelect';
 import AppTextInput from '../inputs/AppTextInput';
+import AppCheckbox from '../inputs/AppCheckbox';
 import ElementWithHelp from './ElementWithHelp';
 import LightPanel from './LightPanel';
 import LightSettings from './LightSettings';
 import LightPanelModel from '../models/LightPanel';
 import LightSettingsModel from '../models/LightSettings';
+
+const PREFIX = 'LightConfiguration';
+
+const classes = {
+  sectionTitle: `${PREFIX}-sectionTitle`
+};
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  [`& .${classes.sectionTitle}`]: {
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(1),
+  }
+}));
 
 const getModes = (value, lights) => {
   return value !== null ? lights.find(l => l.id === value)?.modes : null;
@@ -25,24 +37,15 @@ const getDefaultPanel = (value, lights) => {
   return value !== null ? lights.find(l => l.id === value)?.defaultLightPanel : null;
 };
 
-const useStyles = makeStyles((theme) => ({
-  sectionTitle: {
-    'margin-top': theme.spacing(3),
-    'margin-bottom': theme.spacing(1),
-  }
-}));
-
 export default observer(({
-  className, headerClassName, device, useIndividualNetwork, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
+  device, useIndividualNetwork, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
   setLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel, lightSettings, setLightSettings, deviceNumber, setDeviceNumber,
   serialNumber, setSerialNumber, forceSmartMode, setForceSmartMode }) => {
-  const classes = useStyles();
   const [modes, setModes] = React.useState(getModes(light, lightList));
   const setValue = (value) => {
     setLight(value);
     setLightModes(value !== null ? lightList.find(l => l.id === value).lightModes : null);
   };
-
   var hasFilters = !!setDefaultMode;
 
   useEffect(() => {
@@ -63,14 +66,13 @@ export default observer(({
   }, [light, lightList, lightSettings, setLightSettings]);
 
   return (
-    <Card className={className}>
+    <StyledCard>
       <CardHeader
         title={lightType + ' Configuration'}
         titleTypographyProps={{ align: 'center' }}
-        className={headerClassName}
       />
       <CardContent>
-        <Grid container spacing={3} justify="center">
+        <Grid container spacing={3}>
           <Grid item xs={12} sm={4}>
             <AppSelect items={lightList} label={lightType} setter={setValue} value={light} />
           </Grid>
@@ -83,7 +85,16 @@ export default observer(({
                   items={modes}
                   label="Default mode"
                   setter={setDefaultMode}
-                  value={defaultMode} />
+                  value={defaultMode}
+                  help={
+                    <React.Fragment>
+                      <Typography>
+                        The default mode is used only by the Smart control mode as a fallback light mode, when none of the below filter groups
+                        is matched.
+                      </Typography>
+                    </React.Fragment>
+                  }
+                />
             </Grid>
             : null
           }
@@ -98,7 +109,7 @@ export default observer(({
                 value={deviceNumber}
                 help={
                   <React.Fragment>
-                    <Typography color="textPrimary">
+                    <Typography>
                       The light device number is a unique number that is required by the Individual Light Network. To obtain the device number:
                     </Typography>
                     <ol>
@@ -118,7 +129,7 @@ export default observer(({
               value={serialNumber}
               help={
                 <React.Fragment>
-                  <Typography color="textPrimary">
+                  <Typography>
                     The light serial number which required only when multiple lights of the same type are paired (e.g. two headlights). To obtain the serial number:
                   </Typography>
                   <ol>
@@ -135,18 +146,11 @@ export default observer(({
             setForceSmartMode && light && device?.highMemory
               ?
               <Grid item xs={12} sm={12}>
-                <Grid container spacing={3} justify="center">
+                <Grid container spacing={3}>
                   <Grid item xs={12} sm={4}>
                     <ElementWithHelp
                       element={
-                        <FormControlLabel
-                          control={
-                            <Checkbox checked={forceSmartMode}
-                              onChange={(e) => setForceSmartMode(e.target.checked)}
-                              name="forceSmartMode" />
-                          }
-                          label="Force Smart mode"
-                        />
+                        <AppCheckbox label="Force Smart mode" value={forceSmartMode} setter={setForceSmartMode} />
                       }
                       help={
                         <Typography>
@@ -165,13 +169,13 @@ export default observer(({
           modes && hasFilters
           ? <React.Fragment>
               <ElementWithHelp
-                rootClass={classes.sectionTitle}
-                element={<Typography variant="h5" color="textPrimary">Filter groups</Typography>}
+                sx={{marginBottom: 1, marginTop: 1}}
+                element={<Typography variant="h5">Filter groups</Typography>}
                 help={
-                  <Typography color="textPrimary">
-                    Filter groups contains a group of filters, which are used by the Smart mode to determine the light mode. Every filter group defines 
-                    a light mode, which will be used when every filter condition inside the group is met. The order of filter groups is important
-                    as in case multiple groups meet all their filters conditions, only the light mode of the first group will be used.
+                  <Typography>
+                    Filter groups contains a group of filters, which are used by the Smart control mode to determine the light mode. Every filter group defines 
+                    a light mode, which will be used when every filter inside the group is matched. The order of filter groups is important
+                    as in case multiple filter groups are matched, only the light mode of the topmost matched group will be used.
                   </Typography>
                 }
               />
@@ -182,7 +186,17 @@ export default observer(({
         {
           modes && lightPanel && device?.touchScreen
           ? <React.Fragment>
-            <Typography variant="h5" className={classes.sectionTitle} color="textPrimary">Light panel</Typography>
+              <ElementWithHelp
+                className={classes.sectionTitle}
+                element={<Typography variant="h5">Light panel</Typography>}
+                help={
+                  <Typography>
+                    The Light panel will be displayed only when putting the data field on a "1 Field Layout" data screen on your device. Here you can
+                    modify how the light panel will look like on the screen by renaming buttons, order them in a different way, remove those that won't be
+                    used, change to two buttons per row and change the short light name that will be displayed at the bottom of the screen.
+                  </Typography>
+                }
+              />
             <LightPanel lightPanel={lightPanel} lightModes={modes} />
           </React.Fragment>
           : null
@@ -190,12 +204,23 @@ export default observer(({
         {
           modes && lightSettings && device?.settings
           ? <React.Fragment>
-            <Typography variant="h5" className={classes.sectionTitle} color="textPrimary">Light settings</Typography>
+              <ElementWithHelp
+                className={classes.sectionTitle}
+                element={<Typography variant="h5">Light settings</Typography>}
+                help={
+                  <Typography>
+                    The Light settings will be displayed when opening the data field settings on your device. Here you can modify how the menu for light
+                    modes will be displayed by renaming items, order them in a different way, remove those that won't be used and change the short light name
+                    that will be displayed in the menu.
+                  </Typography>
+                }
+              />
+            
             <LightSettings lightSettings={lightSettings} lightModes={modes} />
           </React.Fragment>
           : null
         }
       </CardContent>
-    </Card>
-    );
+    </StyledCard>
+  );
 });

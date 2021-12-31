@@ -76,10 +76,10 @@ export const gpsAccuracyList = [
 ];
 
 export const timerStateList = [
-  'NR', // Not recording
-  'ST', // Recording stopped
-  'PA', // Recording paused
-  'RE'  // Recording
+  'Not recording',
+  'Recording stopped',
+  'Recording paused',
+  'Recording'
 ];
 
 export const vehicleThreatList = [

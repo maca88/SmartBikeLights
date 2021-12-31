@@ -1,5 +1,5 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
+import Grid from '@mui/material/Grid';
 import Accordion from './Accordion';
 import AccordionSummary from './AccordionSummary';
 import AccordionDetails from './AccordionDetails';
@@ -18,6 +18,7 @@ import ProfileNameFilter from '../filters/ProfileNameFilter';
 import { AppContext } from '../AppContext';
 import { action } from 'mobx';
 import { arrayMoveUp, arrayMoveDown } from '../constants';
+import { Typography } from '@mui/material';
 
 export default observer(({ filters, filterTypes, device }) => {
   const removeFilter = action((filter) => {
@@ -48,7 +49,7 @@ export default observer(({ filters, filterTypes, device }) => {
         {(context) => (
           <AccordionSummary
             item={filter}
-            param1={context}
+            param1={context.configuration}
             removeLabel="Remove filter"
             removeCallback={removeFilter}
             validationParameter={device}
@@ -69,7 +70,17 @@ export default observer(({ filters, filterTypes, device }) => {
               filter.type === 'E' ? <TimespanFilter filter={filter} />
               : filter.type === 'F' ? <PositionFilter filter={filter} />
               : filter.type === 'B' ? <BatteryFilter filter={filter} />
-              : filter.type === 'A' ? <NumberFilter label="% per second" filter={filter} />
+              : filter.type === 'A' ? <NumberFilter 
+                                        label="% per second"
+                                        filter={filter}
+                                        note={
+                                          <Typography>
+                                          NOTE: Acceleration is calculated once per second by calculating the difference between the current and previous (one second ago) speed 
+                                          in percentage (%). When decelerating, the calculated value will be negative, which means that this filter can be also used for braking
+                                          by setting a negative value (e.g. Lower than -20%).
+                                          </Typography>
+                                        }
+                                      />
               : filter.type === 'C' ? <SpeedFilter filter={filter} />
               : filter.type === 'G' ? <GpsAccuracyFilter filter={filter} />
               : filter.type === 'H' ? <TimerStateFilter filter={filter} />

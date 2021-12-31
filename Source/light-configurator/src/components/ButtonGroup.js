@@ -1,36 +1,31 @@
 import React, { useRef } from 'react';
+import { styled } from '@mui/material/styles';
 import { useDrag, useDrop } from 'react-dnd';
-import { makeStyles } from '@material-ui/core/styles';
 import { observer } from 'mobx-react-lite';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import AppTextInput from '../inputs/AppTextInput';
 import AppSelect from '../inputs/AppSelect';
 import LightButtonGroup from '../models/LightButtonGroup';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    flexGrow: 1,
-    cursor: 'move'
-  },
-  paper: {
-    padding: theme.spacing(2)
-  },
-  actions: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
+const Root = styled('div')(({ theme }) => ({
+  flexGrow: 1,
+  cursor: 'move',
+  marginTop: theme.spacing(1)
 }));
 
 export default observer(({ buttonGroup, lightModes, index, moveGroup, addButton, removeButton }) => {
   const ref = useRef(null);
-  const classes = useStyles();
-  const [, drop] = useDrop({
+  const [{ handlerId }, drop] = useDrop({
     accept: 'ButtonGroup',
+    collect(monitor) {
+      return {
+        handlerId: monitor.getHandlerId(),
+      }
+    },
     hover(item, monitor) {
       if (!ref.current) {
         return
@@ -83,7 +78,8 @@ export default observer(({ buttonGroup, lightModes, index, moveGroup, addButton,
 
   var isGroup = buttonGroup instanceof LightButtonGroup;
   const [{ isDragging }, drag] = useDrag({
-    item: { type: 'ButtonGroup', id: buttonGroup.id, index },
+    type: 'ButtonGroup',
+    item: () => ({ id: buttonGroup.id, index }),
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -92,7 +88,7 @@ export default observer(({ buttonGroup, lightModes, index, moveGroup, addButton,
   const getButtonTemplate = (button) => {
     return (
       <Grid item xs key={button.id}>
-        <Paper className={classes.paper}>
+        <Paper sx={{ padding: 2 }}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={12}>
               <AppSelect required items={lightModes} label="Light mode" setter={button.setMode} value={button.mode} />
@@ -111,24 +107,38 @@ export default observer(({ buttonGroup, lightModes, index, moveGroup, addButton,
   const opacity = isDragging ? 0 : 1;
   drag(drop(ref));
   return (
-    <div ref={ref} className={classes.container} style={{ ...opacity }}>
+    <Root ref={ref} style={{ ...opacity }} data-handler-id={handlerId}>
       <Grid container spacing={1}>
         { isGroup
           ? buttonGroup.buttons.map((button, index) => getButtonTemplate(button))
           : getButtonTemplate(buttonGroup)
         }
-        <Grid item xs={1} className={classes.actions}>
+        <Grid item xs={1}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
           {
             isGroup
             ? (
               <Grid container spacing={1}>
                 <Grid item xs={12} sm={12}>
-                  <IconButton edge="end" aria-label="add" disabled={buttonGroup.buttons.length > 1} onClick={() => addButton(buttonGroup)}>
+                  <IconButton
+                    edge="end"
+                    aria-label="add"
+                    disabled={buttonGroup.buttons.length > 1}
+                    onClick={() => addButton(buttonGroup)}
+                    size="large">
                     <AddIcon />
                   </IconButton>
                 </Grid>
                 <Grid item xs={12} sm={12}>
-                  <IconButton edge="end" aria-label="remove" onClick={() => removeButton(buttonGroup)}>
+                  <IconButton
+                    edge="end"
+                    aria-label="remove"
+                    onClick={() => removeButton(buttonGroup)}
+                    size="large">
                     <RemoveIcon />
                   </IconButton>
                 </Grid>
@@ -137,7 +147,10 @@ export default observer(({ buttonGroup, lightModes, index, moveGroup, addButton,
             : (
               <Grid container spacing={1}>
                 <Grid item xs={12} sm={12}>
-                  <IconButton aria-label="remove" onClick={() => removeButton(buttonGroup)}>
+                  <IconButton
+                    aria-label="remove"
+                    onClick={() => removeButton(buttonGroup)}
+                    size="large">
                     <RemoveIcon />
                   </IconButton>
                 </Grid>
@@ -146,6 +159,6 @@ export default observer(({ buttonGroup, lightModes, index, moveGroup, addButton,
           }
         </Grid>
       </Grid>
-    </div>
+    </Root>
   );
 });

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import Grid from '@material-ui/core/Grid';
+import Grid from '@mui/material/Grid';
 import AppSelect from '../inputs/AppSelect';
 import AppTextInput from '../inputs/AppTextInput';
 import { operatorList, speedUnitList } from '../constants';
@@ -7,7 +7,8 @@ import { observer } from 'mobx-react-lite';
 import { AppContext } from '../AppContext';
 
 export default observer(({ filter }) => {
-  const { units } = useContext(AppContext);
+  const { configuration } = useContext(AppContext);
+  const units = configuration.units;
   const [speed, setSpeed] = React.useState(null);
   const setFilterValue = (speed) => {
     let mps = null;

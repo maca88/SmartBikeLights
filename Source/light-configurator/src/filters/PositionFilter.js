@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
+import { styled } from '@mui/material/styles';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet'
-import { makeStyles } from '@material-ui/core/styles';
 import { observer } from 'mobx-react-lite';
 import { action } from 'mobx';
 import {featureGroup, polygon} from 'leaflet';
@@ -8,6 +8,10 @@ import 'leaflet/dist/leaflet.css';
 import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import Polygon from '../models/Polygon';
+
+const StyledMapContainer = styled(MapContainer)(() => ({
+  height: '400px'
+}));
 
 const Polygons = observer(({ polygons }) => {
   const mappings = {};
@@ -85,21 +89,14 @@ const Polygons = observer(({ polygons }) => {
   return null;
 });
 
-const useStyles = makeStyles((theme) => ({
-  map: {
-    height: '400px'
-  }
-}));
-
 export default observer(({ filter }) => {
-  const classes = useStyles();
   return (
-  <MapContainer className={classes.map} center={[0, 0]} zoom={0} scrollWheelZoom={true}>
-    <TileLayer
-      attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-    />
-    <Polygons polygons={filter.polygons} />
-  </MapContainer>
+    <StyledMapContainer center={[0, 0]} zoom={0} scrollWheelZoom={true}>
+      <TileLayer
+        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <Polygons polygons={filter.polygons} />
+    </StyledMapContainer>
   );
 });

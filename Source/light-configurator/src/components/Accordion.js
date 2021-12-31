@@ -1,19 +1,19 @@
-import Accordion from '@material-ui/core/Accordion';
-import { withStyles } from '@material-ui/core/styles';
+import Accordion from '@mui/material/Accordion';
+import { styled } from '@mui/material/styles';
 
-export default withStyles({
-  root: {
-    border: '1px solid rgba(0, 0, 0, .125)',
-    boxShadow: 'none',
-    '&:not(:last-child)': {
-      borderBottom: 0
-    },
-    '&:before': {
-      display: 'none'
-    },
-    '&$expanded': {
-      margin: 'auto'
-    }
+export default styled(Accordion)(({ theme }) => ({
+  border: `1px solid ${theme.palette.divider}`,
+  boxShadow: 'none',
+  '&:not(:last-child)': {
+    borderBottom: 0,
   },
-  expanded: {}
-})(Accordion);
+  '&:before': {
+    display: 'none',
+  },
+  '& .MuiAccordion-root.Mui-expanded': {
+    margin: 'auto'
+  },
+  '&.MuiAccordion-root': {
+    margin: 0
+  }
+}));

@@ -1,20 +1,18 @@
 import React, { useEffect } from 'react';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import List from '@material-ui/core/List';
-import AddIcon from '@material-ui/icons/Add';
+import Grid from '@mui/material/Grid';
+import List from '@mui/material/List';
 import Accordion from './Accordion';
 import AccordionSummary from './AccordionSummary';
 import AccordionDetails from './AccordionDetails';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@mui/material/Typography';
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import AppTextInput from '../inputs/AppTextInput';
 import AppSelect from '../inputs/AppSelect';
 import FilterGroup from '../models/FilterGroup';
 import Filter from '../models/Filter';
-import Filters from '../components/Filters';
+import Filters from './Filters';
+import AddButton from './AddButton';
 import { filterList, arrayMoveUp, arrayMoveDown } from '../constants';
 
 const emptyFilters = [];
@@ -44,22 +42,10 @@ const getFilterTypes = (hasLightModes, device) => {
     ? filterList
     : filterList.filter(f => excludeList.indexOf(f.id) < 0);
 };
-const useStyles = makeStyles((theme) => ({
-  list: {
-    padding: 0
-  },
-  button: {
-    margin: theme.spacing(1)
-  },
-  heading: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
-}));
+
 export default observer(({ filterGroups, lightModes, device }) => {
   const [filterTypes, setFilterTypes] = React.useState(getFilterTypes(lightModes, device));
-  const classes = useStyles();
+
   const createFilterGroup = action(() => {
     filterGroups.push(new FilterGroup(!!lightModes));
   });
@@ -93,8 +79,8 @@ export default observer(({ filterGroups, lightModes, device }) => {
   );
 
   return (
-    <React.Fragment>
-      <List className={classes.list}>
+    <div>
+      <List sx={{ padding: 0 }}>
         {filterGroups.map(filterGroup => (
         <Accordion key={filterGroup.id}
               TransitionProps={{ unmountOnExit: true }}
@@ -115,7 +101,17 @@ export default observer(({ filterGroups, lightModes, device }) => {
           <AccordionDetails>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
-                <AppTextInput label="Group name" setter={filterGroup.setName} value={filterGroup.name} />
+                <AppTextInput
+                  label="Group name" 
+                  setter={filterGroup.setName}
+                  value={filterGroup.name}
+                  help={
+                    <Typography>
+                    The group name will be displayed above the light icon when the filter group is matched. Note that the name won't be displayed in case
+                    there is not enough space above the light icon.
+                  </Typography>
+                  }
+                />
               </Grid>
               {
                 lightModes ? (
@@ -124,7 +120,17 @@ export default observer(({ filterGroups, lightModes, device }) => {
                       <AppSelect required items={lightModes} label="Light mode" setter={filterGroup.setLightMode} value={filterGroup.lightMode} />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <AppTextInput type="number" label="Minimum active time in seconds" setter={filterGroup.setMinActiveTime} value={filterGroup.minActiveTime} />
+                      <AppTextInput 
+                        type="number"
+                        label="Minimum active time in seconds"
+                        setter={filterGroup.setMinActiveTime}
+                        value={filterGroup.minActiveTime}
+                        help={
+                          <Typography>
+                          With this setting it is possible to set the minimum time the light mode of the filter group will be active once it is matched.
+                          </Typography>
+                        }
+                      />
                     </Grid>
                   </React.Fragment>
                 )
@@ -137,31 +143,18 @@ export default observer(({ filterGroups, lightModes, device }) => {
             <div>
               <Filters filters={filterGroup.filters} filterTypes={filterTypes} device={device} />
             </div>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.button}
-              startIcon={<AddIcon />}
-              onClick={() => createFilter(filterGroup)}
-            >
+            <AddButton onClick={() => createFilter(filterGroup)}>
               Add Filter
-            </Button>
-
+            </AddButton>
           </AccordionDetails>
         </Accordion>
         ))}
       </List>
       <div>
-        <Button
-          variant="contained"
-          color="secondary"
-          className={classes.button}
-          startIcon={<AddIcon />}
-          onClick={createFilterGroup}
-        >
+        <AddButton onClick={createFilterGroup}>
           Add Filter Group
-        </Button>
+        </AddButton>
       </div>
-    </React.Fragment>
+    </div>
   );
 });
