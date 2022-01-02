@@ -104,8 +104,9 @@ class BikeLightsView extends BaseView {
     // Parsed filters
     protected var _globalFilters;
 
-    (:touchScreen) private var _headlightPanelSettings;
-    (:touchScreen) private var _taillightPanelSettings;
+    // Light panel settings
+    (:touchScreen) var headlightPanelSettings;
+    (:touchScreen) var taillightPanelSettings;
 
     // Pre-calculated light panel values
     (:touchScreen) private var _headlightPanel;
@@ -1097,8 +1098,8 @@ class BikeLightsView extends BaseView {
     function setupLightButtons(configuration) {
         _controlModeOnly = getPropertyValue("CMO");
         _panelInitialized = false;
-        _headlightPanelSettings = configuration[7];
-        _taillightPanelSettings = configuration[8];
+        headlightPanelSettings = configuration[7];
+        taillightPanelSettings = configuration[8];
         setupHighMemoryConfiguration(configuration);
     }
 
@@ -1244,7 +1245,7 @@ class BikeLightsView extends BaseView {
         var light = lightData[0];
         var capableModes = getLightModes(light);
         var fontTopPaddings = WatchUi.loadResource(Rez.JsonData.FontTopPaddings)[0];
-        var panelSettings = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightPanelSettings : _taillightPanelSettings;
+        var panelSettings = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? headlightPanelSettings : taillightPanelSettings;
         if (panelSettings == null) {
             panelSettings = getDefaultLightPanelSettings(light.type, capableModes);
         }
@@ -1791,6 +1792,12 @@ class BikeLightsView extends BaseView {
             return null;
         }
 
+        // Check whether the configuration string is valid
+        i = filterResult[0];
+        if (i >= chars.size() || chars[i] != ':') {
+            throw new Lang.Exception();
+        }
+
         var data = new [1 + (2 * totalButtons)];
         data[0] = parse(0 /* STRING */, chars, null, filterResult);
         i = filterResult[0];
@@ -1867,11 +1874,11 @@ class BikeLightsView extends BaseView {
             return null;
         }
 
-        var groupDataLength = lightMode ? 4 : 2;
+        var data = [];
+        var groups = 0;
+        var filters = 0;
         var totalGroups = parse(1 /* NUMBER */, chars, null, filterResult);
-        var data = new [(totalFilters * 3) + totalGroups * groupDataLength];
         i = filterResult[0];
-        var dataIndex = 0;
 
         while (i < chars.size()) {
             var charNumber = chars[i].toNumber();
@@ -1880,23 +1887,23 @@ class BikeLightsView extends BaseView {
             }
 
             if (charNumber == 124 /* | */ || charNumber == 33 /* ! */) {
-                data[dataIndex] = parse(0 /* STRING */, chars, i + 1, filterResult); // Group title
-                data[dataIndex + 1] = parse(1 /* NUMBER */, chars, null, filterResult); // Number of filters in the group
+                groups++;
+                data.add(parse(0 /* STRING */, chars, null, filterResult)); // Group title
+                data.add(parse(1 /* NUMBER */, chars, null, filterResult)); // Number of filters in the group
                 if (lightMode) {
-                    data[dataIndex + 2] = parse(1 /* NUMBER */, chars, null /* Skip : */, filterResult); // The light mode id
+                    data.add(parse(1 /* NUMBER */, chars, null /* Skip : */, filterResult)); // The light mode id
                     if (chars[filterResult[0]] == ':') { // For back compatibility
-                        data[dataIndex + 3] = parse(1 /* NUMBER */, chars, null /* Skip : */, filterResult); // The min active filter time
+                        data.add(parse(1 /* NUMBER */, chars, null /* Skip : */, filterResult)); // The min active filter time
                     }
                 }
 
-                dataIndex += groupDataLength;
                 i = filterResult[0];
             } else if (charNumber >= 65 /* A */ && charNumber <= 90 /* Z */) {
+                filters++;
                 var filterValue = parseFilter(charNumber, chars, i + 1, filterResult);
-                data[dataIndex] = chars[i]; // Filter type
-                data[dataIndex + 1] = filterResult[1]; // Filter operator
-                data[dataIndex + 2] = filterValue; // Filter value
-                dataIndex += 3;
+                data.add(chars[i]); // Filter type
+                data.add(filterResult[1]); // Filter operator
+                data.add(filterValue); // Filter value
                 i = filterResult[0];
             } else {
                 // Skip any extra characters (e.g. character : for a string generic filter)
@@ -1905,21 +1912,35 @@ class BikeLightsView extends BaseView {
             }
         }
 
+        if (totalGroups != groups || totalFilters != filters) {
+            throw new Lang.Exception();
+        }
+
         return data;
     }
 
-    (:lowMemory)
+    (:dataField :lowMemory)
     private function parseFilter(charNumber, chars, i, filterResult) {
+        filterResult[1] = chars[i]; // Filter operator
+
         return charNumber == 69 /* E */ ? parseTimespan(chars, i, filterResult)
-            : parseGenericFilter(charNumber, chars, i, filterResult);
+            // In case of a string value, the last character will be a : character in order to know where the next filter starts.
+            // The : character will be automatically skipped by the parseFilters method, so we do not have to increment the
+            // filterResult index here.
+            : parse(charNumber == 75 /* Profile name */ ? 0 /* STRING */ : 1 /* NUMBER */, chars, i + 1, filterResult);
     }
 
-    (:highMemory)
+    (:dataField :highMemory)
     private function parseFilter(charNumber, chars, i, filterResult) {
+        filterResult[1] = chars[i]; // Filter operator
+
         return charNumber == 69 /* E */ ? parseTimespan(chars, i, filterResult)
             : charNumber == 70 /* F */? parsePolygons(chars, i, filterResult)
             : charNumber == 73 /* I */ ? parseBikeRadar(chars, i, filterResult)
-            : parseGenericFilter(charNumber, chars, i, filterResult);
+            // In case of a string value, the last character will be a : character in order to know where the next filter starts.
+            // The : character will be automatically skipped by the parseFilters method, so we do not have to increment the
+            // filterResult index here.
+            : parse(charNumber == 75 /* Profile name */ ? 0 /* STRING */ : 1 /* NUMBER */, chars, i + 1, filterResult);
     }
 
     // E<?FromType><FromValue>,<?ToType><ToValue> (Es45,r-45 E35645,8212)
@@ -1931,15 +1952,6 @@ class BikeLightsView extends BaseView {
         parseTimespanPart(chars, filterResult[0] + 1 /* Skip , */, filterResult, data, 2);
 
         return data;
-    }
-
-    (:dataField)
-    private function parseGenericFilter(charNumber, chars, index, filterResult) {
-        filterResult[1] = chars[index]; // Filter operator
-        // In case of a string value, the last character will be a : character in order to know where the next filter starts.
-        // The : character will be automatically skipped by the parseFilters method, so we do not have to increment the
-        // filterResult index here.
-        return parse(charNumber == 75 /* Profile name */ ? 0 /* STRING */ : 1 /* NUMBER */, chars, index + 1, filterResult);
     }
 
     (:dataField)
@@ -1956,7 +1968,7 @@ class BikeLightsView extends BaseView {
         data[dataIndex + 1] = parse(1 /* NUMBER */, chars, index, filterResult);
     }
 
-    (:highMemory)
+    (:dataField :highMemory)
     private function parsePolygons(chars, index, filterResult) {
         filterResult[1] = null; /* Filter operator */
         // The first value represents the total number of polygons
@@ -1973,7 +1985,7 @@ class BikeLightsView extends BaseView {
     }
 
     // I<300>0
-    (:highMemory)
+    (:dataField :highMemory)
     private function parseBikeRadar(chars, index, filterResult) {
         filterResult[1] = chars[index]; // Filter operator
         var data = new [3];
@@ -1986,7 +1998,8 @@ class BikeLightsView extends BaseView {
 
     // <LightModes>(:<LightSerialNumber>)*
     private function parseLightInfo(chars, serial, resultIndex) {
-        if (serial && chars[resultIndex[0]] == '#') {
+        var index = resultIndex[0];
+        if (serial && (index >= chars.size() || chars[index] == '#')) {
             return null;
         }
 
