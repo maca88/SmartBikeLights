@@ -1201,24 +1201,21 @@ class BikeLightsView extends BaseView {
     (:touchScreen)
     private function getDefaultLightPanelSettings(lightType, capableModes) {
         var totalButtonGroups = capableModes.size();
-        var totalButtons = totalButtonGroups + 1 /* For control mode button */;
-        var data = new [3 + (2 * totalButtons) + totalButtonGroups];
-        data[0] = totalButtonGroups + 1; // Total buttons
-        data[1] = totalButtonGroups; // Total button groups
-        data[2] = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? "Headlight" : "Taillight"; // Light name
-        var dataIndex = 3;
+        var data = [];
+        data.add(totalButtonGroups); // Total buttons
+        data.add(totalButtonGroups); // Total button groups
+        data.add(lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? "Headlight" : "Taillight"); // Light name
         for (var i = 0; i < totalButtonGroups; i++) {
             var mode = capableModes[i];
             var totalGroupButtons = mode == 0 /* Off */ ? 2 : 1; // Number of buttons;
-            data[dataIndex] = totalGroupButtons; // Total buttons in the group
-            data[dataIndex + 1] = mode == 0 ? -1 : mode; // Light mode
-            data[dataIndex + 2] = mode == 0 ? null : mode.toString(); // Mode name
+            data.add(totalGroupButtons); // Total buttons in the group
+            data.add(mode == 0 ? -1 : mode); // Light mode
+            data.add(mode == 0 ? null : mode.toString()); // Mode name
             if (mode == 0 /* Off */) {
-                data[dataIndex + 3] = mode;
-                data[dataIndex + 4] = "Off";
+                data[0]++;
+                data.add(mode);
+                data.add("Off");
             }
-
-            dataIndex += 1 + (totalGroupButtons * 2);
         }
 
         return data;
