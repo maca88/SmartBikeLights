@@ -8,6 +8,7 @@ class MultiBikeLight extends AntPlus.BikeLight {
     private var _batteryStatus;
 
     function initialize(light, light2) {
+        BikeLight.initialize();
         _lights = [light, light2];
         _batteryStatus = new AntPlus.BatteryStatus();
         type = light.type;

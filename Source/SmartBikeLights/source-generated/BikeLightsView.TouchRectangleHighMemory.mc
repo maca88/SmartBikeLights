@@ -643,7 +643,7 @@ class BikeLightsView extends  WatchUi.DataField  {
             }
 
             var controlMode = getLightProperty("CM", lightType, filters != null ? 0 /* SMART */ : 1 /* NETWORK */);
-            var lightMode = getInitialLightMode(light, controlMode);
+            var lightMode = controlMode <= 1 /*NETWORK*/ ? light.mode : getLightProperty("MM", light.type, 0 /* LIGHT_MODE_OFF */);
             var lightModeIndex = capableModes.indexOf(lightMode);
             if (lightModeIndex < 0) {
                 lightModeIndex = 0;
@@ -669,7 +669,11 @@ class BikeLightsView extends  WatchUi.DataField  {
             // In case of SMART or MANUAL control mode, we have to set the light mode in order to prevent the network mode
             // from changing it.
             if (firstTime || oldControlMode != controlMode) {
-                setInitialLightMode(lightData, lightMode, controlMode);
+                if (controlMode != 1 /* NETWORK */) {
+                    setLightMode(lightData, lightMode, null, true);
+                } else {
+                    setNetworkMode(lightData, _networkMode);
+                }
             }
 
             initializedLights++;
@@ -716,14 +720,6 @@ class BikeLightsView extends  WatchUi.DataField  {
             : controlMode != 2 /* MANUAL */ ? 2
             : null;
         setLightAndControlMode(lightData, lightType, lightMode, newControlMode);
-    }
-
-    protected function setInitialLightMode(lightData, lightMode, controlMode) {
-        if (controlMode != 1 /* NETWORK */) {
-            setLightMode(lightData, lightMode, null, true);
-        } else {
-            setNetworkMode(lightData, _networkMode);
-        }
     }
 
     protected function setLightMode(lightData, mode, title, force) {
@@ -1248,11 +1244,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         return value != null ? value : defaultValue;
     }
 
-    protected function getInitialLightMode(light, controlMode) {
-        return controlMode <= 1 /*NETWORK*/ ? light.mode
-            : getLightProperty("MM", light.type, 0 /* LIGHT_MODE_OFF */);
-    }
-
     (:colorScreen)
     private function setTextColor(dc, color) {
         dc.setColor(color, -1 /* COLOR_TRANSPARENT */);
@@ -1353,7 +1344,18 @@ class BikeLightsView extends  WatchUi.DataField  {
                 : data == 'F' ? isInsideAnyPolygon(activityInfo, filterValue)
                 : data == 'I' ? isTargetBehind(activityInfo, filters[i + 1], filterValue)
                 : data == 'D' ? true
-                : checkGenericFilter(activityInfo, data, filters[i + 1], filterValue, lightData);
+                : checkOperatorValue(
+                    filters[i + 1],
+                    data == 'A' ? _acceleration
+                    : data == 'B' ? lightData != null ? getLightBatteryStatus(lightData) : null
+                    : data == 'C' ? activityInfo.currentSpeed
+                    : data == 'G' ? (activityInfo.currentLocationAccuracy == null ? 0 : activityInfo.currentLocationAccuracy)
+                    : data == 'H' ? activityInfo.timerState
+                    : data == 'J' ? activityInfo.startLocation == null ? 0 : 1
+                    : data == 'K' && Activity has :getProfileInfo ? Activity.getProfileInfo().name
+                    : null,
+                    filterValue,
+                    false);
             if (isEnabled) {
                 i += 3;
             } else {
@@ -1393,20 +1395,9 @@ class BikeLightsView extends  WatchUi.DataField  {
     }
 
     (:dataField)
-    private function checkGenericFilter(activityInfo, filterType, operator, filterValue, lightData) {
-        var value = filterType == 'A' ? _acceleration
-            : filterType == 'B' ? lightData != null ? getLightBatteryStatus(lightData) : null
-            : filterType == 'C' ? activityInfo.currentSpeed
-            : filterType == 'G' ? (activityInfo.currentLocationAccuracy == null ? 0 : activityInfo.currentLocationAccuracy)
-            : filterType == 'H' ? activityInfo.timerState
-            : filterType == 'J' ? activityInfo.startLocation == null ? 0 : 1
-            : filterType == 'K' && Activity has :getProfileInfo ? Activity.getProfileInfo().name
-            : null;
-        if (value == null) {
-            return false;
-        }
-
-        return operator == '<' || operator == '[' ? value < filterValue
+    private function checkOperatorValue(operator, value, filterValue, isTarget) {
+        return value == null ? isTarget ? filterValue < 0 : false // For bike radar target filterValue will be -1 in case not set
+            : operator == '<' || operator == '[' ? value < filterValue
             : operator == '>' || operator == ']' ? value > filterValue
             // Use equals method only for string values as it checks also the type. When comparing
             // numeric values we want to ignore the type (e.g. 0 == 0f), so == operator is used instead.
@@ -1478,25 +1469,13 @@ class BikeLightsView extends  WatchUi.DataField  {
         var threat = filterValue[2];
         for (var i = 0; i < targets.size(); i++) {
             var target = targets[i];
-            if (checkOperatorValue(threatOperator, target.threat, threat) &&
-                checkOperatorValue(operator, target.range, range)) {
+            if (checkOperatorValue(threatOperator, target.threat, threat, true) &&
+                checkOperatorValue(operator, target.range, range, true)) {
                 return true;
             }
         }
 
         return false;
-    }
-
-    (:dataField :highMemory)
-    private function checkOperatorValue(operator, value, filterValue) {
-        if (value == null) {
-            return filterValue < 0;
-        }
-
-        return operator == '<' || operator == '[' ? value < filterValue
-            : operator == '>' || operator == ']' ? value > filterValue
-            : operator == '=' ? value == filterValue
-            : false;
     }
 
     (:dataField)
@@ -1777,12 +1756,12 @@ class BikeLightsView extends  WatchUi.DataField  {
     (:dataField :highMemory)
     private function parseBikeRadar(chars, index, filterResult) {
         filterResult[1] = chars[index]; // Filter operator
-        var data = new [3];
-        data[0] = parse(1 /* NUMBER */, chars, index + 1, filterResult); // Range
-        data[1] = chars[filterResult[0]]; // Threat operator
-        data[2] = parse(1 /* NUMBER */, chars, null, filterResult); // Threat
 
-        return data;
+        return [
+            parse(1 /* NUMBER */, chars, index + 1, filterResult), // Range
+            chars[filterResult[0]], // Threat operator
+            parse(1 /* NUMBER */, chars, null, filterResult) // Threat
+        ];
     }
 
     // <LightModes>(:<LightSerialNumber>)*
