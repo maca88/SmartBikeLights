@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "start": "directive-preprocessor watch preprocess.config.json -p"
+  }
+}

@@ -2,6 +2,8 @@ project.manifest = manifest.xml
 #excludeBase=deviceNetwork;widget
 excludeBase=testNetwork;widget
 
+base.sourcePath = source;source-common;source-generated
+
 lowMemory = $(excludeBase);touchScreen;highMemory;settings;lightButtons
 
 roundLowMemory = $(lowMemory);rectangle;monochromeScreen
