@@ -1,6 +1,5 @@
 project.manifest = manifest.xml
-#excludeBase=deviceNetwork;widget
-excludeBase=testNetwork;widget
+excludeBase=widget
 
 base.sourcePath = source;source-common;source-generated
 

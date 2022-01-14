@@ -5,12 +5,12 @@
     "ANT_NETWORK_TEST": "TestNetwork.TestLightNetwork"
   },
   "definedSymbols": ["dataField"],
-  "files": ["source-preprocess/BikeLightsView.mc"],
   "outFolder": "source-generated",
   "outFileExtension": "$(__TARGET_NAME).mc",
   "targets": [
     {
       "name": "TouchRectangleHighMemory",
+      "files": ["source-preprocess/BikeLightsView.mc"],
       "definedSymbols": ["highMemory", "rectangle", "touchScreen"],
       "includeSymbols": {
         "TARGET": ":highMemory :rectangle :touchScreen"
@@ -18,6 +18,7 @@
     },
     {
       "name": "RectangleHighMemory",
+      "files": ["source-preprocess/BikeLightsView.mc"],
       "definedSymbols": ["highMemory", "rectangle", "nonTouchScreen"],
       "includeSymbols": {
         "TARGET": ":highMemory :rectangle :nonTouchScreen"
@@ -25,6 +26,7 @@
     },
     {
       "name": "RectangleLowMemory",
+      "files": ["source-preprocess/BikeLightsView.mc"],
       "definedSymbols": ["lowMemory", "rectangle", "nonTouchScreen"],
       "includeSymbols": {
         "TARGET": ":lowMemory :rectangle :nonTouchScreen"
@@ -32,6 +34,7 @@
     },
     {
       "name": "RoundHighMemory",
+      "files": ["source-preprocess/BikeLightsView.mc"],
       "definedSymbols": ["highMemory", "round", "nonTouchScreen"],
       "includeSymbols": {
         "TARGET": ":highMemory :round :nonTouchScreen"
@@ -39,10 +42,15 @@
     },
     {
       "name": "RoundLowMemory",
+      "files": ["source-preprocess/BikeLightsView.mc"],
       "definedSymbols": ["lowMemory", "round", "nonTouchScreen"],
       "includeSymbols": {
         "TARGET": ":lowMemory :round :nonTouchScreen"
       }
+    },
+    {
+      "name": "TestNetwork",
+      "files": ["source-preprocess/TestLightNetwork.mc"]
     }
   ]
 }

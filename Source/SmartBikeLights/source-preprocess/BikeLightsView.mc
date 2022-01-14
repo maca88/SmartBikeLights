@@ -301,8 +301,8 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
     }
 
     function onUpdate(dc) {
-// #if dataField
         var timer = System.getTimer();
+// #if dataField
         var lastUpdateTime = _lastUpdateTime;
         // In case the device woke up from a sleep, set the control mode that was used before it went to sleep. When
         // a device goes to sleep, it turns off the lights which triggers onExternalLightModeChange method in case

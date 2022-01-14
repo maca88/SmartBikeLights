@@ -1,6 +1,8 @@
+// #if ANT_NETWORK == "TestNetwork.TestLightNetwork"
+// #include HEADER
 using Toybox.AntPlus;
 
-(:testNetwork :highMemory)
+(:glance :highMemory)
 module TestAntPlus {
     class BikeRadar {
         private var target;
@@ -24,7 +26,7 @@ module TestAntPlus {
     }
 }
 
-(:testNetwork)
+(:glance)
 module TestNetwork {
 
     var counter = 0;
@@ -150,3 +152,4 @@ module TestNetwork {
         }
     }
 }
+// #endif
