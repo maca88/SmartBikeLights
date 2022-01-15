@@ -1,7 +1,7 @@
 project.manifest = manifest.xml
 excludeBase=widget
 
-base.sourcePath = source;source-common;source-generated
+base.sourcePath = source;source-common;source-generated;tests
 
 lowMemory = $(excludeBase);touchScreen;highMemory;settings;lightButtons
 

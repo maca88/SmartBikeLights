@@ -122,12 +122,25 @@ export default observer(({ filterGroups, lightModes, device }) => {
                     <Grid item xs={12} sm={6}>
                       <AppTextInput 
                         type="number"
-                        label="Minimum active time in seconds"
-                        setter={filterGroup.setMinActiveTime}
-                        value={filterGroup.minActiveTime}
+                        label="Activation delay in seconds"
+                        setter={filterGroup.setActivationDelay}
+                        value={filterGroup.activationDelay}
                         help={
                           <Typography>
-                          With this setting it is possible to set the minimum time the light mode of the filter group will be active once it is matched.
+                            It will postpone the light mode activation for the given delay. (e.g. change the light mode after the timer has been paused for five seconds) 
+                          </Typography>
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <AppTextInput 
+                        type="number"
+                        label="Deactivation delay in seconds"
+                        setter={filterGroup.setDeactivationDelay}
+                        value={filterGroup.deactivationDelay}
+                        help={
+                          <Typography>
+                            It will postpone the light mode deactivation for the given delay. (e.g. keep the brake light mode for two more seconds after finishing braking)
                           </Typography>
                         }
                       />

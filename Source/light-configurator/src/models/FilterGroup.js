@@ -7,7 +7,8 @@ export default class FilterGroup {
   name = null;
   filters = [];
   lightMode = null;
-  minActiveTime = null;
+  activationDelay = null;
+  deactivationDelay = null;
   // Ui properties
   open = true;
 
@@ -27,7 +28,8 @@ export default class FilterGroup {
     let config = `${(this.name || '')}:${this.filters.length}`;
     if (this._hasLightMode) {
       config += `:${this.lightMode}`;
-      config += `:${(this.minActiveTime || 1)}`;
+      config += `:${(this.deactivationDelay || 0)}`;
+      config += `:${(this.activationDelay || 0)}`;
     }
 
     this.filters.forEach(f => {
@@ -57,8 +59,12 @@ export default class FilterGroup {
     this.lightMode = value;
   }
 
-  setMinActiveTime = (value) => {
-    this.minActiveTime = value;
+  setActivationDelay = (value) => {
+    this.activationDelay = value;
+  }
+
+  setDeactivationDelay = (value) => {
+    this.deactivationDelay = value;
   }
 
   setOpen = (value) => {
