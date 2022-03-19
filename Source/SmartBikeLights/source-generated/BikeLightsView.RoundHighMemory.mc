@@ -121,7 +121,23 @@ class BikeLightsView extends  WatchUi.DataField  {
     protected var _sunriseTime;
     (:dataField) private var _lastSpeed;
     (:dataField) private var _acceleration;
-    (:highMemory) private var _bikeRadar;
+    (:dataField :highMemory) private var _bikeRadar;
+    (:dataField :highMemory) private var _gradientData = [
+        0f,    // 0. Altitude last estimate
+        0f,    // 1. Altitude kalman gain
+        0.1f,  // 2. Altitude process noise
+        0.5f,  // 3. Altitude estimation error
+
+        0f,    // 4. Distance last estimate
+        0f,    // 5. Distance kalman gain
+        0.1f,  // 6. Distance process noise
+        0.5f,  // 7. Distance estimation error
+
+        0f,    // 8. Last elapsed distance
+        0,     // 9. Last calculation time
+        0,     // 10. Last gradient
+        false  // 11. Whether gradient should be calculated
+    ];
 
     private var _lastUpdateTime = 0;
     private var _lastOnShowCallTime = 0;
@@ -225,11 +241,38 @@ class BikeLightsView extends  WatchUi.DataField  {
             return null;
         }
 
+        // Update acceleration
         var lastSpeed = _lastSpeed;
         var currentSpeed = activityInfo.currentSpeed;
         _acceleration = lastSpeed != null && currentSpeed != null && lastSpeed > 0 && currentSpeed > 0
             ? ((currentSpeed / lastSpeed) - 1) * 100
             : null;
+        // Update gradient
+        var altitude = activityInfo.altitude;
+        var elapsedDistance = activityInfo.elapsedDistance;
+        var gradientData = _gradientData;
+        if (gradientData[11] /* Enabled */ && altitude != null && elapsedDistance != null) {
+            var diffDistance = elapsedDistance - gradientData[8] /* Last elapsed distance */;
+            if (diffDistance > 0.5f && activityInfo.timerState == 3 /* TIMER_STATE_ON */) {
+                var timer = System.getTimer();
+                // Reset last estimate in case the GPS signal is lost to prevent abnormal gradients
+                if ((timer - gradientData[9]) > 3000) {
+                    //System.println("init d=" + elapsedDistance + " init a=" + altitude);
+                    gradientData[0] = altitude; // Reset altitude last estimate
+                    gradientData[4] = diffDistance; // Reset distance last estimate
+                }
+
+                gradientData[8] = elapsedDistance; // Update last elapsed distance
+                gradientData[9] = timer; // Update last calculation time
+                var lastEstimateAltitude = gradientData[0];
+                var currentEstimateAltitude = updateGradientData(altitude, 0); // Update estimated altitude
+                gradientData[10] = ((currentEstimateAltitude - lastEstimateAltitude) / updateGradientData(diffDistance, 4) /* Update estimated distance */) * 100; // Calculate gradient
+                //System.println("d=" + elapsedDistance + " a=" + altitude + " ca=" + currentEstimateAltitude + " ddiff=" + diffDistance + " cddiff=" + gradientData[4] + " cadiff=" + (currentEstimateAltitude - lastEstimateAltitude) + " grade=" + gradientData[10]);
+            } else {
+                gradientData[10] = 0f; // Reset last gradient
+            }
+        }
+
         if (_sunsetTime == null && activityInfo.currentLocation != null) {
             var position = activityInfo.currentLocation.toDegrees();
             var time = Gregorian.utcInfo(Time.now(), 0 /* FORMAT_SHORT */);
@@ -1414,6 +1457,7 @@ class BikeLightsView extends  WatchUi.DataField  {
                     : data == 'H' ? activityInfo.timerState
                     : data == 'J' ? activityInfo.startLocation == null ? 0 : 1
                     : data == 'K' && Activity has :getProfileInfo ? Activity.getProfileInfo().name
+                    : data == 'L' ? (activityInfo.timerState == 3 /* TIMER_STATE_ON */ ? _gradientData[10] /* Last gradient */ : null)
                     : null,
                     filterValue,
                     false);
@@ -1467,6 +1511,22 @@ class BikeLightsView extends  WatchUi.DataField  {
             // numeric values we want to ignore the type (e.g. 0 == 0f), so == operator is used instead.
             : operator == '=' ? value instanceof String ? value.equals(filterValue) : value == filterValue
             : false;
+    }
+
+    (:dataField :highMemory)
+    private function updateGradientData(value, index) {
+        // Calculate smooth gradient, applying simple kalman filter
+        var gradientData = _gradientData;
+        var lastEstimate = gradientData[index];
+        var errorEstimate = gradientData[index + 3];
+        var kalmanGain = errorEstimate / (errorEstimate + 5f /* Measure error */);
+        var currentEstimate = lastEstimate + kalmanGain * (value - lastEstimate);
+        var diffEstimate = (lastEstimate - currentEstimate).abs();
+        gradientData[index + 3] = (1f - kalmanGain) * errorEstimate + diffEstimate * gradientData[index + 2] /* Process noise */; // Update estimation error
+        gradientData[index + 1] = kalmanGain; // Update kalman gain
+        gradientData[index + 2] = 1f /* Max process noise */ / (1f + diffEstimate * diffEstimate); // Update process noise
+        gradientData[index] = currentEstimate; // Update last estimate
+        return currentEstimate;
     }
 
     (:dataField :highMemory)
@@ -1567,6 +1627,7 @@ class BikeLightsView extends  WatchUi.DataField  {
 
     // <GlobalFilters>#<HeadlightModes>:<HeadlightSerialNumber>#<HeadlightFilters>#<TaillightModes>:<TaillightSerialNumber>#<TaillightFilters>
     private function parseConfiguration() {
+        _gradientData[11] = false; // Reset whether gradient should be calculated
         var currentConfig = getPropertyValue("CC");
         var configKey = currentConfig != null && currentConfig > 1
             ? "LC" + currentConfig
@@ -1760,6 +1821,7 @@ class BikeLightsView extends  WatchUi.DataField  {
                     // The : character will be automatically skipped by the parseFilters method, so we do not have to increment the
                     // filterResult index here.
                     : parse(charNumber == 75 /* Profile name */ ? 0 /* STRING */ : 1 /* NUMBER */, chars, i + 1, filterResult);
+                _gradientData[11] |= charNumber == 76 /* L */;
                 data.add(filterType); // Filter type
                 data.add(filterResult[1]); // Filter operator
                 data.add(filterValue); // Filter value

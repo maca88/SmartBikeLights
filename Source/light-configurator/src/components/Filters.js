@@ -70,12 +70,12 @@ export default observer(({ filters, filterTypes, device }) => {
               filter.type === 'E' ? <TimespanFilter filter={filter} />
               : filter.type === 'F' ? <PositionFilter filter={filter} />
               : filter.type === 'B' ? <BatteryFilter filter={filter} />
-              : filter.type === 'A' ? <NumberFilter 
+              : filter.type === 'A' ? <NumberFilter
                                         label="% per second"
                                         filter={filter}
                                         note={
                                           <Typography>
-                                          NOTE: Acceleration is calculated once per second by calculating the difference between the current and previous (one second ago) speed 
+                                          NOTE: Acceleration is calculated once per second by calculating the difference between the current and previous (one second ago) speed
                                           in percentage (%). When decelerating, the calculated value will be negative, which means that this filter can be also used for braking
                                           by setting a negative value (e.g. Lower than -20%).
                                           </Typography>
@@ -87,6 +87,15 @@ export default observer(({ filters, filterTypes, device }) => {
               : filter.type === 'I' ? <BikeRadarFilter filter={filter} />
               : filter.type === 'J' ? <StartLocationFilter filter={filter} />
               : filter.type === 'K' ? <ProfileNameFilter filter={filter} />
+              : filter.type === 'L' ? <NumberFilter
+                                        label="Gradient %"
+                                        filter={filter}
+                                        note={
+                                          <Typography>
+                                          NOTE: Works only when an activity is running. The value will be negative when cycling downhill and positive when cycling uphill.
+                                          </Typography>
+                                        }
+                                      />
               : null
             }
           </Grid>
