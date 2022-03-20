@@ -1,0 +1,205 @@
+SplineFontDB: 3.2
+FontName: Battery24
+FullName: Battery24
+FamilyName: Battery24
+Weight: Regular
+Copyright: Copyright (c) 2022, Maca
+UComments: "2022-3-19: Created with FontForge (http://fontforge.org)"
+Version: 001.000
+ItalicAngle: 0
+UnderlinePosition: -102.4
+UnderlineWidth: 51.2
+Ascent: 819
+Descent: 205
+InvalidEm: 0
+LayerCount: 2
+Layer: 0 0 "Back" 1
+Layer: 1 0 "Fore" 0
+XUID: [1021 213 -1312993357 13021]
+StyleMap: 0x0000
+FSType: 0
+OS2Version: 0
+OS2_WeightWidthSlopeOnly: 0
+OS2_UseTypoMetrics: 1
+CreationTime: 1647656788
+ModificationTime: 1647658698
+OS2TypoAscent: 0
+OS2TypoAOffset: 1
+OS2TypoDescent: 0
+OS2TypoDOffset: 1
+OS2TypoLinegap: 92
+OS2WinAscent: 0
+OS2WinAOffset: 1
+OS2WinDescent: 0
+OS2WinDOffset: 1
+HheadAscent: 0
+HheadAOffset: 1
+HheadDescent: 0
+HheadDOffset: 1
+MarkAttachClasses: 1
+DEI: 91125
+Encoding: ISO8859-1
+UnicodeInterp: none
+NameList: AGL For New Fonts
+DisplaySize: -72
+AntiAlias: 1
+FitToEm: 0
+WinInfo: 0 26 11
+BeginPrivate: 0
+EndPrivate
+BeginChars: 256 6
+
+StartChar: B
+Encoding: 66 66 0
+Width: 2879
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+0 819 m 1
+ 2645 819 l 1
+ 2645 748 2645 677 2645 606 c 1
+ 2716 606 2788 606 2859 606 c 1
+ 2859 8 l 1
+ 2788 8 2716 8 2645 8 c 1
+ 2645 -63 2645 -134 2645 -205 c 1
+ 0 -205 l 1
+ 0 819 l 1
+2560 734 m 1
+ 85 734 l 1
+ 85 -120 l 1
+ 2560 -120 l 1
+ 2560 -49 2560 23 2560 94 c 1
+ 2631 94 2702 94 2773 94 c 1
+ 2773 520 l 1
+ 2702 520 2631 520 2560 520 c 1
+ 2560 591 2560 663 2560 734 c 1
+EndSplineSet
+EndChar
+
+StartChar: one
+Encoding: 49 49 1
+Width: 2879
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+2091 -77 m 1
+ 2091 691 l 1
+ 2432 691 l 1
+ 2432 -77 l 1
+ 2091 -77 l 1
+1621 -77 m 1
+ 1621 691 l 1
+ 1963 691 l 1
+ 1963 -77 l 1
+ 1621 -77 l 1
+1152 -77 m 1
+ 1152 691 l 1
+ 1493 691 l 1
+ 1493 -77 l 1
+ 1152 -77 l 1
+683 -77 m 1
+ 683 691 l 1
+ 1024 691 l 1
+ 1024 -77 l 1
+ 683 -77 l 1
+213 -77 m 1
+ 213 691 l 1
+ 555 691 l 1
+ 555 -77 l 1
+ 213 -77 l 1
+EndSplineSet
+EndChar
+
+StartChar: two
+Encoding: 50 50 2
+Width: 2879
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+1621 -77 m 1
+ 1621 691 l 1
+ 1963 691 l 1
+ 1963 -77 l 1
+ 1621 -77 l 1
+1152 -77 m 1
+ 1152 691 l 1
+ 1493 691 l 1
+ 1493 -77 l 1
+ 1152 -77 l 1
+683 -77 m 1
+ 683 691 l 1
+ 1024 691 l 1
+ 1024 -77 l 1
+ 683 -77 l 1
+213 -77 m 1
+ 213 691 l 1
+ 555 691 l 1
+ 555 -77 l 1
+ 213 -77 l 1
+EndSplineSet
+EndChar
+
+StartChar: three
+Encoding: 51 51 3
+Width: 2879
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+1152 -77 m 1
+ 1152 691 l 1
+ 1493 691 l 1
+ 1493 -77 l 1
+ 1152 -77 l 1
+683 -77 m 1
+ 683 691 l 1
+ 1024 691 l 1
+ 1024 -77 l 1
+ 683 -77 l 1
+213 -77 m 1
+ 213 691 l 1
+ 555 691 l 1
+ 555 -77 l 1
+ 213 -77 l 1
+EndSplineSet
+EndChar
+
+StartChar: four
+Encoding: 52 52 4
+Width: 2879
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+683 -77 m 1
+ 683 691 l 1
+ 1024 691 l 1
+ 1024 -77 l 1
+ 683 -77 l 1
+213 -77 m 1
+ 213 691 l 1
+ 555 691 l 1
+ 555 -77 l 1
+ 213 -77 l 1
+EndSplineSet
+EndChar
+
+StartChar: five
+Encoding: 53 53 5
+Width: 2879
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+213 -77 m 1
+ 213 691 l 1
+ 555 691 l 1
+ 555 -77 l 1
+ 213 -77 l 1
+EndSplineSet
+EndChar
+EndChars
+EndSplineFont

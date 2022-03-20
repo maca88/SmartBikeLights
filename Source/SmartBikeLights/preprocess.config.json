@@ -11,41 +11,49 @@
     {
       "name": "TouchRectangleHighMemory",
       "files": ["source-preprocess/BikeLightsView.mc"],
-      "definedSymbols": ["highMemory", "rectangle", "touchScreen"],
+      "definedSymbols": ["highMemory", "rectangle", "touchScreen", "mediumResolution"],
       "includeSymbols": {
-        "TARGET": ":highMemory :rectangle :touchScreen"
+        "TARGET": ":highMemory :rectangle :touchScreen :mediumResolution"
       }
     },
     {
       "name": "RectangleHighMemory",
       "files": ["source-preprocess/BikeLightsView.mc"],
-      "definedSymbols": ["highMemory", "rectangle", "nonTouchScreen"],
+      "definedSymbols": ["highMemory", "rectangle", "nonTouchScreen", "mediumResolution"],
       "includeSymbols": {
-        "TARGET": ":highMemory :rectangle :nonTouchScreen"
+        "TARGET": ":highMemory :rectangle :nonTouchScreen :mediumResolution"
       }
     },
     {
       "name": "RectangleLowMemory",
       "files": ["source-preprocess/BikeLightsView.mc"],
-      "definedSymbols": ["lowMemory", "rectangle", "nonTouchScreen"],
+      "definedSymbols": ["lowMemory", "rectangle", "nonTouchScreen", "mediumResolution"],
       "includeSymbols": {
-        "TARGET": ":lowMemory :rectangle :nonTouchScreen"
+        "TARGET": ":lowMemory :rectangle :nonTouchScreen :mediumResolution"
       }
     },
     {
       "name": "RoundHighMemory",
       "files": ["source-preprocess/BikeLightsView.mc"],
-      "definedSymbols": ["highMemory", "round", "nonTouchScreen"],
+      "definedSymbols": ["highMemory", "round", "nonTouchScreen", "mediumResolution"],
       "includeSymbols": {
-        "TARGET": ":highMemory :round :nonTouchScreen"
+        "TARGET": ":highMemory :round :nonTouchScreen :mediumResolution"
+      }
+    },
+    {
+      "name": "RoundHighResolution",
+      "files": ["source-preprocess/BikeLightsView.mc"],
+      "definedSymbols": ["highMemory", "round", "nonTouchScreen", "highResolution"],
+      "includeSymbols": {
+        "TARGET": ":highMemory :round :nonTouchScreen :highResolution"
       }
     },
     {
       "name": "RoundLowMemory",
       "files": ["source-preprocess/BikeLightsView.mc"],
-      "definedSymbols": ["lowMemory", "round", "nonTouchScreen"],
+      "definedSymbols": ["lowMemory", "round", "nonTouchScreen", "mediumResolution"],
       "includeSymbols": {
-        "TARGET": ":lowMemory :round :nonTouchScreen"
+        "TARGET": ":lowMemory :round :nonTouchScreen :mediumResolution"
       }
     },
     {

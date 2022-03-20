@@ -1,4 +1,5 @@
 export const deviceList = [
+  { id: 'B4125', name: 'D2 Air X10', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
   { id: 'B2819', name: 'D2 Charlie', highMemory: true, bikeRadar: true, touchScreen: false, settings: false, profileName: false },
   { id: 'B3197', name: 'D2 Delta', highMemory: true, bikeRadar: true, touchScreen: false, settings: false, profileName: false },
   { id: 'B3198', name: 'D2 Delta PX', highMemory: true, bikeRadar: true, touchScreen: false, settings: false, profileName: false },
@@ -18,6 +19,7 @@ export const deviceList = [
   { id: 'B2530', name: 'Edge 820 / Explore', highMemory: true, bikeRadar: true, touchScreen: true, settings: false, profileName: false },
   { id: 'B3122', name: 'Edge 830', highMemory: true, bikeRadar: true, touchScreen: true, settings: false, profileName: true },
   { id: 'B3011', name: 'Edge Explore', highMemory: true, bikeRadar: true, touchScreen: true, settings: false, profileName: false },
+  { id: 'B3944', name: 'epix (Gen 2)', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
   { id: 'B2697', name: 'fēnix 5 / quatix 5', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: false },
   { id: 'B3110', name: 'fēnix 5 Plus', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
   //{ id: 'B2544', name: 'fēnix 5S', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: false },
@@ -29,6 +31,9 @@ export const deviceList = [
   { id: 'B3287', name: 'fēnix 6S / 6S Solar / 6S Dual Power', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: true },
   { id: 'B3288', name: 'fēnix 6S Pro / 6S Sapphire / 6S Pro Solar / 6S Pro Dual Power', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
   { id: 'B3291', name: 'fēnix 6X Pro / 6X Sapphire / 6X Pro Solar / tactix Delta Sapphire / Delta Solar / Delta Solar - Ballistics Edition / quatix 6X / 6X Solar / 6X Dual Power', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
+  { id: 'B3906', name: 'fēnix 7', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
+  { id: 'B3905', name: 'fēnix 7S', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
+  { id: 'B3907', name: 'fēnix 7X', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
   { id: 'B3501', name: 'First Avenger', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: true },
   { id: 'B3076', name: 'Forerunner 245', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: true },
   { id: 'B3077', name: 'Forerunner 245 Music', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
@@ -45,12 +50,13 @@ export const deviceList = [
   { id: 'B3246', name: 'MARQ Driver', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
   { id: 'B3250', name: 'MARQ Expedition', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
   { id: 'B3739', name: 'MARQ Golfer', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
+  { id: 'B3703', name: 'Venu 2', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
+  { id: 'B3851', name: 'Venu 2 Plus', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
   { id: 'B2700', name: 'vívoactive 3', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: false },
   { id: 'B3473', name: 'vívoactive 3 Mercedes-Benz Collection', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: false },
   { id: 'B2988', name: 'vívoactive 3 Music', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: true },
   { id: 'B3066', name: 'vívoactive 3 Music LTE', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: true },
-  { id: 'B3225', name: 'vívoactive 4', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: true },
-  //{ id: 'B3224', name: 'vívoactive 4S', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: false }
+  { id: 'B3225', name: 'vívoactive 4', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: true }
 ];
 
 let map = {};

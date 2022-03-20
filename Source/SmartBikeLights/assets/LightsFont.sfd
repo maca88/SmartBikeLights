@@ -1,7 +1,7 @@
 SplineFontDB: 3.2
-FontName: GarminLights
-FullName: GarminLights
-FamilyName: GarminLights
+FontName: LightsFont
+FullName: LightsFont
+FamilyName: LightsFont
 Weight: Light
 Copyright: Copyright (c) 2020, maca88
 UComments: "2020-11-7: Created with FontForge (http://fontforge.org)"
@@ -22,7 +22,7 @@ OS2Version: 0
 OS2_WeightWidthSlopeOnly: 0
 OS2_UseTypoMetrics: 1
 CreationTime: 1604708541
-ModificationTime: 1605038440
+ModificationTime: 1647693277
 OS2TypoAscent: 0
 OS2TypoAOffset: 1
 OS2TypoDescent: 0
@@ -36,7 +36,6 @@ HheadAscent: 0
 HheadAOffset: 1
 HheadDescent: 0
 HheadDOffset: 1
-OS2Vendor: 'PfEd'
 MarkAttachClasses: 1
 DEI: 91125
 Encoding: ISO8859-1
@@ -48,78 +47,10 @@ FitToEm: 0
 WinInfo: 0 38 16
 BeginPrivate: 0
 EndPrivate
-BeginChars: 256 11
-
-StartChar: less
-Encoding: 60 60 0
-Width: 800
-Flags: HW
-LayerCount: 2
-Fore
-SplineSet
-727 819 m 2
- 767 819 800 786 800 746 c 2
- 800 -132 l 2
- 800 -172 767 -205 727 -205 c 2
- 512 -205 l 2
- 230 -205 0 25 0 307 c 0
- 0 589 230 819 512 819 c 2
- 727 819 l 2
-653 -59 m 1
- 653 673 l 1
- 512 673 l 2
- 310 673 146 509 146 307 c 0
- 146 105 310 -59 512 -59 c 2
- 653 -59 l 1
-EndSplineSet
-Validated: 1
-EndChar
-
-StartChar: greater
-Encoding: 62 62 1
-Width: 800
-Flags: HW
-LayerCount: 2
-Fore
-SplineSet
-73 819 m 2
- 288 819 l 2
- 570 819 800 589 800 307 c 0
- 800 25 570 -205 288 -205 c 2
- 73 -205 l 2
- 33 -205 0 -172 0 -132 c 2
- 0 746 l 2
- 0 786 33 819 73 819 c 2
-146 -59 m 1
- 288 -59 l 2
- 490 -59 653 105 653 307 c 0
- 653 509 490 673 288 673 c 2
- 146 673 l 1
- 146 -59 l 1
-EndSplineSet
-Validated: 1
-EndChar
-
-StartChar: b
-Encoding: 98 98 2
-Width: 539
-Flags: HW
-LayerCount: 2
-Fore
-SplineSet
-416 234 m 2
- 123 234 l 2
- 83 234 50 267 50 307 c 0
- 50 347 83 380 123 380 c 0
- 416 380 l 2
- 456 380 489 347 489 307 c 0
- 489 267 456 234 416 234 c 2
-EndSplineSet
-Validated: 1
-EndChar
+BeginChars: 256 10
 
 StartChar: M
-Encoding: 77 77 3
+Encoding: 77 77 0
 Width: 539
 Flags: HW
 LayerCount: 2
@@ -144,7 +75,7 @@ Validated: 1
 EndChar
 
 StartChar: F
-Encoding: 70 70 4
+Encoding: 70 70 1
 Width: 383
 Flags: HW
 LayerCount: 2
@@ -206,7 +137,7 @@ Validated: 1
 EndChar
 
 StartChar: f
-Encoding: 102 102 5
+Encoding: 102 102 2
 Width: 383
 Flags: HW
 LayerCount: 2
@@ -234,7 +165,7 @@ Validated: 1
 EndChar
 
 StartChar: m
-Encoding: 109 109 6
+Encoding: 109 109 3
 Width: 383
 Flags: HW
 LayerCount: 2
@@ -279,7 +210,7 @@ Validated: 1
 EndChar
 
 StartChar: S
-Encoding: 83 83 7
+Encoding: 83 83 4
 Width: 539
 Flags: HW
 LayerCount: 2
@@ -311,7 +242,7 @@ Validated: 1
 EndChar
 
 StartChar: s
-Encoding: 115 115 8
+Encoding: 115 115 5
 Width: 539
 Flags: HW
 LayerCount: 2
@@ -329,7 +260,7 @@ Validated: 1
 EndChar
 
 StartChar: X
-Encoding: 88 88 9
+Encoding: 88 88 6
 Width: 539
 Flags: HW
 LayerCount: 2
@@ -353,7 +284,7 @@ Validated: 1
 EndChar
 
 StartChar: question
-Encoding: 63 63 10
+Encoding: 63 63 7
 Width: 489
 Flags: HW
 LayerCount: 2
@@ -402,6 +333,57 @@ SplineSet
  220 -29 207 -24 198 -15 c 0
  189 -6 185 6 185 20 c 0
 EndSplineSet
+Validated: 1
+EndChar
+
+StartChar: parenleft
+Encoding: 40 40 8
+Width: 800
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+727 819 m 2
+ 767 819 800 786 800 746 c 2
+ 800 -132 l 2
+ 800 -172 767 -205 727 -205 c 2
+ 512 -205 l 2
+ 230 -205 0 25 0 307 c 0
+ 0 589 230 819 512 819 c 2
+ 727 819 l 2
+653 -59 m 1
+ 653 673 l 1
+ 512 673 l 2
+ 310 673 146 509 146 307 c 0
+ 146 105 310 -59 512 -59 c 2
+ 653 -59 l 1
+EndSplineSet
+Validated: 1
+EndChar
+
+StartChar: parenright
+Encoding: 41 41 9
+Width: 800
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+73 819 m 2
+ 288 819 l 2
+ 570 819 800 589 800 307 c 0
+ 800 25 570 -205 288 -205 c 2
+ 73 -205 l 2
+ 33 -205 0 -172 0 -132 c 2
+ 0 746 l 2
+ 0 786 33 819 73 819 c 2
+146 -59 m 1
+ 288 -59 l 2
+ 490 -59 653 105 653 307 c 0
+ 653 509 490 673 288 673 c 2
+ 146 673 l 1
+ 146 -59 l 1
+EndSplineSet
+Validated: 1
 EndChar
 EndChars
 EndSplineFont

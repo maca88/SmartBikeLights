@@ -616,16 +616,24 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         _titleFont = settings[1];
         var titleTopPadding = settings[2];
         var titleHeight = dc.getFontHeight(_titleFont) + titleTopPadding;
+// #if highResolution
+        var lightHeight = height < 83 ? 53 : 83;
+        var includeTitle = height > 120 && width > 200;
+// #else
         var lightHeight = height < 55 ? 35 : 55;
-        var totalHeight = lightHeight + titleHeight;
         var includeTitle = height > 90 && width > 150;
-        totalHeight = includeTitle ? totalHeight : lightHeight;
+// #endif
+        var totalHeight = includeTitle ? lightHeight + titleHeight : lightHeight;
         var startY = (12800 >> flags) & 0x01 == 1 ? 2 /* From top */
             : (200 >> flags) & 0x01 == 1 ? height - totalHeight /* From bottom */
             : (height - totalHeight) / 2; /* From center */
         _titleY = includeTitle ? startY : null;
         _lightY = includeTitle ? _titleY + titleHeight : startY;
+// #if highResolution
+        _batteryY = height < 83 ? null : _lightY + 53;
+// #else
         _batteryY = height < 55 ? null : _lightY + 35;
+// #endif
         var offsetDirection = ((1415136409 >> (flags * 2)) & 0x03) - 1;
         _offsetX = settings[3] * offsetDirection;
     }
@@ -921,7 +929,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         var lightX = Math.round(width * 0.25f * position);
 // #else
         var lightX = Math.round(width * 0.25f * position) + _offsetX;
-        lightX += _initializedLights == 2 ? (direction * ((width / 4) - 25)) : 0;
+        lightX += _initializedLights == 2 ? (direction * ((width / 4) - /* #if highResolution */36/* #else */25/* #endif */)) : 0;
 // #endif
         var batteryStatus = getLightBatteryStatus(lightData);
         var title = lightData[5];
@@ -932,12 +940,17 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 // #if rectangle
             dc.drawText(lightX, _titleY, _titleFont, title, 1 /* TEXT_JUSTIFY_CENTER */);
 // #else
-            dc.drawText(lightX + (direction * 22), _titleY, _titleFont, title, justification);
+            dc.drawText(lightX + (direction * /* #if highResolution */32/* #else */22/* #endif */), _titleY, _titleFont, title, justification);
 // #endif
         }
 
+// #if highResolution
+        dc.drawText(lightX + (direction * (68 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
+        dc.drawText(lightX + (direction * 10), _lightY + 16, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
+// #else
         dc.drawText(lightX + (direction * (49 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
         dc.drawText(lightX + (direction * 8), _lightY + 11, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
+// #endif
         if (_batteryY != null) {
             drawBattery(dc, fgColor, lightX, _batteryY, batteryStatus);
         }
@@ -1361,7 +1374,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
                 : $.lightModeCharacters[index];
         }
 
-        return lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? lightModeCharacter + ">" : "<" + lightModeCharacter;
+        return lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? lightModeCharacter + ")" : "(" + lightModeCharacter;
     }
 
     (:settings)

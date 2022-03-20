@@ -3,19 +3,20 @@ excludeBase=widget
 
 base.sourcePath = source;source-common;source-generated;tests
 
-lowMemory = $(excludeBase);touchScreen;highMemory;settings;lightButtons
+lowMemory = $(excludeBase);touchScreen;highMemory;settings;lightButtons;highResolution
 
 roundLowMemory = $(lowMemory);rectangle;monochromeScreen
-roundNoSettings = $(excludeBase);touchScreen;lowMemory;settings;lightButtons;rectangle;monochromeScreen
+roundNoSettings = $(excludeBase);touchScreen;lowMemory;settings;lightButtons;rectangle;monochromeScreen;highResolution
+roundHighResolution = $(excludeBase);touchScreen;lowMemory;noLightButtons;rectangle;monochromeScreen;mediumResolution
 
 rectangleLowMemory = $(lowMemory);round;monochromeScreen
 rectangleMonochromeLowMemory = $(lowMemory);round;colorScreen
-rectangleNoSettings = $(excludeBase);touchScreen;lowMemory;settings;lightButtons;round;monochromeScreen
-rectangleNonTouchScreen = $(excludeBase);touchScreen;lowMemory;noLightButtons;round;monochromeScreen
+rectangleNoSettings = $(excludeBase);touchScreen;lowMemory;settings;lightButtons;round;monochromeScreen;highResolution
+rectangleNonTouchScreen = $(excludeBase);touchScreen;lowMemory;noLightButtons;round;monochromeScreen;highResolution
 
 # maps default
-rectangle.excludeAnnotations = $(excludeBase);nonTouchScreen;lowMemory;noLightButtons;round;settings;monochromeScreen
-round.excludeAnnotations = $(excludeBase);touchScreen;lowMemory;noLightButtons;rectangle;monochromeScreen
+rectangle.excludeAnnotations = $(excludeBase);nonTouchScreen;lowMemory;noLightButtons;round;settings;monochromeScreen;highResolution
+round.excludeAnnotations = $(excludeBase);touchScreen;lowMemory;noLightButtons;rectangle;monochromeScreen;highResolution
 base.excludeAnnotations = $(rectangle.excludeAnnotations)
 
 # Non touch screen devices with 32KB memory
@@ -91,6 +92,9 @@ fenix5xplus.resourcePath = $(fenix5xplus.resourcePath);resources-highmemory
 fenix6pro.resourcePath = $(fenix6pro.resourcePath);resources-highmemory
 fenix6spro.resourcePath = $(fenix6spro.resourcePath);resources-highmemory
 fenix6xpro.resourcePath = $(fenix6xpro.resourcePath);resources-highmemory
+fenix7.resourcePath = $(fenix7.resourcePath);resources-highmemory
+fenix7s.resourcePath = $(fenix7s.resourcePath);resources-highmemory
+fenix7x.resourcePath = $(fenix7x.resourcePath);resources-highmemory
 fr245m.resourcePath = $(fr245m.resourcePath);resources-highmemory
 fr645m.resourcePath = $(fr645m.resourcePath);resources-highmemory
 fr745.resourcePath = $(fr745.resourcePath);resources-highmemory
@@ -103,3 +107,13 @@ marqcommander.resourcePath = $(marqcommander.resourcePath);resources-highmemory
 marqdriver.resourcePath = $(marqdriver.resourcePath);resources-highmemory
 marqexpedition.resourcePath = $(marqexpedition.resourcePath);resources-highmemory
 marqgolfer.resourcePath = $(marqgolfer.resourcePath);resources-highmemory
+
+# Round high resolution screen devices more than 32KB memory and CIQ 4.0+
+d2airx10.excludeAnnotations = $(roundHighResolution)
+d2airx10.resourcePath = $(d2airx10.resourcePath);resources-highmemory
+epix2.excludeAnnotations = $(roundHighResolution)
+epix2.resourcePath = $(epix2.resourcePath);resources-highmemory
+venu2.excludeAnnotations = $(roundHighResolution)
+venu2.resourcePath = $(venu2.resourcePath);resources-highmemory
+venu2plus.excludeAnnotations = $(roundHighResolution)
+venu2plus.resourcePath = $(venu2plus.resourcePath);resources-highmemory

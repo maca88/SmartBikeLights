@@ -12,7 +12,7 @@ using Toybox.Time;
 using Toybox.Time.Gregorian;
 using Toybox.Application.Properties as Properties;
 
-(:lowMemory :rectangle :nonTouchScreen)
+(:lowMemory :rectangle :nonTouchScreen :mediumResolution)
 const lightModeCharacters = [
     "S", /* High steady beam */
     "M", /* Medium steady beam */
@@ -22,14 +22,14 @@ const lightModeCharacters = [
     "f"  /* Low flash */
 ];
 
-(:lowMemory :rectangle :nonTouchScreen)
+(:lowMemory :rectangle :nonTouchScreen :mediumResolution)
 const controlModes = [
     "S", /* SMART */
     "N", /* NETWORK */
     "M"  /* MANUAL */
 ];
 
-(:lowMemory :rectangle :nonTouchScreen)
+(:lowMemory :rectangle :nonTouchScreen :mediumResolution)
 const networkModes = [
     "INDV", /* LIGHT_NETWORK_MODE_INDIVIDUAL */
     "AUTO", /* LIGHT_NETWORK_MODE_AUTO */
@@ -37,7 +37,7 @@ const networkModes = [
     "TRAIL"
 ];
 
-(:lowMemory :rectangle :nonTouchScreen)
+(:lowMemory :rectangle :nonTouchScreen :mediumResolution)
 class BikeLightsView extends  WatchUi.DataField  {
 
     // Fonts
@@ -572,9 +572,8 @@ class BikeLightsView extends  WatchUi.DataField  {
         var titleTopPadding = settings[2];
         var titleHeight = dc.getFontHeight(_titleFont) + titleTopPadding;
         var lightHeight = height < 55 ? 35 : 55;
-        var totalHeight = lightHeight + titleHeight;
         var includeTitle = height > 90 && width > 150;
-        totalHeight = includeTitle ? totalHeight : lightHeight;
+        var totalHeight = includeTitle ? lightHeight + titleHeight : lightHeight;
         var startY = (12800 >> flags) & 0x01 == 1 ? 2 /* From top */
             : (200 >> flags) & 0x01 == 1 ? height - totalHeight /* From bottom */
             : (height - totalHeight) / 2; /* From center */
@@ -1277,7 +1276,7 @@ class BikeLightsView extends  WatchUi.DataField  {
                 : $.lightModeCharacters[index];
         }
 
-        return lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? lightModeCharacter + ">" : "<" + lightModeCharacter;
+        return lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? lightModeCharacter + ")" : "(" + lightModeCharacter;
     }
 
     (:settings)
