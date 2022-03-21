@@ -26,7 +26,7 @@ export const deviceList = [
   { id: 'B2900', name: 'fēnix 5S Plus', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
   { id: 'B2604', name: 'fēnix 5X / tactix Charlie', highMemory: true, bikeRadar: true, touchScreen: false, settings: false, profileName: false },
   { id: 'B3111', name: 'fēnix 5X Plus', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
-  { id: 'B3289', name: 'fēnix 6 / 6 Solar / 6 Dual Power"', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: true },
+  { id: 'B3289', name: 'fēnix 6 / 6 Solar / 6 Dual Power', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: true },
   { id: 'B3290', name: 'fēnix 6 Pro / 6 Sapphire / 6 Pro Solar / 6 Pro Dual Power / quatix 6', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
   { id: 'B3287', name: 'fēnix 6S / 6S Solar / 6S Dual Power', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: true },
   { id: 'B3288', name: 'fēnix 6S Pro / 6S Sapphire / 6S Pro Solar / 6S Pro Dual Power', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true },
