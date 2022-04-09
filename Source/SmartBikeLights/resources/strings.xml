@@ -3,6 +3,7 @@
     <string id="LC">Lights Configuration</string>
     <string id="AC">Activity color</string>
     <string id="RL">Record lights mode</string>
+    <string id="IL">Invert lights</string>
 
     <string id="Red">Red</string>
     <string id="DarkRed">Dark Red</string>

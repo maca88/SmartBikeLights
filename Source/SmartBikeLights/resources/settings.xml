@@ -17,5 +17,8 @@
         <setting propertyKey="@Properties.RL" title="@Strings.RL">
             <settingConfig type="boolean" />
         </setting>
+        <setting propertyKey="@Properties.IL" title="@Strings.IL">
+            <settingConfig type="boolean" />
+        </setting>
     </settings>
 </resources>

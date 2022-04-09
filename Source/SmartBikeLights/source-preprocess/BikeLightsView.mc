@@ -82,6 +82,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
     protected var _separatorWidth;
     protected var _titleFont;
     protected var _activityColor;
+    protected var _invertLights;
     (:touchScreen) private var _controlModeOnly = false;
 
     // Pre-calculated positions
@@ -153,6 +154,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
     function onSettingsChanged() {
         //System.println("onSettingsChanged" + " timer=" + System.getTimer());
         _activityColor = getPropertyValue("AC");
+        _invertLights = getPropertyValue("IL");
         _errorCode = null;
         try {
             var hlData = headlightData;
@@ -514,8 +516,9 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         }
 
         // Find which light was tapped
-        var lightData = getLightData(_initializedLights == 1 ? null : (_fieldWidth / 2) > location[0] ? 0 : 2);
-
+        var lightData = getLightData(_initializedLights == 1 ? null
+          : (_fieldWidth / 2) > location[0] ? (_invertLights ? 2 : 0)
+          : (_invertLights ? 0 : 2));
         if (getLightBatteryStatus(lightData) > 5) {
             return false; // Battery is disconnected
         }
@@ -924,6 +927,13 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
     protected function drawLight(lightData, position, dc, width, fgColor, bgColor) {
         var justification = lightData[0].type;
+        if (_invertLights) {
+            justification = justification == 0 ? 2 : 0;
+            position = position == 1 ? 3
+              : position == 3 ? 1
+              : position;
+        }
+
         var direction = justification == 0 ? 1 : -1;
 // #if rectangle
         var lightX = Math.round(width * 0.25f * position);
@@ -1154,8 +1164,8 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         if (_initializedLights == 1) {
             initializeLightPanel(dc, getLightData(null), 2, width, height);
         } else {
-            initializeLightPanel(dc, headlightData, 1, width, height);
-            initializeLightPanel(dc, taillightData, 3, width, height);
+            initializeLightPanel(dc, headlightData, _invertLights ? 3 : 1, width, height);
+            initializeLightPanel(dc, taillightData, _invertLights ? 1 : 3, width, height);
         }
 
         _panelInitialized = true;
@@ -1374,7 +1384,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
                 : $.lightModeCharacters[index];
         }
 
-        return lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? lightModeCharacter + ")" : "(" + lightModeCharacter;
+        return lightType == (_invertLights ? 2 /* LIGHT_TYPE_TAILLIGHT */ : 0 /* LIGHT_TYPE_HEADLIGHT */) ? lightModeCharacter + ")" : "(" + lightModeCharacter;
     }
 
     (:settings)

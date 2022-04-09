@@ -8,5 +8,8 @@
 
         <!-- Activity color -->
         <property id="AC" type="number">43775</property>
+
+        <!-- Invert lights -->
+        <property id="IL" type="boolean">false</property>
     </properties>
 </resources>
