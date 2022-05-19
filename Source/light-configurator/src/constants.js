@@ -205,6 +205,24 @@ export const headlightList = [
     }
   },
   {
+    id: 9,
+    name: 'Bontrager ION 800 RT',
+    modes: bontragerIonProRtModes,
+    individualNetworkOnly: false,
+    lightModes: [4587520, 196641], // 19703248369942561
+    defaultLightPanel: {
+      shortName: 'Ion 800 RT',
+      buttonGroups: [
+        [controlMode, bontragerIonProRtModes[0]],
+        [bontragerIonProRtModes[1]],
+        [bontragerIonProRtModes[2]],
+        [bontragerIonProRtModes[3]],
+        [bontragerIonProRtModes[4]],
+        [bontragerIonProRtModes[5]]
+      ]
+    }
+  },
+  {
     id: 5,
     name: 'Cycliq Fly12 CE',
     modes: cycliqFly12Ce,
@@ -521,6 +539,23 @@ export const taillightList = [
       buttonGroups: [
         [controlMode, garminVariaRtl511[0]],
         [garminVariaRtl511[1]]
+      ]
+    }
+  },
+  {
+    id: 11,
+    name: 'Garmin Varia RCT715',
+    modes: garminVariaRtl515,
+    individualNetworkOnly: false,
+    lightModes: [0, 73535488], // 73535488
+    defaultLightPanel: {
+      shortName: 'Varia 715',
+      buttonGroups: [
+        [controlMode, garminVariaRtl515[0]],
+        [garminVariaRtl515[1]],
+        [garminVariaRtl515[2]],
+        [garminVariaRtl515[3]],
+        [garminVariaRtl515[4]],
       ]
     }
   },
