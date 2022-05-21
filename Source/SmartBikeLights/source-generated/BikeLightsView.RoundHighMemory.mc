@@ -614,7 +614,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         _titleFont = settings[1];
         var titleTopPadding = settings[2];
         _offsetX = settings[3];
-        if (_initializedLights == 1) {
+        if (_initializedLights == 1 ) {
             _lightsFont = WatchUi.loadResource(fonts[:lightsLargeFont]);
             _batteryFont = WatchUi.loadResource(fonts[:batteryLargeFont]);
             _controlModeFont = WatchUi.loadResource(fonts[:controlModeLargeFont]);

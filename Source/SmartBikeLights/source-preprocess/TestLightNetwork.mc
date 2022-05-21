@@ -84,7 +84,7 @@ module TestNetwork {
 
             return null;
         }
-        
+
         function getProductInfo(identifier) {
             return _lights[identifier].productInfo;
         }
@@ -134,7 +134,7 @@ module TestNetwork {
             if (updateBattery == 0) {
                 return _batteryStatus;
             }
-            
+
             return _batteryStatus;
 
             updateBattery--;

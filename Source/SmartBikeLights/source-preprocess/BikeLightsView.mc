@@ -649,7 +649,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         _isFullScreen = width == deviceSettings.screenWidth && height == deviceSettings.screenHeight;
 // #endif
 // #if highMemory && mediumResolution
-        if (_initializedLights == 1) {
+        if (_initializedLights == 1 /* #if touchScreen */ && !_isFullScreen /* #endif */) {
             _lightsFont = WatchUi.loadResource(fonts[:lightsLargeFont]);
             _batteryFont = WatchUi.loadResource(fonts[:batteryLargeFont]);
             _controlModeFont = WatchUi.loadResource(fonts[:controlModeLargeFont]);
