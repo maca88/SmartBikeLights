@@ -20,7 +20,7 @@ Smart Bike Lights is a [data field](https://developer.garmin.com/connect-iq/conn
 
 ## How to use
 
-1. Download the data field application from Garmin Connect Store and synchronize your Garmin device
+1. [Download](https://apps.garmin.com/en-US/apps/0d9fd828-c932-4470-9c37-fd2828881888) the data field application from Garmin Connect Store and synchronize your Garmin device
 2. Pair your bike lights with your Garmin device ([Garmin manual](https://www8.garmin.com/manuals/webhelp/variaut/EN-US/GUID-C4BB544A-78FA-4B3E-9061-2371B7B3C558.html))
 3. On your Garmin device set `Light Beam Activated` setting to `Timer Start` in `Menu` -> `Sensors` -> `Lights` -> `Network Options`
 4. Configure your paired lights with the [Lights Configurator](https://maca88.github.io/SmartBikeLights/) (In case your light is not on the list, check [this thread](https://forums.garmin.com/developer/connect-iq/f/showcase/248492/data-field-smart-bike-lights))
@@ -117,6 +117,26 @@ Known limitations:
 - It requires to manually set the device numbers for the lights
 - It will not turn off the lights when the device goes to sleep
 - It uses one ANT channel per light
+
+## Control multiple lights of the same type
+
+There are two ways to control more than one light of the same type (e.g. two headlights):
+
+### Grouping them into one virtual light
+
+In case there is more than one taillight or headlight paired, the data field will automatically group all headlights or taillights into one virtual light, which will forward commands (e.g. light mode changes) to all grouped lights. For the battery level, it will display the lowest battery level of the grouped lights. When pairing different headlights or taillights (e.g. Varia 515 and Flare RT), the virtual light will display only light modes that both lights support, based on the light mode number. For example when grouping Varia 515 and Flare RT, the following light modes will be available:
+```
+0 - Off
+5 - Peloton for Varia 515 and Night Steady for Flare RT
+7 - Day Flash
+```
+even if they both supports "Night Flash" mode, it will not be displayed, because Flare RT uses 63 and Varia 6 for the light mode number.
+
+**NOTE:** This works only on high memory devices (more than 32KB of memory).
+
+### Installing [Smart Bike Lights #2](https://apps.garmin.com/en-US/apps/2e27525f-3847-4e49-89af-673970692df6) data field
+
+`Smart Bike Lights #2` data field is a copy of the original data field, which can be used along with the original one and configured separately. By using both data fields, it is possible to configure two lights of the same type (e.g. two headlights), one configured in the original data field and the other in the copy data field. When creating the configuration for the lights, it is required to set the `Serial number` input in [Lights Configurator](https://maca88.github.io/SmartBikeLights/), so that the data field will know which of the two lights to control.
 
 ## Currently tested Garmin devices:
 
