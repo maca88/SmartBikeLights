@@ -1,0 +1,10 @@
+info face="Battery48" size=48 bold=0 italic=0 charset="" unicode=1 stretchH=100 smooth=0 aa=1 padding=0,0,0,0 spacing=1,1 outline=0
+common lineHeight=48 base=38 scaleW=128 scaleH=64 pages=1 packed=0 alphaChnl=1 redChnl=0 greenChnl=0 blueChnl=0
+page id=0 file="Battery48.png"
+chars count=6
+char id=49   x=19    y=0     width=12    height=38    xoffset=3     yoffset=6     xadvance=48    page=0  chnl=15
+char id=50   x=32    y=0     width=12    height=30    xoffset=3     yoffset=14    xadvance=48    page=0  chnl=15
+char id=51   x=45    y=0     width=12    height=22    xoffset=3     yoffset=22    xadvance=48    page=0  chnl=15
+char id=52   x=58    y=0     width=12    height=14    xoffset=3     yoffset=30    xadvance=48    page=0  chnl=15
+char id=53   x=71    y=0     width=12    height=6     xoffset=3     yoffset=38    xadvance=48    page=0  chnl=15
+char id=66   x=0     y=0     width=18    height=48    xoffset=0     yoffset=0     xadvance=48    page=0  chnl=15

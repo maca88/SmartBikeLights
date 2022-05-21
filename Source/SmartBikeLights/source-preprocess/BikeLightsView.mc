@@ -136,10 +136,6 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 // #else
         View.initialize();
 // #endif
-        var fonts = Rez.Fonts;
-        _lightsFont = WatchUi.loadResource(fonts[:lightsFont]);
-        _batteryFont = WatchUi.loadResource(fonts[:batteryFont]);
-        _controlModeFont = WatchUi.loadResource(fonts[:controlModeFont]);
         _lightNetworkListener = new BikeLightNetworkListener(self);
 
         // In order to avoid calling Gregorian.utcInfo every second, calcualate Unix Timestamp of today
@@ -595,6 +591,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
     (:rectangle)
     protected function preCalculate(dc, width, height) {
+        var fonts = Rez.Fonts;
         var deviceSettings = System.getDeviceSettings();
         var padding = height - 55 < 0 ? 0 : 3;
         var settings = WatchUi.loadResource(Rez.JsonData.Settings);
@@ -606,6 +603,20 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         _fieldWidth = width;
         _isFullScreen = width == deviceSettings.screenWidth && height == deviceSettings.screenHeight;
 // #endif
+// #if highMemory && mediumResolution
+        if (_initializedLights == 1) {
+            _lightsFont = WatchUi.loadResource(fonts[:lightsLargeFont]);
+            _batteryFont = WatchUi.loadResource(fonts[:batteryLargeFont]);
+            _controlModeFont = WatchUi.loadResource(fonts[:controlModeLargeFont]);
+            _lightY = height - 50 - padding;
+            _batteryY = _lightY;
+            _titleY = (_lightY - dc.getFontHeight(_titleFont) - titleTopPadding) >= 0 ? titleTopPadding : null;
+            return;
+        }
+// #endif
+        _lightsFont = WatchUi.loadResource(fonts[:lightsFont]);
+        _batteryFont = WatchUi.loadResource(fonts[:batteryFont]);
+        _controlModeFont = WatchUi.loadResource(fonts[:controlModeFont]);
         _batteryY = height - 19 - padding;
         _lightY = _batteryY - padding - 32 /* Lights font size */;
         _titleY = (_lightY - dc.getFontHeight(_titleFont) - titleTopPadding) >= 0 ? titleTopPadding : null;
@@ -613,6 +624,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
     (:round)
     protected function preCalculate(dc, width, height) {
+        var fonts = Rez.Fonts;
         var flags = getObscurityFlags();
         var settings = WatchUi.loadResource(Rez.JsonData.Settings);
         _separatorWidth = settings[0];
@@ -620,10 +632,17 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         var titleTopPadding = settings[2];
         var titleHeight = dc.getFontHeight(_titleFont) + titleTopPadding;
 // #if highResolution
-        var lightHeight = height < 83 ? 53 : 83;
+        var excludeBattery = height < 83;
+        var lightHeight = excludeBattery ? 53 : 83;
         var includeTitle = height > 120 && width > 200;
 // #else
-        var lightHeight = height < 55 ? 35 : 55;
+        var excludeBattery = height < 55;
+        var lightHeight = excludeBattery ? 35 : 55;
+  // #if highMemory && mediumResolution
+        if (_initializedLights == 1 && !excludeBattery) {
+            lightHeight = 52;
+        }
+  // #endif
         var includeTitle = height > 90 && width > 150;
 // #endif
         var totalHeight = includeTitle ? lightHeight + titleHeight : lightHeight;
@@ -632,13 +651,25 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
             : (height - totalHeight) / 2; /* From center */
         _titleY = includeTitle ? startY : null;
         _lightY = includeTitle ? _titleY + titleHeight : startY;
-// #if highResolution
-        _batteryY = height < 83 ? null : _lightY + 53;
-// #else
-        _batteryY = height < 55 ? null : _lightY + 35;
-// #endif
         var offsetDirection = ((1415136409 >> (flags * 2)) & 0x03) - 1;
         _offsetX = settings[3] * offsetDirection;
+// #if highMemory && mediumResolution
+        if (_initializedLights == 1 && !excludeBattery) {
+            _lightsFont = WatchUi.loadResource(fonts[:lightsLargeFont]);
+            _batteryFont = WatchUi.loadResource(fonts[:batteryLargeFont]);
+            _controlModeFont = WatchUi.loadResource(fonts[:controlModeLargeFont]);
+            _batteryY = _lightY;
+            return;
+        }
+// #endif
+        _lightsFont = WatchUi.loadResource(fonts[:lightsFont]);
+        _batteryFont = WatchUi.loadResource(fonts[:batteryFont]);
+        _controlModeFont = WatchUi.loadResource(fonts[:controlModeFont]);
+// #if highResolution
+        _batteryY = excludeBattery ? null : _lightY + 53;
+// #else
+        _batteryY = excludeBattery ? null : _lightY + 35;
+// #endif
     }
 
     protected function initializeLights(newNetworkMode) {
@@ -758,6 +789,9 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
         _errorCode = errorCode;
         _initializedLights = errorCode == null ? initializedLights : 0;
+// #if highMemory && mediumResolution
+        _lightY = null; // Force to pre-calculate again to update icon fonts
+// #endif
     }
 
     (:touchScreen)
@@ -958,6 +992,15 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         dc.drawText(lightX + (direction * (68 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
         dc.drawText(lightX + (direction * 10), _lightY + 16, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
 // #else
+  // #if highMemory
+        if (position == 2 && _batteryY != null) { // Use larger icons when only one light is paired
+            lightX -= 10; // Center by subtracting half of battery width
+            dc.drawText(lightX + (direction * (68 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
+            dc.drawText(lightX + (direction * 10), _lightY + 16, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
+            drawBattery(dc, fgColor, lightX + 60, _batteryY, batteryStatus);
+            return;
+        }
+  // #endif
         dc.drawText(lightX + (direction * (49 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
         dc.drawText(lightX + (direction * 8), _lightY + 11, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
 // #endif
@@ -1447,7 +1490,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
             var filterValue = filters[i + 2];
             var isEnabled = data == 'E' ? isWithinTimespan(filters, i, filterValue)
-// #if highMemory 
+// #if highMemory
                 : data == 'F' ? isInsideAnyPolygon(activityInfo, filterValue)
                 : data == 'I' ? isTargetBehind(activityInfo, filters[i + 1], filterValue)
 // #endif
