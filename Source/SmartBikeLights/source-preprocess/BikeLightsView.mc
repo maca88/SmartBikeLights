@@ -834,7 +834,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
         _errorCode = errorCode;
         _initializedLights = errorCode == null ? initializedLights : 0;
-// #if highMemory && mediumResolution
+// #if dataField && highMemory && mediumResolution
         _lightY = null; // Force to pre-calculate again to update icon fonts
 // #endif
     }
