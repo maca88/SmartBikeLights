@@ -695,8 +695,12 @@ class BikeLightsView extends  WatchUi.DataField  {
 
     (:touchScreen)
     protected function onLightPanelTap(location, lightData, lightType, controlMode) {
+        if (!_panelInitialized) {
+            return false;
+        }
+
         var panelData = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightPanel : _taillightPanel;
-        var totalButtonGroups = panelData[0]; // TODO: Check how this can be null
+        var totalButtonGroups = panelData[0];
         var tapX = location[0];
         var tapY = location[1];
         var groupIndex = 6;
