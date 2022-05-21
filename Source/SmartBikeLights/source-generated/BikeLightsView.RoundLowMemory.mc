@@ -121,7 +121,23 @@ class BikeLightsView extends  WatchUi.DataField  {
     protected var _sunriseTime;
     (:dataField) private var _lastSpeed;
     (:dataField) private var _acceleration;
-    (:highMemory) private var _bikeRadar;
+    (:dataField :highMemory) private var _bikeRadar;
+    (:dataField :highMemory) private var _gradientData = [
+        0f,    // 0. Altitude last estimate
+        0f,    // 1. Altitude kalman gain
+        0.1f,  // 2. Altitude process noise
+        0.5f,  // 3. Altitude estimation error
+
+        0f,    // 4. Distance last estimate
+        0f,    // 5. Distance kalman gain
+        0.1f,  // 6. Distance process noise
+        0.5f,  // 7. Distance estimation error
+
+        0f,    // 8. Last elapsed distance
+        0,     // 9. Last calculation time
+        0,     // 10. Last gradient
+        false  // 11. Whether gradient should be calculated
+    ];
 
     private var _lastUpdateTime = 0;
     private var _lastOnShowCallTime = 0;
@@ -213,6 +229,7 @@ class BikeLightsView extends  WatchUi.DataField  {
             return null;
         }
 
+        // Update acceleration
         var lastSpeed = _lastSpeed;
         var currentSpeed = activityInfo.currentSpeed;
         _acceleration = lastSpeed != null && currentSpeed != null && lastSpeed > 0 && currentSpeed > 0
@@ -1422,6 +1439,22 @@ class BikeLightsView extends  WatchUi.DataField  {
             // numeric values we want to ignore the type (e.g. 0 == 0f), so == operator is used instead.
             : operator == '=' ? value instanceof String ? value.equals(filterValue) : value == filterValue
             : false;
+    }
+
+    (:dataField :highMemory)
+    private function updateGradientData(value, index) {
+        // Calculate smooth gradient, applying simple kalman filter
+        var gradientData = _gradientData;
+        var lastEstimate = gradientData[index];
+        var errorEstimate = gradientData[index + 3];
+        var kalmanGain = errorEstimate / (errorEstimate + 5f /* Measure error */);
+        var currentEstimate = lastEstimate + kalmanGain * (value - lastEstimate);
+        var diffEstimate = (lastEstimate - currentEstimate).abs();
+        gradientData[index + 3] = (1f - kalmanGain) * errorEstimate + diffEstimate * gradientData[index + 2] /* Process noise */; // Update estimation error
+        gradientData[index + 1] = kalmanGain; // Update kalman gain
+        gradientData[index + 2] = 1f /* Max process noise */ / (1f + diffEstimate * diffEstimate); // Update process noise
+        gradientData[index] = currentEstimate; // Update last estimate
+        return currentEstimate;
     }
 
     (:dataField :highMemory)

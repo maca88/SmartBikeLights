@@ -23,19 +23,23 @@ const getFilterTypes = (hasLightModes, device) => {
 
   const excludeList = [];
   if (!hasLightModes) {
-    excludeList.push('B');
+    excludeList.push('B'); // Exclude light battery
   }
 
   if (!device.highMemory){
-    excludeList.push('F');
+    excludeList.push('F'); // Exclude position
   }
 
   if (!device.bikeRadar){
-    excludeList.push('I');
+    excludeList.push('I'); // Exclude bike radar
   }
 
   if (!device.profileName){
-    excludeList.push('K');
+    excludeList.push('K'); // Exclude profile name
+  }
+
+  if (!device.highMemory || !device.barometer){
+    excludeList.push('L'); // Exclude gradient
   }
 
   return !excludeList.length
@@ -102,7 +106,7 @@ export default observer(({ filterGroups, lightModes, device }) => {
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <AppTextInput
-                  label="Group name" 
+                  label="Group name"
                   setter={filterGroup.setName}
                   value={filterGroup.name}
                   help={
@@ -120,20 +124,20 @@ export default observer(({ filterGroups, lightModes, device }) => {
                       <AppSelect required items={lightModes} label="Light mode" setter={filterGroup.setLightMode} value={filterGroup.lightMode} />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <AppTextInput 
+                      <AppTextInput
                         type="number"
                         label="Activation delay in seconds"
                         setter={filterGroup.setActivationDelay}
                         value={filterGroup.activationDelay}
                         help={
                           <Typography>
-                            It will postpone the light mode activation for the given delay. (e.g. change the light mode after the timer has been paused for five seconds) 
+                            It will postpone the light mode activation for the given delay. (e.g. change the light mode after the timer has been paused for five seconds)
                           </Typography>
                         }
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <AppTextInput 
+                      <AppTextInput
                         type="number"
                         label="Deactivation delay in seconds"
                         setter={filterGroup.setDeactivationDelay}

@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { makeAutoObservable } from 'mobx';
-import { 
-  filterMap, batteryStateList, gpsAccuracyList, timerStateList, timespanTypeMap, speedUnitList, getBatteryOperator, 
+import {
+  filterMap, batteryStateList, gpsAccuracyList, timerStateList, timespanTypeMap, speedUnitList, getBatteryOperator,
   getBatteryValue, vehicleThreatList, distanceUnitList, setList
 } from '../constants';
 import addSeconds from 'date-fns/addSeconds';
@@ -29,7 +29,7 @@ const getSpeedName = (value, units) => {
       : value * 2.236934;
   const unitsName = speedUnitList[units].name;
 
-  return `${Math.round(speed * 100) / 100} ${unitsName}`; 
+  return `${Math.round(speed * 100) / 100} ${unitsName}`;
 };
 
 const getDistanceName = (value, units) => {
@@ -38,7 +38,7 @@ const getDistanceName = (value, units) => {
       : value * 3.2808;
   const unitsName = distanceUnitList[units].name;
 
-  return `${Math.round(distance * 100) / 100} ${unitsName}`; 
+  return `${Math.round(distance * 100) / 100} ${unitsName}`;
 };
 
 const getOperatorFromValue = (value) => {
@@ -83,7 +83,7 @@ export default class Filter {
   isValid(device) {
     switch (this.type) {
       case 'E':
-        return this.fromType && this.fromValue !== null && !Number.isNaN(this.fromValue) && 
+        return this.fromType && this.fromValue !== null && !Number.isNaN(this.fromValue) &&
           this.toType && this.toValue !== null && !Number.isNaN(this.toValue);
       case 'F':
         return device.highMemory && this.polygons.length;
@@ -199,6 +199,10 @@ export default class Filter {
         case 'K': // Profile name
           name += ((this.operator || '') + ' ');
           name += (this.value);
+          break;
+        case 'L': // Gradient
+          name += ((this.operator || '') + ' ');
+          name += (this.value + '%');
           break;
         default:
           break;
