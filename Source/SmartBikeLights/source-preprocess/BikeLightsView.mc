@@ -669,6 +669,10 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
     (:round)
     protected function preCalculate(dc, width, height) {
+        // Free resources
+        _lightsFont = null;
+        _batteryFont = null;
+        _controlModeFont = null;
         var fonts = Rez.Fonts;
         var flags = getObscurityFlags();
         var settings = WatchUi.loadResource(Rez.JsonData.Settings);

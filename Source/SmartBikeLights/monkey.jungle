@@ -28,6 +28,8 @@ edge130plus.resourcePath = $(edge130plus.resourcePath);resources-lowmemory
 edge_520.excludeAnnotations = $(rectangleLowMemory)
 edge_520.resourcePath = $(edge_520.resourcePath);resources-lowmemory
   # Round screen devices
+enduro.excludeAnnotations = $(roundLowMemory)
+enduro.resourcePath = $(enduro.resourcePath);resources-lowmemory
 fenix5.excludeAnnotations = $(roundLowMemory)
 fenix5.resourcePath = $(fenix5.resourcePath);resources-lowmemory
 fenix6.excludeAnnotations = $(roundLowMemory)
@@ -86,6 +88,7 @@ fenix5x.resourcePath = $(fenix5x.resourcePath);resources-highmemory
 
 # Round non touch screen devices with more than 32KB memory and have CIQ 3.2+
 descentmk2.resourcePath = $(descentmk2.resourcePath);resources-highmemory
+descentmk2s.resourcePath = $(descentmk2s.resourcePath);resources-highmemory
 fenix5plus.resourcePath = $(fenix5plus.resourcePath);resources-highmemory
 fenix5splus.resourcePath = $(fenix5splus.resourcePath);resources-highmemory
 fenix5xplus.resourcePath = $(fenix5xplus.resourcePath);resources-highmemory
@@ -99,6 +102,7 @@ fr245m.resourcePath = $(fr245m.resourcePath);resources-highmemory
 fr645m.resourcePath = $(fr645m.resourcePath);resources-highmemory
 fr745.resourcePath = $(fr745.resourcePath);resources-highmemory
 fr945.resourcePath = $(fr945.resourcePath);resources-highmemory
+fr945lte.resourcePath = $(fr945lte.resourcePath);resources-highmemory
 marqadventurer.resourcePath = $(marqadventurer.resourcePath);resources-highmemory
 marqathlete.resourcePath = $(marqathlete.resourcePath);resources-highmemory
 marqaviator.resourcePath = $(marqaviator.resourcePath);resources-highmemory
@@ -111,9 +115,13 @@ marqgolfer.resourcePath = $(marqgolfer.resourcePath);resources-highmemory
 # Round high resolution screen devices more than 32KB memory and CIQ 4.0+
 d2airx10.excludeAnnotations = $(roundHighResolution)
 d2airx10.resourcePath = $(d2airx10.resourcePath);resources-highmemory
+d2mach1.excludeAnnotations = $(roundHighResolution)
+d2mach1.resourcePath = $(d2mach1.resourcePath);resources-highmemory
 epix2.excludeAnnotations = $(roundHighResolution)
 epix2.resourcePath = $(epix2.resourcePath);resources-highmemory
 venu2.excludeAnnotations = $(roundHighResolution)
 venu2.resourcePath = $(venu2.resourcePath);resources-highmemory
+venu2s.excludeAnnotations = $(roundHighResolution)
+venu2s.resourcePath = $(venu2s.resourcePath);resources-highmemory
 venu2plus.excludeAnnotations = $(roundHighResolution)
 venu2plus.resourcePath = $(venu2plus.resourcePath);resources-highmemory
