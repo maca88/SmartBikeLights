@@ -69,16 +69,8 @@ class BikeLightsView extends  WatchUi.DataField  {
     // 14. Serial number
     // 15. Filters
     // 16. Force Smart mode (high memory devices only)
-    (:highMemory)
     var headlightData = new [17];
-    (:highMemory)
     var taillightData = new [17];
-
-    (:lowMemory)
-    var headlightData = new [16];
-    (:lowMemory)
-    var taillightData = new [16];
-
     protected var _errorCode;
 
     // Settings
@@ -86,12 +78,21 @@ class BikeLightsView extends  WatchUi.DataField  {
     protected var _titleFont;
     protected var _activityColor;
     protected var _invertLights;
-    (:touchScreen) private var _controlModeOnly = false;
+    private var _controlModeOnly = false;
+
+    // Light panel settings
+    var headlightPanelSettings;
+    var taillightPanelSettings;
+
+    // Pre-calculated light panel values
+    private var _headlightPanel;
+    private var _taillightPanel;
+    private var _panelInitialized = false;
 
     // Pre-calculated positions
-    (:touchScreen) protected var _isFullScreen;
-    (:touchScreen) protected var _fieldWidth;
-    (:touchScreen) protected var _batteryWidth = 49;
+    protected var _isFullScreen;
+    protected var _fieldWidth;
+    protected var _batteryWidth = 49;
     protected var _batteryY;
     protected var _lightY;
     protected var _titleY;
@@ -100,29 +101,20 @@ class BikeLightsView extends  WatchUi.DataField  {
     // Parsed filters
     protected var _globalFilters;
 
-    // Light panel settings
-    (:touchScreen) var headlightPanelSettings;
-    (:touchScreen) var taillightPanelSettings;
-
-    // Pre-calculated light panel values
-    (:touchScreen) private var _headlightPanel;
-    (:touchScreen) private var _taillightPanel;
-    (:touchScreen) private var _panelInitialized = false;
-
     // Settings data
     (:settings) var headlightSettings;
     (:settings) var taillightSettings;
     (:settings) private var _settingsInitialized;
-    (:highMemory) private var _individualNetwork;
+    private var _individualNetwork;
 
     // Fields used to evaluate filters
     protected var _todayMoment;
     protected var _sunsetTime;
     protected var _sunriseTime;
-    (:dataField) private var _lastSpeed;
-    (:dataField) private var _acceleration;
-    (:dataField :highMemory) private var _bikeRadar;
-    (:dataField :highMemory) private var _gradientData = [
+    private var _lastSpeed;
+    private var _acceleration;
+    private var _bikeRadar;
+    private var _gradientData = [
         0f,    // 0. Altitude last estimate
         0f,    // 1. Altitude kalman gain
         0.1f,  // 2. Altitude process noise
@@ -217,7 +209,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         recreateLightNetwork();
     }
 
-    (:highMemory)
     function release() {
         releaseLights();
         if (_lightNetwork != null && _lightNetwork has :release) {
@@ -228,7 +219,6 @@ class BikeLightsView extends  WatchUi.DataField  {
     }
 
     // Overrides DataField.compute
-    (:dataField)
     function compute(activityInfo) {
         //System.println("usedMemory=" + System.getSystemStats().usedMemory);
         // Needed for TestLightNetwork and IndividualLightNetwork
@@ -525,7 +515,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
     }
 
-    (:touchScreen)
     function onTap(location) {
         if (_fieldWidth == null || _initializedLights == 0 || _errorCode != null) {
             return false;
@@ -580,7 +569,6 @@ class BikeLightsView extends  WatchUi.DataField  {
             : lightType == 0 ? headlightData : taillightData;
     }
 
-    (:highMemory)
     function tryUpdateMultiBikeLight(lightData, newLight) {
         var oldLight = lightData[0];
         if (oldLight == null || !(oldLight has :updateLight)) {
@@ -590,7 +578,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         return oldLight.updateLight(newLight, lightData[7]);
     }
 
-    (:highMemory)
     function combineLights(lightData, light) {
         var currentLight = lightData[0];
         if (currentLight has :addLight) {
@@ -605,12 +592,11 @@ class BikeLightsView extends  WatchUi.DataField  {
         return Properties.getValue(key);
     }
 
-    (:widget)
-    protected function getBackgroundColor() {
-    }
-
-    (:rectangle)
     protected function preCalculate(dc, width, height) {
+        // Free resources
+        _lightsFont = null;
+        _batteryFont = null;
+        _controlModeFont = null;
         var fonts = Rez.Fonts;
         var deviceSettings = System.getDeviceSettings();
         var padding = height - 55 < 0 ? 0 : 3;
@@ -637,47 +623,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         _lightY = _batteryY - padding - 32 /* Lights font size */;
         _titleY = (_lightY - dc.getFontHeight(_titleFont) - titleTopPadding) >= 0 ? titleTopPadding : null;
     }
-
-    (:round)
-    protected function preCalculate(dc, width, height) {
-        // Free resources
-        _lightsFont = null;
-        _batteryFont = null;
-        _controlModeFont = null;
-        var fonts = Rez.Fonts;
-        var flags = getObscurityFlags();
-        var settings = WatchUi.loadResource(Rez.JsonData.Settings);
-        _separatorWidth = settings[0];
-        _titleFont = settings[1];
-        var titleTopPadding = settings[2];
-        var titleHeight = dc.getFontHeight(_titleFont) + titleTopPadding;
-        var excludeBattery = height < 55;
-        var lightHeight = excludeBattery ? 35 : 55;
-        if (_initializedLights == 1 && !excludeBattery) {
-            lightHeight = 52;
-        }
-        var includeTitle = height > 90 && width > 150;
-        var totalHeight = includeTitle ? lightHeight + titleHeight : lightHeight;
-        var startY = (12800 >> flags) & 0x01 == 1 ? 2 /* From top */
-            : (200 >> flags) & 0x01 == 1 ? height - totalHeight /* From bottom */
-            : (height - totalHeight) / 2; /* From center */
-        _titleY = includeTitle ? startY : null;
-        _lightY = includeTitle ? _titleY + titleHeight : startY;
-        var offsetDirection = ((1415136409 >> (flags * 2)) & 0x03) - 1;
-        _offsetX = settings[3] * offsetDirection;
-        if (_initializedLights == 1 && !excludeBattery) {
-            _lightsFont = WatchUi.loadResource(fonts[:lightsLargeFont]);
-            _batteryFont = WatchUi.loadResource(fonts[:batteryLargeFont]);
-            _controlModeFont = WatchUi.loadResource(fonts[:controlModeLargeFont]);
-            _batteryY = _lightY;
-            return;
-        }
-        _lightsFont = WatchUi.loadResource(fonts[:lightsFont]);
-        _batteryFont = WatchUi.loadResource(fonts[:batteryFont]);
-        _controlModeFont = WatchUi.loadResource(fonts[:controlModeFont]);
-        _batteryY = excludeBattery ? null : _lightY + 35;
-    }
-
     protected function initializeLights(newNetworkMode) {
         //System.println("initializeLights=" + newNetworkMode + " timer=" + System.getTimer());
         var errorCode = _errorCode;
@@ -780,7 +725,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         _lightY = null; // Force to pre-calculate again to update icon fonts
     }
 
-    (:touchScreen)
     protected function onLightPanelTap(location, lightData, lightType, controlMode) {
         if (!_panelInitialized) {
             return false;
@@ -815,7 +759,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         return false;
     }
 
-    (:touchScreen)
     protected function onLightPanelModeChange(lightData, lightType, lightMode, controlMode) {
         var newControlMode = lightMode < 0 ? controlMode != 0 /* SMART */ ? 0 : 1 /* NETWORK */
             : controlMode != 2 /* MANUAL */ ? 2
@@ -1081,7 +1024,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         return data;
     }
 
-    (:noLightButtons :highMemory)
+    (:noLightButtons)
     private function setupLightButtons(configuration) {
         setupHighMemoryConfiguration(configuration);
     }
@@ -1103,7 +1046,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         setupHighMemoryConfiguration(configuration);
     }
 
-    (:highMemory)
     private function setupHighMemoryConfiguration(configuration) {
         _individualNetwork = configuration[9];
         if (_individualNetwork != null /* Is enabled */ || _lightNetwork instanceof AntLightNetwork.IndividualLightNetwork) {
@@ -1117,7 +1059,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
     }
 
-    (:highMemory)
     private function recreateLightNetwork() {
         release();
         _lightNetwork = _individualNetwork != null
@@ -1125,7 +1066,6 @@ class BikeLightsView extends  WatchUi.DataField  {
             : new AntPlus.LightNetwork(_lightNetworkListener);
     }
 
-    (:touchScreen)
     private function drawLightPanels(dc, width, height, fgColor, bgColor) {
         if (!_panelInitialized) {
             initializeLightPanels(dc, width, height);
@@ -1147,7 +1087,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         drawLightPanel(dc, taillightData, _taillightPanel, width, height, fgColor, bgColor);
     }
 
-    (:touchScreen)
     private function getDefaultLightPanelSettings(lightType, capableModes) {
         var totalButtonGroups = capableModes.size();
         var data = [];
@@ -1170,7 +1109,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         return data;
     }
 
-    (:touchScreen)
     private function initializeLightPanels(dc, width, height) {
         if (_initializedLights == 1) {
             initializeLightPanel(dc, getLightData(null), 2, width, height);
@@ -1182,7 +1120,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         _panelInitialized = true;
     }
 
-    (:touchScreen)
     private function initializeLightPanel(dc, lightData, position, width, height) {
         var x = position < 3 ? 0 : (width / 2); // Left x
         var y = 0;
@@ -1273,7 +1210,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
     }
 
-    (:touchScreen)
     private function drawLightPanel(dc, lightData, panelData, width, height, fgColor, bgColor) {
         var light = lightData[0];
         var controlMode = lightData[4];
@@ -1420,7 +1356,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         return true;
     }
 
-    (:dataField)
     private function checkFilters(activityInfo, filters, filterResult, lightData, i) {
         var nextGroupIndex = null;
         var lightMode = 1;
@@ -1496,7 +1431,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         return hasFilters || lightData != null ? 0 : 1;
     }
 
-    (:dataField)
     private function isWithinTimespan(filters, index, filterValue) {
         if (filterValue.size() == 4) {
             filterValue = initializeTimeFilter(filterValue);
@@ -1515,7 +1449,6 @@ class BikeLightsView extends  WatchUi.DataField  {
             : value > from && value < to;
     }
 
-    (:dataField)
     private function checkOperatorValue(operator, value, filterValue, isTarget) {
         return value == null ? isTarget ? filterValue < 0 : false // For bike radar target filterValue will be -1 in case not set
             : operator == '<' || operator == '[' ? value < filterValue
@@ -1526,7 +1459,6 @@ class BikeLightsView extends  WatchUi.DataField  {
             : false;
     }
 
-    (:dataField :highMemory)
     private function updateGradientData(value, index) {
         // Calculate smooth gradient, applying simple kalman filter
         var gradientData = _gradientData;
@@ -1542,7 +1474,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         return currentEstimate;
     }
 
-    (:dataField :highMemory)
     private function isInsideAnyPolygon(activityInfo, filterValue) {
         if (activityInfo.currentLocation == null) {
             return false;
@@ -1559,7 +1490,6 @@ class BikeLightsView extends  WatchUi.DataField  {
     }
 
     // Code ported from https://stackoverflow.com/a/14998816
-    (:dataField :highMemory)
     private function isPointInPolygon(x, y, points, index) {
         var result = false;
         var pointX;
@@ -1586,7 +1516,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         return result;
     }
 
-    (:dataField :highMemory)
     private function isTargetBehind(activityInfo, operator, filterValue) {
         if (_bikeRadar == null) {
             if (Toybox.AntPlus has :BikeRadar) {
@@ -1615,7 +1544,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         return false;
     }
 
-    (:dataField)
     private function initializeTimeFilter(filterValue) {
         var from = initializeTimeFilterPart(filterValue, 0);
         var to = initializeTimeFilterPart(filterValue, 2);
@@ -1623,7 +1551,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         return from == null || to == null ? null : [from, to];
     }
 
-    (:dataField)
     private function initializeTimeFilterPart(filterValue, index) {
         var type = filterValue[index];
         if (type > 0 /* Sunset or sunrise */ && _sunsetTime == null) {
@@ -1667,7 +1594,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         ];
     }
 
-    (:highMemory)
     private function parseIndividualNetwork(chars, i, filterResult) {
         var enabled = parse(1 /* NUMBER */, chars, i, filterResult);
         if (enabled == null) { // Old configuration
@@ -1684,7 +1610,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         ];
     }
 
-    (:highMemory)
     private function parseForceSmartMode(chars, i, filterResult) {
         var headlightForceSmartMode = parse(1 /* NUMBER */, chars, i, filterResult);
         if (headlightForceSmartMode == null) {
@@ -1697,7 +1622,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         ];
     }
 
-    (:noLightButtons :highMemory)
+    (:noLightButtons)
     private function parseLightButtons(chars, i, filterResult) {
         filterResult[0] = filterResult[0] + 1;
         return null;
@@ -1737,7 +1662,6 @@ class BikeLightsView extends  WatchUi.DataField  {
     // <ButtonGroup> := <ButtonsNumber>,[<Button>, ...]
     // <Button> := <ModeTitle>:<LightMode>
     // Example: 7,6:Ion Pro RT|2,:-1,Off:0|1,High:1|1,Medium:2|1,Low:5|1,Night Flash:62|1,Day Flash:63
-    (:touchScreen)
     private function parseLightButtons(chars, i, filterResult) {
         var totalButtons = parse(1 /* NUMBER */, chars, i, filterResult);
         if (totalButtons == null) {
@@ -1780,15 +1704,9 @@ class BikeLightsView extends  WatchUi.DataField  {
         return data;
     }
 
-    (:widget)
-    private function parseFilters(chars, i, lightMode, filterResult) {
-        filterResult[0] = i == null ? filterResult[0] + 1 : i;
-    }
-
     // <TotalFilters>,<TotalGroups>|[<FilterGroup>| ...]
     // <FilterGroup> := <GroupName>:<FiltersNumber>(?:<LightMode>)(?:<DeactivationTime>)(?:<ActivationTime>)[<Filter>, ...]
     // <Filter> := <FilterType><FilterOperator><FilterValue>
-    (:dataField)
     private function parseFilters(chars, i, lightMode, filterResult) {
         var totalFilters = parse(1 /* NUMBER */, chars, i, filterResult);
         if (totalFilters == null) {
@@ -1854,7 +1772,6 @@ class BikeLightsView extends  WatchUi.DataField  {
     }
 
     // E<?FromType><FromValue>,<?ToType><ToValue> (Es45,r-45 E35645,8212)
-    (:dataField)
     private function parseTimespan(chars, index, filterResult) {
         var data = new [4];
         filterResult[1] = null; /* Filter operator */
@@ -1864,7 +1781,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         return data;
     }
 
-    (:dataField)
     private function parseTimespanPart(chars, index, filterResult, data, dataIndex) {
         var char = chars[index];
         var type = char == 's' ? 2 /* Sunset */
@@ -1878,7 +1794,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         data[dataIndex + 1] = parse(1 /* NUMBER */, chars, index, filterResult);
     }
 
-    (:dataField :highMemory)
     private function parsePolygons(chars, index, filterResult) {
         filterResult[1] = null; /* Filter operator */
         // The first value represents the total number of polygons
@@ -1895,7 +1810,6 @@ class BikeLightsView extends  WatchUi.DataField  {
     }
 
     // I<300>0
-    (:dataField :highMemory)
     private function parseBikeRadar(chars, index, filterResult) {
         filterResult[1] = chars[index]; // Filter operator
 
