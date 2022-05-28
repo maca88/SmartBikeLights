@@ -824,6 +824,28 @@ class BikeLightsView extends  WatchUi.DataField  {
         return value == null ? null : (value < 0 ? value + 86400 : value) % 86400;
     }
 
+    (:settings)
+    protected function validateSettingsLightModes(light) {
+        if (light == null) {
+            return true; // In case only one light is connected
+        }
+
+        var settings = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? headlightSettings : taillightSettings;
+        if (settings == null) {
+            return true;
+        }
+
+        var capableModes = getLightModes(light);
+        for (var i = 2; i < settings.size(); i += 2) {
+            if (capableModes.indexOf(settings[i]) < 0) {
+                _errorCode = 3;
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     // The below source code was ported from: https://www.esrl.noaa.gov/gmd/grad/solcalc/main.js
     // which is used for the NOAA Solar Calculator: https://www.esrl.noaa.gov/gmd/grad/solcalc/
     protected function getSunriseSet(rise, time, position) {
@@ -1001,28 +1023,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
 
         return lightType == (_invertLights ? 2 /* LIGHT_TYPE_TAILLIGHT */ : 0 /* LIGHT_TYPE_HEADLIGHT */) ? lightModeCharacter + ")" : "(" + lightModeCharacter;
-    }
-
-    (:settings)
-    private function validateSettingsLightModes(light) {
-        if (light == null) {
-            return true; // In case only one light is connected
-        }
-
-        var settings = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? headlightSettings : taillightSettings;
-        if (settings == null) {
-            return true;
-        }
-
-        var capableModes = getLightModes(light);
-        for (var i = 2; i < settings.size(); i += 2) {
-            if (capableModes.indexOf(settings[i]) < 0) {
-                _errorCode = 3;
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private function checkFilters(activityInfo, filters, filterResult, lightData, i) {

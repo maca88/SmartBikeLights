@@ -695,7 +695,10 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
     }
 // #endif
 
-// #if rectangle
+// #if widget
+    protected function preCalculate(dc, width, height) {
+    }
+// #elif rectangle
     protected function preCalculate(dc, width, height) {
         // Free resources
         _lightsFont = null;
@@ -1053,6 +1056,10 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 // #endif
     }
 
+// #if widget
+    protected function drawLight(lightData, position, dc, width, fgColor, bgColor) {
+    }
+// #else
     protected function drawLight(lightData, position, dc, width, fgColor, bgColor) {
         var justification = lightData[0].type;
         if (_invertLights) {
@@ -1063,30 +1070,30 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         }
 
         var direction = justification == 0 ? 1 : -1;
-// #if rectangle
+  // #if rectangle
         var lightX = Math.round(width * 0.25f * position);
-// #else
+  // #else
         var lightX = Math.round(width * 0.25f * position) + _offsetX;
         lightX += _initializedLights == 2 ? (direction * ((width / 4) - /* #if highResolution */36/* #else */25/* #endif */)) : 0;
-// #endif
+  // #endif
         var batteryStatus = getLightBatteryStatus(lightData);
         var title = lightData[5];
         var lightXOffset = justification == 0 ? -4 : 2;
         dc.setColor(fgColor, bgColor);
 
         if (title != null && _titleY != null) {
-// #if rectangle
+  // #if rectangle
             dc.drawText(lightX, _titleY, _titleFont, title, 1 /* TEXT_JUSTIFY_CENTER */);
-// #else
+  // #else
             dc.drawText(lightX + (direction * /* #if highResolution */32/* #else */22/* #endif */), _titleY, _titleFont, title, justification);
-// #endif
+  // #endif
         }
 
-// #if highResolution
+  // #if highResolution
         dc.drawText(lightX + (direction * (68 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
         dc.drawText(lightX + (direction * 10), _lightY + 16, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
-// #else
-  // #if highMemory
+  // #else
+    // #if highMemory
         if (position == 2 && _batteryY != null) { // Use larger icons when only one light is paired
             lightX -= 10; // Center by subtracting half of battery width
             dc.drawText(lightX + (direction * (68 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
@@ -1094,14 +1101,15 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
             drawBattery(dc, fgColor, lightX + 60, _batteryY, batteryStatus);
             return;
         }
-  // #endif
+    // #endif
         dc.drawText(lightX + (direction * (49 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
         dc.drawText(lightX + (direction * 8), _lightY + 11, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
-// #endif
+  // #endif
         if (_batteryY != null) {
             drawBattery(dc, fgColor, lightX, _batteryY, batteryStatus);
         }
     }
+// #endif
 
     protected function drawBattery(dc, fgColor, x, y, batteryStatus) {
         // Draw the battery shell
@@ -1126,6 +1134,30 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         value = value.toNumber();
         return value == null ? null : (value < 0 ? value + 86400 : value) % 86400;
     }
+
+// #if highMemory
+    (:settings)
+    protected function validateSettingsLightModes(light) {
+        if (light == null) {
+            return true; // In case only one light is connected
+        }
+
+        var settings = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? headlightSettings : taillightSettings;
+        if (settings == null) {
+            return true;
+        }
+
+        var capableModes = getLightModes(light);
+        for (var i = 2; i < settings.size(); i += 2) {
+            if (capableModes.indexOf(settings[i]) < 0) {
+                _errorCode = 3;
+                return false;
+            }
+        }
+
+        return true;
+    }
+// #endif
 
     // The below source code was ported from: https://www.esrl.noaa.gov/gmd/grad/solcalc/main.js
     // which is used for the NOAA Solar Calculator: https://www.esrl.noaa.gov/gmd/grad/solcalc/
@@ -1529,30 +1561,6 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
         return lightType == (_invertLights ? 2 /* LIGHT_TYPE_TAILLIGHT */ : 0 /* LIGHT_TYPE_HEADLIGHT */) ? lightModeCharacter + ")" : "(" + lightModeCharacter;
     }
-
-// #if highMemory
-    (:settings)
-    private function validateSettingsLightModes(light) {
-        if (light == null) {
-            return true; // In case only one light is connected
-        }
-
-        var settings = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? headlightSettings : taillightSettings;
-        if (settings == null) {
-            return true;
-        }
-
-        var capableModes = getLightModes(light);
-        for (var i = 2; i < settings.size(); i += 2) {
-            if (capableModes.indexOf(settings[i]) < 0) {
-                _errorCode = 3;
-                return false;
-            }
-        }
-
-        return true;
-    }
-// #endif
 
 // #if dataField
     private function checkFilters(activityInfo, filters, filterResult, lightData, i) {

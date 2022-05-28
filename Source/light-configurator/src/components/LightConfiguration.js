@@ -60,7 +60,7 @@ export default observer(({
   }, [light, lightList, setLightPanel, lightPanel]);
 
   useEffect(() => {
-    if (lightIconTapBehavior == null) {
+    if (lightIconTapBehavior == null && setLightIconTapBehavior != null) {
       setLightIconTapBehavior(new LightIconTapBehaviorModel());
     }
   }, [lightIconTapBehavior, setLightIconTapBehavior]);
@@ -192,7 +192,7 @@ export default observer(({
           : null
         }
         {
-          modes && lightPanel && lightIconTapBehavior && device?.touchScreen
+          modes && lightIconTapBehavior && device?.touchScreen
           ? <React.Fragment>
               <ElementWithHelp
                 className={classes.sectionTitle}
@@ -204,7 +204,12 @@ export default observer(({
                 }
               />
               <LightIconTapBehavior lightIconTapBehavior={lightIconTapBehavior} lightModes={modes} />
-
+          </React.Fragment>
+          : null
+        }
+        {
+          modes && lightPanel && device?.touchScreen
+          ? <React.Fragment>
               <ElementWithHelp
                 className={classes.sectionTitle}
                 element={<Typography variant="h5">Light panel</Typography>}
