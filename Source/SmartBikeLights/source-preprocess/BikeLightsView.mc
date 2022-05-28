@@ -697,6 +697,10 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
 // #if widget
     protected function preCalculate(dc, width, height) {
+// #if touchScreen
+        _fieldWidth = width;
+        _isFullScreen = true;
+// #endif
     }
 // #elif rectangle
     protected function preCalculate(dc, width, height) {
