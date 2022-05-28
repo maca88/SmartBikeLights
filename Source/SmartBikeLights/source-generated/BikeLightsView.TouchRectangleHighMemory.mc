@@ -78,7 +78,6 @@ class BikeLightsView extends  WatchUi.DataField  {
     protected var _titleFont;
     protected var _activityColor;
     protected var _invertLights;
-    private var _controlModeOnly = false;
 
     // Light panel settings
     var headlightPanelSettings;
@@ -88,6 +87,11 @@ class BikeLightsView extends  WatchUi.DataField  {
     private var _headlightPanel;
     private var _taillightPanel;
     private var _panelInitialized = false;
+
+    // Light icon tap behavior
+    var headlightIconTapBehavior;
+    var taillightIconTapBehavior;
+    var defaultLightIconTapBehavior = [[0 /* SMART */, 1 /* NETWORK */, 2 /* MANUAL */], null /* All light modes */];
 
     // Pre-calculated positions
     protected var _isFullScreen;
@@ -535,28 +539,42 @@ class BikeLightsView extends  WatchUi.DataField  {
             return onLightPanelTap(location, lightData, lightType, controlMode);
         }
 
-        var modes = getLightModes(light);
-        var index = modes.indexOf(lightData[2]);
-        var newControlMode = null;
-        var newMode = null;
-        // Change to the next mode
-        if (_controlModeOnly && controlMode != 0 /* SMART */) {
-            newControlMode = 0; /* SMART */
-        } else if (controlMode == 0 /* SMART */) {
-            newControlMode = 1; /* NETWORK */
-        } else if (controlMode == 1 /* NETWORK */) {
-            newControlMode = 2; /* MANUAL */
-            index = -1;
+        var tapBehavior = lightType == 0 ? headlightIconTapBehavior : taillightIconTapBehavior;
+        if (tapBehavior == null) {
+            tapBehavior = defaultLightIconTapBehavior;
         }
 
-        if (!_controlModeOnly && (controlMode == 2 /* MANUAL */ || newControlMode == 2 /* MANUAL */)) {
-            index = (index + 1) % modes.size();
-            if (controlMode == 2 /* MANUAL */ && index == 0) {
-                newControlMode = 0; /* SMART */
-                // The mode will be calculated in compute method
-            } else {
-                newMode = modes[index];
+        var filters = lightData[15];
+        var controlModes = tapBehavior[0];
+        var controlModesSize = controlModes.size();
+        if (controlModesSize == 0 || (controlModesSize == 1 && controlModes.indexOf(0 /* SMART */) == 0 && filters == null)) {
+            return false; // Tapping on light icon is disabled
+        }
+
+        var newMode = null;
+        var newControlMode = null;
+        var controlModeIndex = controlModes.indexOf(controlMode);
+        var lightModes = getLightModes(light);
+        var allowedLightModes = tapBehavior[1] != null ? tapBehavior[1] : lightModes;
+        var lightModeIndex = allowedLightModes.indexOf(lightData[2]);
+        var newLightModeIndex = lightModeIndex + 1;
+        if (controlMode == 2 /* MANUAL */ && controlModeIndex >= 0 && lightModeIndex >= 0 && newLightModeIndex < allowedLightModes.size()) {
+            newMode = allowedLightModes[newLightModeIndex];
+        } else {
+            newControlMode = controlModes[(controlModeIndex + 1) % controlModesSize];
+            if (newControlMode == 0 /* SMART */ && filters == null) {
+                newControlMode = controlModes[(controlModeIndex + 2) % controlModesSize]; // Skip Smart mode
             }
+
+            if (newControlMode == 2 /* MANUAL */) {
+                newMode = allowedLightModes[0];
+            } else if (controlMode == newControlMode) {
+                return false;
+            }
+        }
+
+        if (newMode != null && lightModes.indexOf(newMode) < 0) {
+            return false; // Invalid light icon configuration
         }
 
         setLightAndControlMode(lightData, lightType, newMode, newControlMode);
@@ -760,7 +778,7 @@ class BikeLightsView extends  WatchUi.DataField  {
     }
 
     protected function onLightPanelModeChange(lightData, lightType, lightMode, controlMode) {
-        var newControlMode = lightMode < 0 ? controlMode != 0 /* SMART */ ? 0 : 1 /* NETWORK */
+        var newControlMode = lightMode < 0 ? controlMode != 0 /* SMART */ && lightData[15] /* Filters */ != null ? 0 : 1 /* NETWORK */
             : controlMode != 2 /* MANUAL */ ? 2
             : null;
         setLightAndControlMode(lightData, lightType, lightMode, newControlMode);
@@ -1029,13 +1047,19 @@ class BikeLightsView extends  WatchUi.DataField  {
         setupHighMemoryConfiguration(configuration);
     }
 
-    (:touchScreen)
     private function setupLightButtons(configuration) {
-        _controlModeOnly = getPropertyValue("CMO");
         _panelInitialized = false;
         headlightPanelSettings = configuration[7];
         taillightPanelSettings = configuration[8];
         setupHighMemoryConfiguration(configuration);
+        var lightsTapBehavior = configuration[11];
+        if (lightsTapBehavior != null) {
+            headlightIconTapBehavior = lightsTapBehavior[0];
+            taillightIconTapBehavior = lightsTapBehavior[1];
+        } else {
+            headlightIconTapBehavior = null;
+            taillightIconTapBehavior = null;
+        }
     }
 
     (:settings)
@@ -1574,7 +1598,7 @@ class BikeLightsView extends  WatchUi.DataField  {
             : "LC";
         var value = getPropertyValue(configKey);
         if (value == null || value.length() == 0) {
-            return new [11];
+            return new [ 12 ];
         }
 
         var filterResult = [0 /* next index */, 0 /* operator type */];
@@ -1590,7 +1614,8 @@ class BikeLightsView extends  WatchUi.DataField  {
             parseLightButtons(chars, null, filterResult),      // Headlight panel/settings buttons
             parseLightButtons(chars, null, filterResult),      // Taillight panel/settings buttons
             parseIndividualNetwork(chars, null, filterResult), // Individual network settings
-            parseForceSmartMode(chars, null, filterResult)     // Force smart mode
+            parseForceSmartMode(chars, null, filterResult),    // Force smart mode
+            parseLightsTapBehavior(chars, null, filterResult)
         ];
     }
 
@@ -1613,6 +1638,7 @@ class BikeLightsView extends  WatchUi.DataField  {
     private function parseForceSmartMode(chars, i, filterResult) {
         var headlightForceSmartMode = parse(1 /* NUMBER */, chars, i, filterResult);
         if (headlightForceSmartMode == null) {
+            filterResult[0] = filterResult[0] - 1; // Avoid parseLightsTapBehavior from parsing the next value
             return null;
         }
 
@@ -1702,6 +1728,53 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
 
         return data;
+    }
+
+    private function parseLightsTapBehavior(chars, i, filterResult) {
+        var headlightBehavior = parseLightTapBehavior(chars, i, filterResult);
+        if (headlightBehavior == null) {
+            return null;
+        }
+
+        return [
+            headlightBehavior,
+            parseLightTapBehavior(chars, i, filterResult)
+        ];
+    }
+
+    private function parseLightTapBehavior(chars, i, filterResult) {
+        // HL all modes, TL two modes: 231!:123!0,1
+        // Disabled: 0!:0!
+        var value = parse(1 /* NUMBER */, chars, i, filterResult);
+        if (value == null) {
+            return null; // Old configuration or widget
+        }
+
+        var controlModes = [];
+        var manualModes = [];
+        var controlModeChars = value.toString().toCharArray();
+        // Parse control modes
+        for (var j = 0; j < controlModeChars.size(); j++) {
+            var controlMode = controlModeChars[j].toString().toNumber();
+            if (controlMode != null && controlMode > 0 && controlMode < 4) {
+                controlModes.add(controlMode - 1);
+            }
+        }
+
+        // Parse manual light modes
+        do {
+            value = parse(1 /* NUMBER */, chars, null, filterResult);
+            if (value != null) {
+                manualModes.add(value);
+            }
+
+            i = filterResult[0];
+        } while (value != null && i < chars.size() && chars[i] == ',');
+
+        return [
+            controlModes,
+            manualModes.size() == 0 ? null : manualModes
+        ];
     }
 
     // <TotalFilters>,<TotalGroups>|[<FilterGroup>| ...]

@@ -100,6 +100,8 @@ export default observer(({ configuration, device, deviceList }) => {
         setSerialNumber={configuration.setHeadlightSerialNumber}
         forceSmartMode={configuration.headlightForceSmartMode}
         setForceSmartMode={configuration.setHeadlightForceSmartMode}
+        lightIconTapBehavior={configuration.headlightIconTapBehavior}
+        setLightIconTapBehavior={configuration.setHeadlightIconTapBehavior}
       />
       <LightConfiguration
         globalFilterGroups={configuration.globalFilterGroups}
@@ -123,6 +125,8 @@ export default observer(({ configuration, device, deviceList }) => {
         setSerialNumber={configuration.setTaillightSerialNumber}
         forceSmartMode={configuration.taillightForceSmartMode}
         setForceSmartMode={configuration.setTaillightForceSmartMode}
+        lightIconTapBehavior={configuration.taillightIconTapBehavior}
+        setLightIconTapBehavior={configuration.setTaillightIconTapBehavior}
       />
       <ConfigurationResult
         configuration={configuration}

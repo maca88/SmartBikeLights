@@ -7,7 +7,8 @@ import LightPanel from './LightPanel';
 import LightButtonGroup from './LightButtonGroup';
 import LightButton from './LightButton';
 import LightSettings from './LightSettings';
-import { getLight } from '../constants';
+import LightIconTapBehavior from './LightIconTapBehavior';
+import { getLight, isDataField } from '../constants';
 
 const defaultFilter = new Filter();
 defaultFilter.type = 'D';
@@ -45,7 +46,7 @@ const parseNumber = (chars, index, resultIndex) => {
 
 const parseLong = (chars, index, resultIndex) => {
   var array = parseNumberArray(chars, index, resultIndex);
-  console.log(bigint(array[0]).shiftLeft(31).or(bigint(array[1])));
+  //console.log(bigint(array[0]).shiftLeft(31).or(bigint(array[1])));
   return !array ? null : bigint(array[0]).shiftLeft(31).or(bigint(array[1]));
 };
 
@@ -168,6 +169,41 @@ const parseLightPanel = (chars, i, filterResult) => {
   }
 
   return panel;
+}
+
+const parseLightIconTapBehavior = (chars, i, filterResult) => {
+  let value = parseNumber(chars, i, filterResult);
+  if (value === null) {
+    return null; // Old configuration
+  }
+
+  const controlModes = [];
+  const manualModes = [];
+  const controlModeChars = value.toString();
+  // Parse control modes
+  for (let j = 0; j < controlModeChars.length; j++) {
+    let controlMode = parseInt(controlModeChars[j]);
+    if (!isNaN(controlMode) && controlMode > 0) {
+      controlModes.push(controlMode - 1);
+    }
+  }
+
+  // Parse manual light modes
+  do {
+    value = parseNumber(chars, filterResult[0] + 1, filterResult);
+    if (value !== null) {
+      manualModes.push(value);
+    }
+
+    i = filterResult[0];
+  } while (value !== null && i < chars.length && chars[i] === ',');
+
+  const tapBehavior = new LightIconTapBehavior();
+  tapBehavior.lightModes = !manualModes.length ? null : manualModes;
+  tapBehavior.controlModes = controlModes;
+  tapBehavior.manualModeBehavior = tapBehavior.lightModes ? 1 : 0;
+
+  return tapBehavior;
 }
 
 const parseLightSettings = (totalButtons, chars, filterResult) => {
@@ -306,6 +342,32 @@ const parseToFilterGroups = (chars, i, hasLightMode, filterResult) => {
   return filterGroups;
 };
 
+const parseDevice = (configurationValue, deviceList) => {
+  if (!configurationValue || configurationValue.length === 0) {
+    return null;
+  }
+
+  let hashCount = 0;
+  let index = configurationValue.length - 1;
+  while (hashCount < 5 && index > 0) {
+    index--;
+    if (configurationValue[index] === '#') {
+      hashCount++;
+    }
+  }
+
+  if (hashCount !== 5) {
+    return null;
+  }
+
+  const deviceId = parseTitle(configurationValue, index + 1, [index]);
+  if (!deviceId) {
+    return null;
+  }
+
+  return deviceId ? deviceList.find(l => l.id === deviceId) : null;
+}
+
 export default class Configuration {
 
   device = null;
@@ -319,6 +381,7 @@ export default class Configuration {
   headlightPanel = null;
   headlightSettings = null;
   headlightForceSmartMode = false;
+  headlightIconTapBehavior = null;
   taillight = null;
   taillightModes = null;
   taillightFilterGroups = [];
@@ -326,6 +389,7 @@ export default class Configuration {
   taillightPanel = null;
   taillightSettings = null;
   taillightForceSmartMode = false;
+  taillightIconTapBehavior = null;
   useIndividualNetwork = false;
   headlightDeviceNumber = null;
   taillightDeviceNumber = null;
@@ -338,7 +402,9 @@ export default class Configuration {
   }
 
   static parse(value, deviceList) {
-    if (!value || value.length === 0) {
+    const device = parseDevice(value, deviceList);
+    console.log(device);
+    if (!device) {
       return null;
     }
 
@@ -385,23 +451,42 @@ export default class Configuration {
       configuration.taillightPanel = panel;
     }
 
+    if (!device.highMemory) {
+      return this.parseMetadataConfiguration(configuration, value, deviceList, filterResult[0] + 1, filterResult);
+    }
+
+    // Parse individual network
     const useIndividualNetwork = parseNumber(value, filterResult[0] + 1, filterResult);
     if (useIndividualNetwork === null) {
-      // Old configuration or not supported
+      // Old configuration
       return this.parseMetadataConfiguration(configuration, value, deviceList, filterResult[0], filterResult);
     }
 
     configuration.useIndividualNetwork = useIndividualNetwork === 1;
     configuration.headlightDeviceNumber = parseNumber(value, filterResult[0] + 1, filterResult);
     configuration.taillightDeviceNumber = parseNumber(value, filterResult[0] + 1, filterResult);
+
+    // Parse force smart mode
     const headlightForceSmartMode = parseNumber(value, filterResult[0] + 1, filterResult);
     if (headlightForceSmartMode === null) {
-      // Old configuration or not supported
+      // Old configuration
       return this.parseMetadataConfiguration(configuration, value, deviceList, filterResult[0], filterResult);
     }
 
     configuration.headlightForceSmartMode = headlightForceSmartMode === 1;
     configuration.taillightForceSmartMode = parseNumber(value, filterResult[0] + 1, filterResult) === 1;
+
+    // Parse light icon tap behavior
+    if (device.touchScreen && isDataField()) {
+      const headlightTapBehavior = parseLightIconTapBehavior(value, filterResult[0] + 1, filterResult);
+      if (headlightTapBehavior === null) {
+        // Old configuration
+        return this.parseMetadataConfiguration(configuration, value, deviceList, filterResult[0], filterResult);
+      }
+
+      configuration.headlightIconTapBehavior = headlightTapBehavior;
+      configuration.taillightIconTapBehavior = parseLightIconTapBehavior(value, filterResult[0] + 1, filterResult);
+    }
 
     return this.parseMetadataConfiguration(configuration, value, deviceList, filterResult[0] + 1, filterResult);
   }
@@ -418,16 +503,20 @@ export default class Configuration {
 
   isValid(deviceList) {
     const device = deviceList.find(l => l.id === this.device);
+    const headlightData = getLight(false, this.headlight);
+    const taillightData = getLight(true, this.taillight);
     return device &&
       this.globalFilterGroups.every(g => g.isValid(device, null)) && (
         (this.headlight !== null || this.taillight !== null) &&
-        this.islightValid(this.headlight, false, this.headlightFilterGroups, this.headlightDefaultMode, device) &&
-        this.islightValid(this.taillight, true, this.taillightFilterGroups, this.taillightDefaultMode, device)
+        this.isLightValid(headlightData, this.headlightFilterGroups, this.headlightDefaultMode, device) &&
+        this.isLightValid(taillightData, this.taillightFilterGroups, this.taillightDefaultMode, device)
       ) &&
-      this.isItemValid(this.headlightPanel, device.touchScreen) &&
-      this.isItemValid(this.taillightPanel, device.touchScreen) &&
-      this.isItemValid(this.headlightSettings, device.settings) &&
-      this.isItemValid(this.taillightSettings, device.settings) &&
+      this.isItemValid(this.headlightPanel, headlightData, device.touchScreen) &&
+      this.isItemValid(this.taillightPanel, taillightData, device.touchScreen) &&
+      this.isItemValid(this.headlightIconTapBehavior, headlightData, device.touchScreen) &&
+      this.isItemValid(this.taillightIconTapBehavior, taillightData, device.touchScreen) &&
+      this.isItemValid(this.headlightSettings, headlightData, device.settings) &&
+      this.isItemValid(this.taillightSettings, taillightData, device.settings) &&
       this.isIndividualNetworkValid(device);
   }
 
@@ -436,20 +525,19 @@ export default class Configuration {
       return true;
     }
 
-    return (this.headlight === null || this.headlightDeviceNumber !== null) && 
+    return (this.headlight === null || this.headlightDeviceNumber !== null) &&
       (this.taillight === null || this.taillightDeviceNumber !== null);
   }
 
-  isItemValid(item, validate) {
-    return !validate || item == null || item.isValid();
+  isItemValid(item, lightData, validate) {
+    return !validate || item == null || item.isValid(lightData);
   }
 
-  islightValid(light, taillight, lightFilterGroups, lightDefaultMode, device) {
-    if (light === null) {
+  isLightValid(lightData, lightFilterGroups, lightDefaultMode, device) {
+    if (lightData === null) {
       return true;
     }
 
-    const lightData = getLight(taillight, light);
     if (lightData.individualNetworkOnly && (!this.useIndividualNetwork || !device.highMemory)) {
       return false;
     }
@@ -476,6 +564,7 @@ export default class Configuration {
     config += `#${this.getLightPanelOrSettingsConfigurationValue(this.taillightPanel, this.taillightSettings, device)}`;
     config += `${this.getIndividualNetworkConfigurationValue(device)}`;
     config += `${this.getForceSmartModeConfigurationValue(device)}`;
+    config += `${this.getLightsTapBehaviorConfigurationValue(device)}`;
     config += `#${(this.device)}`;
     config += `#${(this.headlight === null ? '' : this.headlight)}`;
     config += `#${(this.taillight === null ? '' : this.taillight)}`;
@@ -527,6 +616,34 @@ export default class Configuration {
     config += this.headlight === null || !this.headlightForceSmartMode ? '0' : '1';
     config += ':';
     config += this.taillight === null || !this.taillightForceSmartMode ? '0' : '1';
+
+    return config;
+  }
+
+  getLightsTapBehaviorConfigurationValue(device) {
+    if (!device || !device.touchScreen || !isDataField()) {
+      return '';
+    }
+
+    let config = '#';
+    config += this.getLightTapBehaviorConfigurationValue(this.headlight, this.headlightIconTapBehavior);
+    config += ':';
+    config += this.getLightTapBehaviorConfigurationValue(this.taillight, this.taillightIconTapBehavior);
+
+    return config;
+  }
+
+  getLightTapBehaviorConfigurationValue(light, lightIconTapBehavior) {
+    if (!light || !lightIconTapBehavior) {
+      return '123!';
+    }
+
+    var controlModes = lightIconTapBehavior.controlModes || [];
+    var lightModes = lightIconTapBehavior.lightModes || [];
+    let config = '';
+    config += controlModes.length ? controlModes.map(m => m + 1).join('') : '0';
+    config += '!';
+    config += controlModes.indexOf(2) >= 0 && lightModes.length ? lightModes.join(',') : '';
 
     return config;
   }
@@ -635,6 +752,10 @@ export default class Configuration {
     this.headlightForceSmartMode = value;
   }
 
+  setHeadlightIconTapBehavior = (value) => {
+    this.headlightIconTapBehavior = value;
+  }
+
   setTaillight = (value) => {
     this.taillight = value;
   }
@@ -677,5 +798,9 @@ export default class Configuration {
 
   setTaillightForceSmartMode = (value) => {
     this.taillightForceSmartMode = value;
+  }
+
+  setTaillightIconTapBehavior = (value) => {
+    this.taillightIconTapBehavior = value;
   }
 }

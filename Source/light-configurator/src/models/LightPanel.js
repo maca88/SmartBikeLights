@@ -25,8 +25,8 @@ export default class LightPanel {
     });
   }
 
-  isValid() {
-    return this.buttonGroups.every(g => g.isValid());
+  isValid(lightData) {
+    return this.buttonGroups.every(g => g.isValid(lightData));
   }
 
   setLightName = (value) => {

@@ -12,7 +12,7 @@ export default class LightButtonGroup {
     });
   }
 
-  isValid() {
-    return this.buttons.every(g => g.isValid());
+  isValid(lightData) {
+    return this.buttons.every(g => g.isValid(lightData));
   }
 }

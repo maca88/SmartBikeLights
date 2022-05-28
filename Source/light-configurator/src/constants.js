@@ -28,6 +28,22 @@ timespanTypeList.forEach(item => map[item.id] = item.name);
 
 export const timespanTypeMap = map;
 
+export const controlModeList = [
+  { id: 0, name: 'Smart' },
+  { id: 1, name: 'Network' },
+  { id: 2, name: 'Manual' }
+];
+
+map = {};
+controlModeList.forEach(item => map[item.id] = item.name);
+
+export const controlModeMap = map;
+
+export const manualModeBehaviorList = [
+  { id: 0, name: 'All light modes' },
+  { id: 1, name: 'Specific light modes' }
+]
+
 export const unitList = [
   { id: 0, name: 'Metric (km/h)' },
   { id: 1, name: 'Statute (MPH)' },
@@ -611,8 +627,12 @@ export const taillightList = [
 ];
 
 export const getLight = (taillight, light) => {
+  if (!light) {
+    return null;
+  }
+
   const lights = taillight ? taillightList : headlightList;
-  return lights.find(l => l.id === light);
+  return lights.find(l => l.id === light) || null;
 };
 
 export const getDeviceLights = (device, lightsList, useIndividualNetwork) => {
@@ -660,3 +680,11 @@ export const arrayMoveDown = (array, element) => {
 
   return arrayMove(array, index, newIndex);
 };
+
+export const getAppType = () => {
+  return process.env.REACT_APP_TYPE;
+}
+
+export const isDataField = () => {
+  return getAppType() === 'datafield';
+}

@@ -926,15 +926,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         setupHighMemoryConfiguration(configuration);
     }
 
-    (:touchScreen)
-    private function setupLightButtons(configuration) {
-        _controlModeOnly = getPropertyValue("CMO");
-        _panelInitialized = false;
-        headlightPanelSettings = configuration[7];
-        taillightPanelSettings = configuration[8];
-        setupHighMemoryConfiguration(configuration);
-    }
-
     (:settings)
     private function setupLightButtons(configuration) {
         _settingsInitialized = false;
@@ -1270,7 +1261,7 @@ class BikeLightsView extends  WatchUi.DataField  {
             : "LC";
         var value = getPropertyValue(configKey);
         if (value == null || value.length() == 0) {
-            return new [11];
+            return new [ 11 ];
         }
 
         var filterResult = [0 /* next index */, 0 /* operator type */];
@@ -1286,7 +1277,7 @@ class BikeLightsView extends  WatchUi.DataField  {
             parseLightButtons(chars, null, filterResult),      // Headlight panel/settings buttons
             parseLightButtons(chars, null, filterResult),      // Taillight panel/settings buttons
             parseIndividualNetwork(chars, null, filterResult), // Individual network settings
-            parseForceSmartMode(chars, null, filterResult)     // Force smart mode
+            parseForceSmartMode(chars, null, filterResult),    // Force smart mode
         ];
     }
 
@@ -1309,6 +1300,7 @@ class BikeLightsView extends  WatchUi.DataField  {
     private function parseForceSmartMode(chars, i, filterResult) {
         var headlightForceSmartMode = parse(1 /* NUMBER */, chars, i, filterResult);
         if (headlightForceSmartMode == null) {
+            filterResult[0] = filterResult[0] - 1; // Avoid parseLightsTapBehavior from parsing the next value
             return null;
         }
 

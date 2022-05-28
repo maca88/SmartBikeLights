@@ -21,7 +21,7 @@ export default class LightButton {
     this.name = value;
   }
 
-  isValid() {
-    return this.mode != null && (this.mode < 0 || this.name);
+  isValid(lightData) {
+    return this.mode != null && (this.mode < 0 || (this.name && lightData.modes.find(m => m.id === this.mode) !== undefined));
   }
 }

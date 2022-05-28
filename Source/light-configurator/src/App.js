@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import Container from '@mui/material/Container';
@@ -13,6 +13,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { observer } from 'mobx-react-lite';
 import Configuration from './models/Configuration';
 import { AppContext, getContextValue } from './AppContext';
+import { getAppType } from './constants'
 
 const MainContent = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -33,7 +34,7 @@ const getDefaultConfiguration = (deviceList) => {
 
 export default observer(() => {
   var appTitle = process.env.REACT_APP_TITLE;
-  var appType = process.env.REACT_APP_TYPE;
+  var appType = getAppType();
   const DataField = React.lazy(() => import('./components/DataFieldConfiguration'));
   const Widget = React.lazy(() => import('./components/WidgetConfiguration'));
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -41,21 +42,27 @@ export default observer(() => {
     ? require('./dataFieldConstants')
     : require('./widgetConstants');
   const [state, setState] = React.useState(getContextValue(prefersDarkMode ? 'dark' : 'light', getDefaultConfiguration(deviceList)));
-  const setTheme = (theme) => {
-    setState({ ...state, theme: theme })
-  };
+  const setTheme = useMemo(() =>
+    (theme) => {
+      setState((prevState) => {
+        return { ...prevState, theme: theme };
+      })
+    },
+    []);
   const toggleTheme = () => {
     setTheme(state.theme === 'light' ? 'dark' : 'light');
   };
   const setConfiguration = (configuration) => {
-    setState({ ...state, configuration: configuration })
+    setState((prevState) => {
+      return { ...prevState, configuration: configuration };
+    })
   };
 
   useEffect(() => {
     setTheme(prefersDarkMode ? 'dark' : 'light');
-  }, [prefersDarkMode]);
+  }, [prefersDarkMode, setTheme]);
 
-  const theme = React.useMemo(() => {
+  const theme = useMemo(() => {
     var newTheme = createTheme({
       palette: {
         mode: state.theme

@@ -100,9 +100,10 @@ module Settings {
             setTitle("Control mode");
             _lightType = lightType;
             _menuItem = menuItem.weak();
+            var lightData = view.getLightData(_lightType);
             for (var i = 0; i < controlModeNames.size(); i++) {
-                if (i == 0 && view has :updateUi) {
-                    continue; // Do not show smart mode for the widget
+                if (i == 0 && lightData[15] == null) {
+                    continue; // Do not show smart mode when there are no filters
                 }
 
                 addItem(new WatchUi.MenuItem(controlModeNames[i], null, i, null));

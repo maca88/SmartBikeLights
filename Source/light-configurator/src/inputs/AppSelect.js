@@ -8,16 +8,29 @@ import IconButton from '@mui/material/IconButton';
 import { observer } from "mobx-react-lite";
 import AppInputHelp from './AppInputHelp';
 
-export default observer(({ items, label, value, setter, required, help }) => {
+export default observer(({ items, label, value, setter, required, help, multiple }) => {
   const id = nanoid();
+  const defaultValue = multiple ? [] : '';
+  const isDefault = (val) => multiple ? Array.isArray(val) && !val.length : val === '';
   const handleChange = (event) => {
     const newValue = event.target.value;
-    setter(!items.find(i => i.id === newValue) ? null : newValue);
+    if (multiple) {
+      setter(newValue);
+    } else {
+      setter(!items.find(i => i.id === newValue) ? null : newValue);
+    }
+  };
+  const renderNames = (ids) => {
+    if (!ids)  {
+      return '';
+    }
+
+    return ids.map(id => items.find(i => i.id === id)?.name).join(', ')
   };
 
   useEffect(
     () => {
-      if (value === null || value === '') {
+      if (value === null || multiple || value === '') {
         return;
       }
 
@@ -25,11 +38,11 @@ export default observer(({ items, label, value, setter, required, help }) => {
         setter(null);
       }
     },
-    [items, value, setter]
+    [items, value, setter, multiple]
   );
 
-  if (value === null || !items.find(i => i.id === value)) {
-    value = '';
+  if (value === null || (!multiple && !items.find(i => i.id === value))) {
+    value = defaultValue;
   }
 
   return (
@@ -40,15 +53,19 @@ export default observer(({ items, label, value, setter, required, help }) => {
       id={id}
       select
       required={required}
-      error={ required && value === '' ? true : false}
+      error={ required && isDefault(value) ? true : false}
       label={label}
       value={value}
       onChange={handleChange}
+      SelectProps={{
+        multiple: multiple,
+        renderValue: multiple ? renderNames : undefined
+      }}
       variant="standard"
       InputProps={{
         readOnly: !setter,
         endAdornment: (
-          setter && !required && value !== '' ?
+          setter && !required && !isDefault(value) ?
           <React.Fragment>
             <IconButton
               style={{ marginRight: "1em", padding: '0' }}

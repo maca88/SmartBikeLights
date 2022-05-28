@@ -12,9 +12,11 @@ import AppTextInput from '../inputs/AppTextInput';
 import AppCheckbox from '../inputs/AppCheckbox';
 import ElementWithHelp from './ElementWithHelp';
 import LightPanel from './LightPanel';
+import LightIconTapBehavior from './LightIconTapBehavior';
 import LightSettings from './LightSettings';
 import LightPanelModel from '../models/LightPanel';
 import LightSettingsModel from '../models/LightSettings';
+import LightIconTapBehaviorModel from '../models/LightIconTapBehavior';
 
 const PREFIX = 'LightConfiguration';
 
@@ -40,7 +42,7 @@ const getDefaultPanel = (value, lights) => {
 export default observer(({
   device, useIndividualNetwork, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
   setLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel, lightSettings, setLightSettings, deviceNumber, setDeviceNumber,
-  serialNumber, setSerialNumber, forceSmartMode, setForceSmartMode }) => {
+  serialNumber, setSerialNumber, forceSmartMode, setForceSmartMode, lightIconTapBehavior, setLightIconTapBehavior }) => {
   const [modes, setModes] = React.useState(getModes(light, lightList));
   const setValue = (value) => {
     setLight(value);
@@ -56,6 +58,12 @@ export default observer(({
       setLightPanel(new LightPanelModel(getDefaultPanel(light, lightList)));
     }
   }, [light, lightList, setLightPanel, lightPanel]);
+
+  useEffect(() => {
+    if (lightIconTapBehavior == null) {
+      setLightIconTapBehavior(new LightIconTapBehaviorModel());
+    }
+  }, [lightIconTapBehavior, setLightIconTapBehavior]);
 
   useEffect(() => {
     if (light == null) {
@@ -105,7 +113,7 @@ export default observer(({
             ?
             <Grid item xs={12} sm={4}>
               <AppTextInput required label="Device number" type="number"
-                setter={setDeviceNumber} 
+                setter={setDeviceNumber}
                 value={deviceNumber}
                 help={
                   <React.Fragment>
@@ -122,10 +130,10 @@ export default observer(({
                 }
               />
             </Grid>
-            : 
+            :
             <Grid item xs={12} sm={4}>
             <AppTextInput label="Serial number" type="number"
-              setter={setSerialNumber} 
+              setter={setSerialNumber}
               value={serialNumber}
               help={
                 <React.Fragment>
@@ -154,7 +162,7 @@ export default observer(({
                       }
                       help={
                         <Typography>
-                         Force Smart mode will prevent external light mode changes (e.g. pressing the button on the light) to switch from Smart 
+                         Force Smart mode will prevent external light mode changes (e.g. pressing the button on the light) to switch from Smart
                          to Manual control mode. This setting works only when the light is in Smart control mode.
                         </Typography>
                       }
@@ -173,7 +181,7 @@ export default observer(({
                 element={<Typography variant="h5">Filter groups</Typography>}
                 help={
                   <Typography>
-                    Filter groups contains a group of filters, which are used by the Smart control mode to determine the light mode. Every filter group defines 
+                    Filter groups contains a group of filters, which are used by the Smart control mode to determine the light mode. Every filter group defines
                     a light mode, which will be used when every filter inside the group is matched. The order of filter groups is important
                     as in case multiple filter groups are matched, only the light mode of the topmost matched group will be used.
                   </Typography>
@@ -184,8 +192,19 @@ export default observer(({
           : null
         }
         {
-          modes && lightPanel && device?.touchScreen
+          modes && lightPanel && lightIconTapBehavior && device?.touchScreen
           ? <React.Fragment>
+              <ElementWithHelp
+                className={classes.sectionTitle}
+                element={<Typography variant="h5">Light icon tap behavior</Typography>}
+                help={
+                  <Typography>
+                    Configure which control modes and light modes (for Manual mode) can be selected by tapping on the light icon.
+                  </Typography>
+                }
+              />
+              <LightIconTapBehavior lightIconTapBehavior={lightIconTapBehavior} lightModes={modes} />
+
               <ElementWithHelp
                 className={classes.sectionTitle}
                 element={<Typography variant="h5">Light panel</Typography>}
@@ -215,7 +234,7 @@ export default observer(({
                   </Typography>
                 }
               />
-            
+
             <LightSettings lightSettings={lightSettings} lightModes={modes} />
           </React.Fragment>
           : null
