@@ -89,7 +89,6 @@ class BikeLightsView extends  WatchUi.DataField  {
     // Settings data
     (:settings) var headlightSettings;
     (:settings) var taillightSettings;
-    (:settings) private var _settingsInitialized;
     private var _individualNetwork;
 
     // Fields used to evaluate filters
@@ -459,16 +458,42 @@ class BikeLightsView extends  WatchUi.DataField  {
 
     (:settings)
     function getSettingsView() {
-        if (_errorCode != null || _initializedLights == 0 || !initializeSettings() || !(WatchUi has :Menu2)) {
+        if (_errorCode != null ||
+            _initializedLights == 0 ||
+            !validateSettingsLightModes(headlightData[0]) ||
+            !validateSettingsLightModes(taillightData[0]) ||
+            !(WatchUi has :Menu2)) {
             return null;
         }
 
-        var menuContext = [headlightSettings, taillightSettings];
+        var menuContext = [
+            headlightSettings,
+            taillightSettings,
+            getLightSettings(0 /* LIGHT_TYPE_HEADLIGHT */),
+            getLightSettings(2 /* LIGHT_TYPE_TAILLIGHT */)
+        ];
         var menu = _initializedLights > 1
             ? new Settings.LightsMenu(self, menuContext)
             : new Settings.LightMenu(getLightData(null)[0].type, self, menuContext);
 
         return [menu, new Settings.MenuDelegate(menu)];
+    }
+
+    (:settings)
+    function getLightSettings(lightType) {
+        var lightData = getLightData(lightType);
+        var light = lightData[0];
+        if (light == null) {
+            return null;
+        }
+
+        var lightSettings = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */
+            ? headlightSettings
+            : taillightSettings;
+
+        return lightSettings == null
+            ? getDefaultLightSettings(light)
+            : lightSettings;
     }
 
     (:lightButtons)
@@ -747,30 +772,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         taillightData[0] = null;
     }
 
-    (:settings)
-    protected function initializeSettings() {
-        if (_settingsInitialized) {
-            return true;
-        }
-
-        if (!validateSettingsLightModes(headlightData[0]) || !validateSettingsLightModes(taillightData[0])) {
-            return false;
-        }
-
-        var light = headlightData[0];
-        if (light != null && headlightSettings == null) {
-            headlightSettings = getDefaultLightSettings(light);
-        }
-
-        light = taillightData[0];
-        if (light != null && taillightSettings == null) {
-            taillightSettings = getDefaultLightSettings(light);
-        }
-
-        _settingsInitialized = true;
-        return true;
-    }
-
     protected function drawLight(lightData, position, dc, width, fgColor, bgColor) {
         var justification = lightData[0].type;
         if (_invertLights) {
@@ -910,7 +911,6 @@ class BikeLightsView extends  WatchUi.DataField  {
 
     (:settings)
     private function setupLightButtons(configuration) {
-        _settingsInitialized = false;
         headlightSettings = configuration[7];
         taillightSettings = configuration[8];
         setupHighMemoryConfiguration(configuration);

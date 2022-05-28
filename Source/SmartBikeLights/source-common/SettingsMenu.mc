@@ -29,9 +29,9 @@ module Settings {
 
         function isContextValid() {
             var view = viewRef.get();
-            return context[0] == view.headlightSettings &&
-                context[1] == view.taillightSettings &&
-                view.getLightData(null)[0] != null; // The network was disconnected
+            return context[0] == view.headlightSettings && // Check for settings change
+                context[1] == view.taillightSettings && // Check for settings change
+                view.getLightData(null)[0] != null; // Check whether the network was disconnected
         }
 
         function close() {
@@ -59,8 +59,8 @@ module Settings {
         function initialize(view, context) {
             BaseMenu.initialize(view, context);
             setTitle("Lights");
-            addItem(new WatchUi.MenuItem(view.headlightSettings[0], null, 0, null));
-            addItem(new WatchUi.MenuItem(view.taillightSettings[0], null, 2, null));
+            addItem(new WatchUi.MenuItem(context[2][0], null, 0, null));
+            addItem(new WatchUi.MenuItem(context[3][0], null, 2, null));
         }
 
         function onSelect(lightType, menuItem) {
@@ -74,7 +74,7 @@ module Settings {
 
         function initialize(lightType, view, context) {
             BaseMenu.initialize(view, context);
-            var lightSettings = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? view.headlightSettings : view.taillightSettings;
+            var lightSettings = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? context[2] : context[3];
             setTitle(lightSettings[0]);
             _lightType = lightType;
             var lightData = view.getLightData(lightType);
@@ -139,7 +139,7 @@ module Settings {
             setTitle("Light modes");
             _lightType = lightType;
             _menuItem = menuItem.weak();
-            var lightSettings = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? view.headlightSettings : view.taillightSettings;
+            var lightSettings = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? context[2] : context[3];
             for (var i = 1; i < lightSettings.size(); i += 2) {
                 var mode = lightSettings[i + 1];
                 addItem(new WatchUi.MenuItem(lightSettings[i], null, mode, null));
@@ -154,7 +154,7 @@ module Settings {
             view.setLightAndControlMode(lightData, _lightType, mode, newControlMode);
             // Set parent sub label
             if (_menuItem.stillAlive()) {
-                var lightSettings = _lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? view.headlightSettings : view.taillightSettings;
+                var lightSettings = _lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? context[2] : context[3];
                 var modeIndex = lightSettings.indexOf(mode);
                 _menuItem.get().setSubLabel(modeIndex < 0 ? null : lightSettings[modeIndex - 1]);
             }
