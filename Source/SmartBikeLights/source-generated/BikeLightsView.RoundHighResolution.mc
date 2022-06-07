@@ -1605,7 +1605,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         var configKey = currentConfig != null && currentConfig > 1
             ? "LC" + currentConfig
             : "LC";
-        var value = getPropertyValue(configKey);
+        var value = "1,1!REC:1H]0###0,73404416#6,6!LOWBAT:1:0:0:0B]4!RADAR:1:7:1:0I]-1]0!TUNNEL:1:6:0:0G[4!NIGHT:1:6:0:0Es0,r0!DAY:1:0:0:0Er0,s0!:1:0:0:0D=1##5,4:Varia RTL 510!2,:-1,OFF:0!1,DAY FLASH:7!1,NIGHT FLASH:6!1,SOLID:4#0::#0:1#B2713##2#0#0"; //getPropertyValue(configKey);
         if (value == null || value.length() == 0) {
             return new [11];
         }
