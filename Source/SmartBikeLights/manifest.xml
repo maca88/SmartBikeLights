@@ -15,6 +15,7 @@
             <iq:product id="edge1030"/>
             <iq:product id="edge1030bontrager"/>
             <iq:product id="edge1030plus"/>
+            <iq:product id="edge1040"/>
             <iq:product id="edge130"/>
             <iq:product id="edge130plus"/>
             <iq:product id="edge520plus"/>
@@ -41,12 +42,15 @@
             <iq:product id="fenix7x"/>
             <iq:product id="fr245"/>
             <iq:product id="fr245m"/>
+            <iq:product id="fr255"/>
+            <iq:product id="fr255m"/>
             <iq:product id="fr645"/>
             <iq:product id="fr645m"/>
             <iq:product id="fr745"/>
             <iq:product id="fr935"/>
             <iq:product id="fr945"/>
             <iq:product id="fr945lte"/>
+            <iq:product id="fr955"/>
             <iq:product id="legacyherofirstavenger"/>
             <iq:product id="legacysagadarthvader"/>
             <iq:product id="marqadventurer"/>

@@ -64,13 +64,14 @@ edge530.excludeAnnotations = $(rectangleNonTouchScreen)
 edge530.resourcePath = $(edge530.resourcePath);resources-highmemory
 
 # Rectangle touch screen devices
-edge1030.resourcePath = $(edge1030.resourcePath);resources-touchscreen;resources-highmemory
-edge1030bontrager.resourcePath = $(edge1030bontrager.resourcePath);resources-touchscreen;resources-highmemory
-edge1030plus.resourcePath = $(edge1030plus.resourcePath);resources-touchscreen;resources-highmemory
-edge820.resourcePath = $(edge820.resourcePath);resources-touchscreen;resources-highmemory
-edge830.resourcePath = $(edge830.resourcePath);resources-touchscreen;resources-highmemory
-edge_1000.resourcePath = $(edge_1000.resourcePath);resources-touchscreen;resources-highmemory
-edgeexplore.resourcePath = $(edgeexplore.resourcePath);resources-touchscreen;resources-highmemory
+edge1030.resourcePath = $(edge1030.resourcePath);resources-highmemory
+edge1030bontrager.resourcePath = $(edge1030bontrager.resourcePath);resources-highmemory
+edge1030plus.resourcePath = $(edge1030plus.resourcePath);resources-highmemory
+edge1040.resourcePath = $(edge1040.resourcePath);resources-highmemory
+edge820.resourcePath = $(edge820.resourcePath);resources-highmemory
+edge830.resourcePath = $(edge830.resourcePath);resources-highmemory
+edge_1000.resourcePath = $(edge_1000.resourcePath);resources-highmemory
+edgeexplore.resourcePath = $(edgeexplore.resourcePath);resources-highmemory
 
 # Round non touch screen devices with more than 32KB memory but do not have CIQ 3.2
 d2charlie.excludeAnnotations = $(roundNoSettings)
@@ -99,10 +100,13 @@ fenix7.resourcePath = $(fenix7.resourcePath);resources-highmemory
 fenix7s.resourcePath = $(fenix7s.resourcePath);resources-highmemory
 fenix7x.resourcePath = $(fenix7x.resourcePath);resources-highmemory
 fr245m.resourcePath = $(fr245m.resourcePath);resources-highmemory
+fr255.resourcePath = $(fr255.resourcePath);resources-highmemory
+fr255m.resourcePath = $(fr255m.resourcePath);resources-highmemory
 fr645m.resourcePath = $(fr645m.resourcePath);resources-highmemory
 fr745.resourcePath = $(fr745.resourcePath);resources-highmemory
 fr945.resourcePath = $(fr945.resourcePath);resources-highmemory
 fr945lte.resourcePath = $(fr945lte.resourcePath);resources-highmemory
+fr955.resourcePath = $(fr955.resourcePath);resources-highmemory
 marqadventurer.resourcePath = $(marqadventurer.resourcePath);resources-highmemory
 marqathlete.resourcePath = $(marqathlete.resourcePath);resources-highmemory
 marqaviator.resourcePath = $(marqaviator.resourcePath);resources-highmemory
