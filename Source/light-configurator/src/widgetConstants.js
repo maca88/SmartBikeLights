@@ -42,6 +42,8 @@ export const deviceList = [
   { id: 'B3077', name: 'Forerunner 245 Music', highMemory: true, touchScreen: false, settings: true },
   { id: 'B3992', name: 'Forerunner 255', highMemory: true, touchScreen: false, settings: true },
   { id: 'B3990', name: 'Forerunner 255 Music', highMemory: true, touchScreen: false, settings: true },
+  { id: 'B3993', name: 'Forerunner 255s', highMemory: true, touchScreen: false, settings: true },
+  { id: 'B3991', name: 'Forerunner 255s Music', highMemory: true, touchScreen: false, settings: true },
   { id: 'B2886', name: 'Forerunner 645', highMemory: true, touchScreen: false, settings: true },
   { id: 'B2158', name: 'Forerunner 735xt', highMemory: true, touchScreen: false, settings: true },
   { id: 'B3589', name: 'Forerunner 745', highMemory: true, touchScreen: false, settings: true },
