@@ -1,0 +1,135 @@
+SplineFontDB: 3.2
+FontName: MenuIcons
+FullName: MenuIcons
+FamilyName: MenuIcons
+Weight: Regular
+Copyright: Copyright (c) 2022, Maca
+UComments: "2022-6-12: Created with FontForge (http://fontforge.org)"
+Version: 001.000
+ItalicAngle: 0
+UnderlinePosition: -102
+UnderlineWidth: 51
+Ascent: 819
+Descent: 205
+InvalidEm: 0
+LayerCount: 2
+Layer: 0 0 "Back" 1
+Layer: 1 0 "Fore" 0
+XUID: [1021 213 -1312993357 8071]
+StyleMap: 0x0000
+FSType: 0
+OS2Version: 0
+OS2_WeightWidthSlopeOnly: 0
+OS2_UseTypoMetrics: 1
+CreationTime: 1655029786
+ModificationTime: 1655029927
+OS2TypoAscent: 0
+OS2TypoAOffset: 1
+OS2TypoDescent: 0
+OS2TypoDOffset: 1
+OS2TypoLinegap: 92
+OS2WinAscent: 0
+OS2WinAOffset: 1
+OS2WinDescent: 0
+OS2WinDOffset: 1
+HheadAscent: 0
+HheadAOffset: 1
+HheadDescent: 0
+HheadDOffset: 1
+MarkAttachClasses: 1
+DEI: 91125
+Encoding: ISO8859-1
+UnicodeInterp: none
+NameList: AGL For New Fonts
+DisplaySize: -48
+AntiAlias: 1
+FitToEm: 0
+WinInfo: 0 38 16
+BeginPrivate: 0
+EndPrivate
+BeginChars: 256 3
+
+StartChar: T
+Encoding: 84 84 0
+Width: 1024
+Flags: H
+LayerCount: 2
+Fore
+SplineSet
+960 435 m 0
+ 960 545 885 665 717 665 c 2
+ 307 665 l 2
+ 215 665 151 630 112 579 c 0
+ 10 448 69 205 307 205 c 2
+ 717 205 l 2
+ 885 205 960 325 960 435 c 0
+1011 435 m 0
+ 1011 290 907 153 717 153 c 2
+ 307 153 l 2
+ 200 153 120 196 71 260 c 0
+ -58 426 28 717 307 717 c 2
+ 717 717 l 2
+ 907 717 1011 580 1011 435 c 0
+EndSplineSet
+Validated: 33
+EndChar
+
+StartChar: zero
+Encoding: 48 48 1
+Width: 1024
+Flags: H
+LayerCount: 2
+Fore
+SplineSet
+270 626 m 0
+ 294 628 333 625 356 619 c 0
+ 375 614 387 607 402 597 c 0
+ 418 586 434 574 447 557 c 0
+ 462 538 476 511 483 486 c 0
+ 490 461 491 433 488 408 c 0
+ 485 383 475 356 463 335 c 0
+ 452 315 436 297 418 283 c 0
+ 400 268 378 256 354 249 c 0
+ 328 242 293 239 267 242 c 0
+ 243 245 221 254 201 265 c 0
+ 180 277 160 293 145 312 c 0
+ 130 330 118 352 111 376 c 0
+ 104 402 101 436 104 463 c 0
+ 107 488 117 514 129 534 c 0
+ 140 553 155 570 171 583 c 0
+ 186 596 202 606 219 613 c 0
+ 235 620 250 624 270 626 c 0
+EndSplineSet
+Validated: 33
+EndChar
+
+StartChar: one
+Encoding: 49 49 2
+Width: 1024
+Flags: H
+LayerCount: 2
+Fore
+SplineSet
+701 626 m 0
+ 725 628 764 625 787 619 c 0
+ 806 614 818 607 833 597 c 0
+ 849 586 865 574 878 557 c 0
+ 893 538 907 511 914 486 c 0
+ 921 461 922 433 919 408 c 0
+ 916 383 906 356 894 335 c 0
+ 883 315 867 297 849 283 c 0
+ 831 268 809 256 785 249 c 0
+ 759 242 724 239 698 242 c 0
+ 674 245 652 254 632 265 c 0
+ 611 277 591 293 576 312 c 0
+ 561 330 549 352 542 376 c 0
+ 535 402 532 436 535 463 c 0
+ 538 488 548 514 560 534 c 0
+ 571 553 586 570 602 583 c 0
+ 617 596 633 606 650 613 c 0
+ 666 620 681 624 701 626 c 0
+EndSplineSet
+Validated: 33
+EndChar
+EndChars
+EndSplineFont

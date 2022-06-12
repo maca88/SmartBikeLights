@@ -57,6 +57,24 @@
       }
     },
     {
+      "name": "Settings",
+      "files": ["source-preprocess/AppSettings.mc"],
+      "definedSymbols": ["settings"],
+      "includeSymbols": {
+        "TARGET": ":settings",
+        "UIMODULE": "WatchUi."
+      }
+    },
+    {
+      "name": "TouchScreen",
+      "files": ["source-preprocess/AppSettings.mc"],
+      "definedSymbols": ["touchScreen"],
+      "includeSymbols": {
+        "TARGET": ":touchScreen",
+        "UIMODULE": "DataFieldUi."
+      }
+    },
+    {
       "name": "TestNetwork",
       "files": ["source-preprocess/TestLightNetwork.mc"]
     }
