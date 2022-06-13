@@ -1,19 +1,13 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import Grid from '@mui/material/Grid';
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import LightButton from '../models/LightButton';
 import ButtonGroup from './ButtonGroup';
 import AddButton from './AddButton';
-import { controlMode } from '../constants';
 import AppTextInput from '../inputs/AppTextInput';
 
-const getModes = (lightModes) => {
-  return [controlMode].concat(lightModes);
-};
-
 export default observer(({ lightSettings, lightModes, }) => {
-  const [modes, setModes] = React.useState(lightModes);
   const moveButton = action(useCallback((dragIndex, hoverIndex) => {
       const dragButton = lightSettings.buttons[dragIndex]
       lightSettings.buttons.splice(dragIndex, 1);
@@ -28,10 +22,6 @@ export default observer(({ lightSettings, lightModes, }) => {
     lightSettings.buttons.remove(button);
   });
 
-  useEffect(() => {
-    setModes(getModes(lightModes));
-  }, [lightModes]);
-
   return (
     <div>
       <Grid container spacing={3}>
@@ -44,7 +34,7 @@ export default observer(({ lightSettings, lightModes, }) => {
           <ButtonGroup
             key={button.id}
             buttonGroup={button}
-            lightModes={modes}
+            lightModes={lightModes}
             index={index}
             moveGroup={moveButton}
             addButton={addButton}
