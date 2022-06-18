@@ -1,0 +1,4 @@
+<resources>
+    <font id="menuArrows" filename="../resources/fonts/MenuArrows26.fnt" antialias="true" />
+    <font id="menuIcons" filename="../resources/fonts/MenuIcons30.fnt" antialias="true" />
+</resources>

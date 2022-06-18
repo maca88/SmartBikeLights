@@ -458,12 +458,14 @@ class BikeLightsView extends  WatchUi.DataField  {
 
     (:settings)
     function getSettingsView() {
+        var menu = null;
         if (_errorCode != null ||
             _initializedLights == 0 ||
             !validateSettingsLightModes(headlightData[0]) ||
             !validateSettingsLightModes(taillightData[0]) ||
             !(WatchUi has :Menu2)) {
-            return null;
+            menu = new AppSettings.Menu();
+            return [menu, new MenuDelegate(menu)];
         }
 
         var menuContext = [
@@ -472,11 +474,11 @@ class BikeLightsView extends  WatchUi.DataField  {
             getLightSettings(0 /* LIGHT_TYPE_HEADLIGHT */),
             getLightSettings(2 /* LIGHT_TYPE_TAILLIGHT */)
         ];
-        var menu = _initializedLights > 1
-            ? new Settings.LightsMenu(self, menuContext)
-            : new Settings.LightMenu(getLightData(null)[0].type, self, menuContext);
+        menu = _initializedLights > 1
+            ? new LightsSettings.LightsMenu(self, menuContext, true)
+            : new LightsSettings.LightMenu(getLightData(null)[0].type, self, menuContext, true);
 
-        return [menu, new Settings.MenuDelegate(menu)];
+        return [menu, new MenuDelegate(menu)];
     }
 
     (:settings)

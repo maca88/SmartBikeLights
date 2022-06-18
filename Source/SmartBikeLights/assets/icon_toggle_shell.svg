@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 40 30" width="40px" height="30px" xmlns="http://www.w3.org/2000/svg">
+  <path style="stroke: rgb(0, 0, 0); paint-order: fill; fill-rule: nonzero; stroke-width: 2px; fill: none;" d="M 12 5 C -2 5 -2 25 12 25 M 28 25 C 42 25 42 5 28 5 M 12 5 L 28 5 M 12 25 L 28 25"/>
+</svg>

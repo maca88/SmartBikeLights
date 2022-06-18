@@ -2,7 +2,7 @@ using Toybox.WatchUi;
 using Toybox.Application.Storage;
 
 (:settings)
-module Settings {
+module LightsSettings {
     const controlModeNames = [
         "Smart (S)",
         "Network (N)",
@@ -12,7 +12,6 @@ module Settings {
     class BaseMenu extends WatchUi.Menu2 {
         protected var context;
         protected var viewRef;
-        protected var subMenu;
         protected var closed = false;
 
         function initialize(view, context) {
@@ -39,32 +38,31 @@ module Settings {
                 return;
             }
 
-            if (subMenu != null) {
-                subMenu.close();
-                subMenu = null;
-            }
-
             WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
             closed = true;
         }
 
         function openSubMenu(menu) {
-            subMenu = menu;
             WatchUi.pushView(menu, new MenuDelegate(menu), WatchUi.SLIDE_IMMEDIATE);
         }
     }
 
     class LightsMenu extends BaseMenu {
 
-        function initialize(view, context) {
+        function initialize(view, context, root) {
             BaseMenu.initialize(view, context);
             setTitle("Lights");
             addItem(new WatchUi.MenuItem(context[2][0], null, 0, null));
             addItem(new WatchUi.MenuItem(context[3][0], null, 2, null));
+            if (root) {
+                addItem(new WatchUi.MenuItem("Settings", null, 3, null));
+            }
         }
 
         function onSelect(lightType, menuItem) {
-            openSubMenu(new LightMenu(lightType, viewRef.get(), context));
+            openSubMenu(lightType == 3
+                ? new AppSettings.Menu()
+                : new LightMenu(lightType, viewRef.get(), context, false));
         }
     }
 
@@ -72,7 +70,7 @@ module Settings {
 
         private var _lightType;
 
-        function initialize(lightType, view, context) {
+        function initialize(lightType, view, context, root) {
             BaseMenu.initialize(view, context);
             var lightSettings = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? context[2] : context[3];
             setTitle(lightSettings[0]);
@@ -81,11 +79,16 @@ module Settings {
             var modeIndex = lightSettings.indexOf(lightData[2]);
             addItem(new WatchUi.MenuItem("Control mode", controlModeNames[lightData[4]], 0, null));
             addItem(new WatchUi.MenuItem("Light modes", modeIndex < 0 ? null : lightSettings[modeIndex - 1], 1, null));
+            if (root) {
+                addItem(new WatchUi.MenuItem("Settings", null, 2, null));
+            }
         }
 
         function onSelect(id, menuItem) {
             var view = viewRef.get();
-            var menu = id == 0 ? new LightControlModeMenu(_lightType, view, menuItem, context) : new LightModesMenu(_lightType, view, menuItem, context);
+            var menu = id == 0 ? new LightControlModeMenu(_lightType, view, menuItem, context)
+                : id == 1 ? new LightModesMenu(_lightType, view, menuItem, context)
+                : new AppSettings.Menu();
             openSubMenu(menu);
         }
     }
@@ -160,38 +163,6 @@ module Settings {
             }
 
             close();
-        }
-    }
-
-    class MenuDelegate extends WatchUi.Menu2InputDelegate {
-
-        private var _menu;
-
-        function initialize(menu) {
-            Menu2InputDelegate.initialize();
-            _menu = menu.weak();
-        }
-
-        function onSelect(menuItem) {
-            if (!_menu.stillAlive()) {
-                return;
-            }
-
-            var menu = _menu.get();
-            if (!menu.isContextValid()) {
-                menu.close();
-                return;
-            }
-
-            menu.onSelect(menuItem.getId(), menuItem);
-        }
-
-        function onBack() {
-            if (!_menu.stillAlive()) {
-                return;
-            }
-
-            _menu.get().close();
         }
     }
 }

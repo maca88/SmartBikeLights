@@ -1,0 +1,122 @@
+SplineFontDB: 3.2
+FontName: MenuArrows
+FullName: MenuArrows
+FamilyName: MenuArrows
+Weight: Regular
+Copyright: Copyright (c) 2022, Maca
+UComments: "2022-6-12: Created with FontForge (http://fontforge.org)"
+Version: 001.000
+ItalicAngle: 0
+UnderlinePosition: -102.4
+UnderlineWidth: 51.2
+Ascent: 819
+Descent: 205
+InvalidEm: 0
+LayerCount: 2
+Layer: 0 0 "Back" 1
+Layer: 1 0 "Fore" 0
+XUID: [1021 213 -1312993357 22264]
+OS2Version: 0
+OS2_WeightWidthSlopeOnly: 0
+OS2_UseTypoMetrics: 1
+CreationTime: 1655024099
+ModificationTime: 1655024259
+OS2TypoAscent: 0
+OS2TypoAOffset: 1
+OS2TypoDescent: 0
+OS2TypoDOffset: 1
+OS2TypoLinegap: 0
+OS2WinAscent: 0
+OS2WinAOffset: 1
+OS2WinDescent: 0
+OS2WinDOffset: 1
+HheadAscent: 0
+HheadAOffset: 1
+HheadDescent: 0
+HheadDOffset: 1
+OS2Vendor: 'PfEd'
+MarkAttachClasses: 1
+DEI: 91125
+Encoding: ISO8859-1
+UnicodeInterp: none
+NameList: AGL For New Fonts
+DisplaySize: -48
+AntiAlias: 1
+FitToEm: 0
+WinInfo: 0 38 16
+BeginPrivate: 0
+EndPrivate
+BeginChars: 256 4
+
+StartChar: B
+Encoding: 66 66 0
+Width: 1024
+Flags: H
+LayerCount: 2
+Fore
+SplineSet
+866 248 m 1
+ 373 248 l 1
+ 575 32 l 1
+ 489 -48 l 1
+ 378 70 266 189 155 307 c 1
+ 266 425 378 544 489 662 c 1
+ 575 582 l 1
+ 373 366 l 1
+ 866 366 l 1
+ 866 248 l 1
+EndSplineSet
+EndChar
+
+StartChar: D
+Encoding: 68 68 1
+Width: 1024
+Flags: H
+LayerCount: 2
+Fore
+SplineSet
+237 498 m 1
+ 512 240 l 1
+ 787 498 l 1
+ 867 412 l 1
+ 749 301 630 189 512 78 c 1
+ 394 189 275 301 157 412 c 1
+ 237 498 l 1
+EndSplineSet
+EndChar
+
+StartChar: U
+Encoding: 85 85 2
+Width: 1024
+Flags: H
+LayerCount: 2
+Fore
+SplineSet
+787 116 m 1
+ 512 374 l 1
+ 237 116 l 1
+ 157 202 l 1
+ 275 313 394 425 512 536 c 1
+ 630 425 749 313 867 202 c 1
+ 787 116 l 1
+EndSplineSet
+EndChar
+
+StartChar: R
+Encoding: 82 82 3
+Width: 1024
+Flags: H
+LayerCount: 2
+Fore
+SplineSet
+321 32 m 1
+ 579 307 l 1
+ 321 582 l 1
+ 407 662 l 1
+ 518 544 630 425 741 307 c 1
+ 630 189 518 70 407 -48 c 1
+ 321 32 l 1
+EndSplineSet
+EndChar
+EndChars
+EndSplineFont

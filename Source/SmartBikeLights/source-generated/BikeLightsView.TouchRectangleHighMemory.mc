@@ -88,6 +88,11 @@ class BikeLightsView extends  WatchUi.DataField  {
     private var _taillightPanel;
     private var _panelInitialized = false;
 
+    // Setting menu
+    private var _lastModeTap;
+    private var _firstModeTapTime = 0;
+    private var _modeTapCount = 0;
+
     // Light icon tap behavior
     var headlightIconTapBehavior;
     var taillightIconTapBehavior;
@@ -382,6 +387,10 @@ class BikeLightsView extends  WatchUi.DataField  {
             preCalculate(dc, width, height);
         }
 
+        if (_isFullScreen && DataFieldUi.onUpdate(dc, fgColor, bgColor)) {
+            return;
+        }
+
         var text = _errorCode != null ? "Error " + _errorCode
             : _initializedLights == 0 ? "No network"
             : null;
@@ -482,12 +491,14 @@ class BikeLightsView extends  WatchUi.DataField  {
 
     (:settings)
     function getSettingsView() {
+        var menu = null;
         if (_errorCode != null ||
             _initializedLights == 0 ||
             !validateSettingsLightModes(headlightData[0]) ||
             !validateSettingsLightModes(taillightData[0]) ||
             !(WatchUi has :Menu2)) {
-            return null;
+            menu = new AppSettings.Menu();
+            return [menu, new MenuDelegate(menu)];
         }
 
         var menuContext = [
@@ -496,11 +507,11 @@ class BikeLightsView extends  WatchUi.DataField  {
             getLightSettings(0 /* LIGHT_TYPE_HEADLIGHT */),
             getLightSettings(2 /* LIGHT_TYPE_TAILLIGHT */)
         ];
-        var menu = _initializedLights > 1
-            ? new Settings.LightsMenu(self, menuContext)
-            : new Settings.LightMenu(getLightData(null)[0].type, self, menuContext);
+        menu = _initializedLights > 1
+            ? new LightsSettings.LightsMenu(self, menuContext, true)
+            : new LightsSettings.LightMenu(getLightData(null)[0].type, self, menuContext, true);
 
-        return [menu, new Settings.MenuDelegate(menu)];
+        return [menu, new MenuDelegate(menu)];
     }
 
     (:settings)
@@ -545,7 +556,16 @@ class BikeLightsView extends  WatchUi.DataField  {
     }
 
     function onTap(location) {
+        if (DataFieldUi.onTap(location)) {
+            return true;
+        }
+
         if (_fieldWidth == null || _initializedLights == 0 || _errorCode != null) {
+            if (_isFullScreen) {
+                DataFieldUi.pushMenu(new AppSettings.Menu());
+                return true;
+            }
+
             return false;
         }
 
@@ -803,6 +823,21 @@ class BikeLightsView extends  WatchUi.DataField  {
     }
 
     protected function onLightPanelModeChange(lightData, lightType, lightMode, controlMode) {
+        if ((System.getTimer() - _firstModeTapTime) > 5000) {
+            _lastModeTap = null;
+            _modeTapCount = 0;
+            _firstModeTapTime = System.getTimer();
+        }
+
+        _modeTapCount = _lastModeTap == 0 && lightMode == 0 ? _modeTapCount + 1 : 1;
+        _lastModeTap = lightMode;
+        if (_modeTapCount > 2) {
+            _lastModeTap = null;
+            _modeTapCount = 0;
+            DataFieldUi.pushMenu(new AppSettings.Menu());
+            return;
+        }
+
         var newControlMode = lightMode < 0 ? controlMode != 0 /* SMART */ && lightData[15] /* Filters */ != null ? 0 : 1 /* NETWORK */
             : controlMode != 2 /* MANUAL */ ? 2
             : null;
