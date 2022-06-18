@@ -47,7 +47,6 @@ module AppSettings {
                 var newValue = !Properties.getValue("IL"); // Toggle invert lights
                 menuItem.setEnabled(newValue);
                 Properties.setValue(key, newValue);
-                Application.getApp().onSettingsChanged();
             } else {
                 openSubMenu(index == 1
                     ? new ListMenu("Color", key, menuItem, colorValues, colorNames)
@@ -87,7 +86,6 @@ module AppSettings {
 
             // Set new value
             Properties.setValue(_key, newValue);
-            Application.getApp().onSettingsChanged();
             // Set parent sub label
             var index = _values.indexOf(newValue);
             if (_menuItem.stillAlive() && index >= 0) {

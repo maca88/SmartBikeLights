@@ -92,6 +92,7 @@ class BikeLightsView extends  WatchUi.DataField  {
     private var _lastModeTap;
     private var _firstModeTapTime = 0;
     private var _modeTapCount = 0;
+    private var _updateSettings = false;
 
     // Light icon tap behavior
     var headlightIconTapBehavior;
@@ -372,6 +373,11 @@ class BikeLightsView extends  WatchUi.DataField  {
             onShow();
         }
 
+        if (_updateSettings) {
+            _updateSettings = false;
+            onSettingsChanged();
+        }
+
         _lastUpdateTime = timer;
         var width = dc.getWidth();
         var height = dc.getHeight();
@@ -557,6 +563,11 @@ class BikeLightsView extends  WatchUi.DataField  {
 
     function onTap(location) {
         if (DataFieldUi.onTap(location)) {
+            if (!DataFieldUi.isMenuOpen()) {
+                // Call onSettingsChanged in next onUpdate call. We don't want to call the method here in order to prevent Stack Overflow Error.
+                _updateSettings = true;
+            }
+
             return true;
         }
 

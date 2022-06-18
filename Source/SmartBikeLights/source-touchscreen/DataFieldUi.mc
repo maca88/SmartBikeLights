@@ -9,6 +9,10 @@ module DataFieldUi {
     var _arrowsFont;
     var _iconsFont;
 
+    public function isMenuOpen() {
+        return _openedMenus.size() > 0;
+    }
+
     public function pushMenu(menu) {
         if (_arrowsFont == null) {
             _arrowsFont = WatchUi.loadResource(Rez.Fonts[:menuArrows]);
