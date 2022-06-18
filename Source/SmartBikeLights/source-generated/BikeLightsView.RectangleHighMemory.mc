@@ -1478,6 +1478,10 @@ class BikeLightsView extends  WatchUi.DataField  {
         var isFloat = false;
         for (i = index; i < chars.size(); i++) {
             var char = chars[i];
+            if (stringValue == null && char == ' ') {
+                continue; // Trim leading spaces
+            }
+
             if (char == '.') {
                 isFloat = true;
             }
