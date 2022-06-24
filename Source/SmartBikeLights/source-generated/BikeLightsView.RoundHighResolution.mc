@@ -1078,6 +1078,7 @@ class BikeLightsView extends  WatchUi.DataField  {
                     : data == 'J' ? activityInfo.startLocation == null ? 0 : 1
                     : data == 'K' && Activity has :getProfileInfo ? Activity.getProfileInfo().name
                     : data == 'L' ? (activityInfo.timerState == 3 /* TIMER_STATE_ON */ ? _gradientData[10] /* Last gradient */ : null)
+                    : data == 'M' ? System.getSystemStats() has :solarIntensity ? System.getSystemStats().solarIntensity : null
                     : null,
                     filterValue,
                     false);

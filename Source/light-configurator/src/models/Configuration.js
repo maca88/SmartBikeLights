@@ -403,7 +403,6 @@ export default class Configuration {
 
   static parse(value, deviceList) {
     const device = parseDevice(value, deviceList);
-    console.log(device);
     if (!device) {
       return null;
     }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import Accordion from './Accordion';
 import AccordionSummary from './AccordionSummary';
@@ -96,6 +96,16 @@ export default observer(({ filters, filterTypes, device }) => {
                                           </Typography>
                                         }
                                       />
+              : filter.type === 'M' ? <NumberFilter
+                                      label="Solar intensity"
+                                      filter={filter}
+                                      note={
+                                        <Typography>
+                                        NOTE: Works only for solar models. Value from 0-100 describes the solar sensor's charge efficiency. When the device is not charging by using solar sensor
+                                        (e.g. device too hot/cold or full battery), the value will be negative.
+                                        </Typography>
+                                      }
+                                    />
               : null
             }
           </Grid>

@@ -204,6 +204,10 @@ export default class Filter {
           name += ((this.operator || '') + ' ');
           name += (this.value + '%');
           break;
+        case 'M': // Solar intensity
+          name += ((this.operator || '') + ' ');
+          name += this.value;
+          break;
         default:
           break;
       }

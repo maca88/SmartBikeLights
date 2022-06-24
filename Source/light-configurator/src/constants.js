@@ -9,7 +9,8 @@ export const filterList = [
   { id: 'I', name: 'Bike radar' },
   { id: 'J', name: 'Start location' },
   { id: 'K', name: 'Profile name' },
-  { id: 'L', name: 'Gradient' }
+  { id: 'L', name: 'Gradient' },
+  { id: 'M', name: 'Solar intensity' }
 ];
 
 let map = {};

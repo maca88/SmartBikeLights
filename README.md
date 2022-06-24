@@ -182,6 +182,7 @@ even if they both supports "Night Flash" mode, it will not be displayed, because
 - Bike radar (only for devices with CIQ 3.0+. For devices with 32KB memory, the filter is available only when one light is paired)
 - Profile name (only for devices with CIQ 3.2+ that support multiple profiles)
 - Gradient (only for devices with more that 32KB memory that have a barometer)
+- Solar intensity (only for solar devices with more than 32KB memory)
 
 ## Error codes
 

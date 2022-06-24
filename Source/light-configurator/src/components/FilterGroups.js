@@ -42,6 +42,10 @@ const getFilterTypes = (hasLightModes, device, totalLights) => {
     excludeList.push('L'); // Exclude gradient
   }
 
+  if (!device.highMemory || !device.solar) {
+    excludeList.push('M'); // Exclude solar intensity
+  }
+
   return !excludeList.length
     ? filterList
     : filterList.filter(f => excludeList.indexOf(f.id) < 0);
@@ -80,6 +84,19 @@ export default observer(({ filterGroups, lightModes, device, totalLights }) => {
       setFilterTypes(getFilterTypes(lightModes, device, totalLights));
     },
     [lightModes, device, totalLights]
+  );
+
+  useEffect(
+    () => {
+      filterGroups.forEach(filterGroup => {
+        filterGroup.filters.forEach(filter => {
+          if (!filterTypes.find(t => t.id === filter.type)) {
+            filter.setType(null);
+          }
+        });
+      })
+    },
+    [filterTypes, filterGroups]
   );
 
   return (
