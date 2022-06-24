@@ -28,8 +28,13 @@ export default observer(({ items, label, value, setter, required, help, multiple
     return ids.map(id => items.find(i => i.id === id)?.name).join(', ')
   };
 
+  let resetValue = value != null && (!multiple && !items.find(i => i.id === value));
   useEffect(
     () => {
+      if (resetValue) {
+        setter(null);
+      }
+
       if (value === null || multiple || value === '') {
         return;
       }
@@ -38,10 +43,10 @@ export default observer(({ items, label, value, setter, required, help, multiple
         setter(null);
       }
     },
-    [items, value, setter, multiple]
+    [items, value, setter, multiple, resetValue]
   );
 
-  if (value === null || (!multiple && !items.find(i => i.id === value))) {
+  if (value === null || resetValue) {
     value = defaultValue;
   }
 

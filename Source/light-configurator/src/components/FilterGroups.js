@@ -16,7 +16,7 @@ import AddButton from './AddButton';
 import { filterList, arrayMoveUp, arrayMoveDown } from '../constants';
 
 const emptyFilters = [];
-const getFilterTypes = (hasLightModes, device) => {
+const getFilterTypes = (hasLightModes, device, totalLights) => {
   if (!device) {
     return emptyFilters;
   }
@@ -26,19 +26,19 @@ const getFilterTypes = (hasLightModes, device) => {
     excludeList.push('B'); // Exclude light battery
   }
 
-  if (!device.highMemory){
+  if (!device.highMemory) {
     excludeList.push('F'); // Exclude position
   }
 
-  if (!device.bikeRadar){
+  if (!device.bikeRadar || (!device.highMemory && totalLights > 1)) {
     excludeList.push('I'); // Exclude bike radar
   }
 
-  if (!device.profileName){
+  if (!device.profileName) {
     excludeList.push('K'); // Exclude profile name
   }
 
-  if (!device.highMemory || !device.barometer){
+  if (!device.highMemory || !device.barometer) {
     excludeList.push('L'); // Exclude gradient
   }
 
@@ -47,8 +47,8 @@ const getFilterTypes = (hasLightModes, device) => {
     : filterList.filter(f => excludeList.indexOf(f.id) < 0);
 };
 
-export default observer(({ filterGroups, lightModes, device }) => {
-  const [filterTypes, setFilterTypes] = React.useState(getFilterTypes(lightModes, device));
+export default observer(({ filterGroups, lightModes, device, totalLights }) => {
+  const [filterTypes, setFilterTypes] = React.useState(getFilterTypes(lightModes, device, totalLights));
 
   const createFilterGroup = action(() => {
     filterGroups.push(new FilterGroup(!!lightModes));
@@ -77,9 +77,9 @@ export default observer(({ filterGroups, lightModes, device }) => {
 
   useEffect(
     () => {
-      setFilterTypes(getFilterTypes(lightModes, device));
+      setFilterTypes(getFilterTypes(lightModes, device, totalLights));
     },
-    [lightModes, device]
+    [lightModes, device, totalLights]
   );
 
   return (

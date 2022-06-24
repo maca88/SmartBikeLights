@@ -716,6 +716,19 @@ export default class Configuration {
     return `${totalFilters},${totalGroups}${config}${defaultGroupConfig}`;
   }
 
+  getTotalLights = () => {
+    var num = 0;
+    if (this.headlight) {
+      num++;
+    }
+
+    if (this.taillight) {
+      num++;
+    }
+
+    return num;
+  }
+
   setDevice = (value) => {
     this.device = value;
   }

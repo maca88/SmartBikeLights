@@ -132,8 +132,8 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 // #if dataField
     private var _lastSpeed;
     private var _acceleration;
-  // #if highMemory
     private var _bikeRadar;
+  // #if highMemory
     private var _gradientData = [
         0f,    // 0. Altitude last estimate
         0f,    // 1. Altitude kalman gain
@@ -190,6 +190,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
             var tlData = taillightData;
             // Free memory before parsing to avoid out of memory exception
             _globalFilters = null;
+            _bikeRadar = null;
             hlData[15] = null; // Headlight filters
             tlData[15] = null; // Taillight filters
             var configuration = parseConfiguration();
@@ -1656,8 +1657,8 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
             var isEnabled = data == 'E' ? isWithinTimespan(filters, i, filterValue)
   // #if highMemory
                 : data == 'F' ? isInsideAnyPolygon(activityInfo, filterValue)
-                : data == 'I' ? isTargetBehind(activityInfo, filters[i + 1], filterValue)
   // #endif
+                : data == 'I' ? isTargetBehind(activityInfo, filters[i + 1], filterValue)
                 : data == 'D' ? true
                 : checkOperatorValue(
                     filters[i + 1],
@@ -1781,14 +1782,11 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
         return result;
     }
+  // #endif
 
     private function isTargetBehind(activityInfo, operator, filterValue) {
         if (_bikeRadar == null) {
-            if (Toybox.AntPlus has :BikeRadar) {
-                _bikeRadar = new AntPlus.BikeRadar(null);
-            } else {
-                return false;
-            }
+            return false;
         }
 
         var targets = _bikeRadar.getRadarInfo();
@@ -1809,27 +1807,24 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
         return false;
     }
-  // #endif
 
     private function initializeTimeFilter(filterValue) {
-        var from = initializeTimeFilterPart(filterValue, 0);
-        var to = initializeTimeFilterPart(filterValue, 2);
+        var result = new [2];
+        for (var i = 0; i < 2; i++) {
+            var type = filterValue[i*2];
+            if (type > 0 /* Sunset or sunrise */ && _sunsetTime == null) {
+                return null; // Not able to initialize
+            }
 
-        return from == null || to == null ? null : [from, to];
-    }
-
-    private function initializeTimeFilterPart(filterValue, index) {
-        var type = filterValue[index];
-        if (type > 0 /* Sunset or sunrise */ && _sunsetTime == null) {
-            return null; // Not able to initialize
+            var value = filterValue[i*2 + 1];
+            result[i] = getSecondsOfDay(
+                type == 2 /* Sunset */ ? _sunsetTime + value
+                : type == 1 /* Sunrise */ ? _sunriseTime + value
+                : value
+            );
         }
 
-        var value = filterValue[index + 1];
-        return getSecondsOfDay(
-            type == 2 /* Sunset */ ? _sunsetTime + value
-            : type == 1 /* Sunrise */ ? _sunriseTime + value
-            : value
-        );
+        return result;
     }
 // #endif
 
@@ -2093,8 +2088,8 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
                 var filterValue = charNumber == 69 /* E */ ? parseTimespan(chars, i, filterResult)
   // #if highMemory
                     : charNumber == 70 /* F */? parsePolygons(chars, i, filterResult)
-                    : charNumber == 73 /* I */ ? parseBikeRadar(chars, i, filterResult)
   // #endif
+                    : charNumber == 73 /* I */ ? parseBikeRadar(chars, i, filterResult)
                     // In case of a string value, the last character will be a : character in order to know where the next filter starts.
                     // The : character will be automatically skipped by the parseFilters method, so we do not have to increment the
                     // filterResult index here.
@@ -2124,23 +2119,33 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
     private function parseTimespan(chars, index, filterResult) {
         var data = new [4];
         filterResult[1] = null; /* Filter operator */
-        parseTimespanPart(chars, index, filterResult, data, 0);
-        parseTimespanPart(chars, filterResult[0] + 1 /* Skip , */, filterResult, data, 2);
+        for (var i = 0; i < 2; i++) {
+            var char = chars[index];
+            var type = char == 's' ? 2 /* Sunset */
+                : char == 'r' ? 1 /* Sunrise */
+                : 0; /* Total minutes of the day */
+            if (type != 0) {
+                index++;
+            }
+
+            data[i*2] = type;
+            data[i*2 + 1] = parse(1 /* NUMBER */, chars, index, filterResult);
+            index = filterResult[0] + 1; /* Skip , */
+        }
 
         return data;
     }
 
-    private function parseTimespanPart(chars, index, filterResult, data, dataIndex) {
-        var char = chars[index];
-        var type = char == 's' ? 2 /* Sunset */
-            : char == 'r' ? 1 /* Sunrise */
-            : 0; /* Total minutes of the day */
-        if (type != 0) {
-            index++;
-        }
+    // I<300>0
+    private function parseBikeRadar(chars, index, filterResult) {
+        filterResult[1] = chars[index]; // Filter operator
+        _bikeRadar = Toybox.AntPlus has :BikeRadar ? new AntPlus.BikeRadar(null) : null;
 
-        data[dataIndex] = type;
-        data[dataIndex + 1] = parse(1 /* NUMBER */, chars, index, filterResult);
+        return [
+            parse(1 /* NUMBER */, chars, index + 1, filterResult), // Range
+            chars[filterResult[0]], // Threat operator
+            parse(1 /* NUMBER */, chars, null, filterResult) // Threat
+        ];
     }
 
    // #if highMemory
@@ -2157,17 +2162,6 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         }
 
         return data;
-    }
-
-    // I<300>0
-    private function parseBikeRadar(chars, index, filterResult) {
-        filterResult[1] = chars[index]; // Filter operator
-
-        return [
-            parse(1 /* NUMBER */, chars, index + 1, filterResult), // Range
-            chars[filterResult[0]], // Threat operator
-            parse(1 /* NUMBER */, chars, null, filterResult) // Threat
-        ];
     }
   // #endif
 // #endif

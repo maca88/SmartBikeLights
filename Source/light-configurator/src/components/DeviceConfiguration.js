@@ -74,7 +74,7 @@ export default observer(({ configuration, device, deviceList }) => {
               }
             />
           </Grid>
-          <FilterGroups filterGroups={configuration.globalFilterGroups} device={device} />
+          <FilterGroups filterGroups={configuration.globalFilterGroups} device={device} totalLights={configuration.getTotalLights()} />
         </CardContent>
       </Card>
 
@@ -82,6 +82,7 @@ export default observer(({ configuration, device, deviceList }) => {
         globalFilterGroups={configuration.globalFilterGroups}
         useIndividualNetwork={configuration.useIndividualNetwork}
         device={device}
+        totalLights={configuration.getTotalLights()}
         lightType="Headlight"
         lightList={getDeviceLights(device, headlightList, configuration.useIndividualNetwork)}
         lightFilterGroups={configuration.headlightFilterGroups}
@@ -107,6 +108,7 @@ export default observer(({ configuration, device, deviceList }) => {
         globalFilterGroups={configuration.globalFilterGroups}
         useIndividualNetwork={configuration.useIndividualNetwork}
         device={device}
+        totalLights={configuration.getTotalLights()}
         lightType="Taillight"
         lightList={getDeviceLights(device, taillightList, configuration.useIndividualNetwork)}
         light={configuration.taillight}

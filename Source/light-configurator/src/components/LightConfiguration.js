@@ -40,7 +40,7 @@ const getDefaultPanel = (value, lights) => {
 };
 
 export default observer(({
-  device, useIndividualNetwork, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
+  device, totalLights, useIndividualNetwork, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
   setLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel, lightSettings, setLightSettings, deviceNumber, setDeviceNumber,
   serialNumber, setSerialNumber, forceSmartMode, setForceSmartMode, lightIconTapBehavior, setLightIconTapBehavior }) => {
   const [modes, setModes] = React.useState(getModes(light, lightList));
@@ -187,7 +187,7 @@ export default observer(({
                   </Typography>
                 }
               />
-              <FilterGroups filterGroups={lightFilterGroups} lightModes={modes} device={device} />
+              <FilterGroups filterGroups={lightFilterGroups} lightModes={modes} device={device} totalLights={totalLights} />
           </React.Fragment>
           : null
         }

@@ -179,7 +179,7 @@ even if they both supports "Night Flash" mode, it will not be displayed, because
 - Timer state
 - Start location
 - Position (only for devices with more that 32KB memory)
-- Bike radar (only for devices with more that 32KB memory and with CIQ 3.0+)
+- Bike radar (only for devices with CIQ 3.0+. For devices with 32KB memory, the filter is available only when one light is paired)
 - Profile name (only for devices with CIQ 3.2+ that support multiple profiles)
 - Gradient (only for devices with more that 32KB memory that have a barometer)
 

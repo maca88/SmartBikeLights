@@ -51,6 +51,7 @@ export default observer(({ configuration, setConfiguration }) => {
           <LightConfiguration
             useIndividualNetwork={configuration.useIndividualNetwork}
             device={device}
+            totalLights={configuration.getTotalLights()}
             lightType="Headlight"
             lightList={getDeviceLights(device, headlightList, configuration.useIndividualNetwork)}
             light={configuration.headlight}
@@ -68,6 +69,7 @@ export default observer(({ configuration, setConfiguration }) => {
           <LightConfiguration
             useIndividualNetwork={configuration.useIndividualNetwork}
             device={device}
+            totalLights={configuration.getTotalLights()}
             lightType="Taillight"
             lightList={getDeviceLights(device, taillightList, configuration.useIndividualNetwork)}
             light={configuration.taillight}
@@ -82,7 +84,7 @@ export default observer(({ configuration, setConfiguration }) => {
             serialNumber={configuration.taillightSerialNumber}
             setSerialNumber={configuration.setTaillightSerialNumber}
           />
-          <ConfigurationResult 
+          <ConfigurationResult
             configuration={configuration}
             deviceList={deviceList}
           />

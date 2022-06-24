@@ -173,6 +173,7 @@ class BikeLightsView extends  WatchUi.DataField  {
             var tlData = taillightData;
             // Free memory before parsing to avoid out of memory exception
             _globalFilters = null;
+            _bikeRadar = null;
             hlData[15] = null; // Headlight filters
             tlData[15] = null; // Taillight filters
             var configuration = parseConfiguration();
@@ -1588,11 +1589,7 @@ class BikeLightsView extends  WatchUi.DataField  {
 
     private function isTargetBehind(activityInfo, operator, filterValue) {
         if (_bikeRadar == null) {
-            if (Toybox.AntPlus has :BikeRadar) {
-                _bikeRadar = new AntPlus.BikeRadar(null);
-            } else {
-                return false;
-            }
+            return false;
         }
 
         var targets = _bikeRadar.getRadarInfo();
@@ -1615,24 +1612,22 @@ class BikeLightsView extends  WatchUi.DataField  {
     }
 
     private function initializeTimeFilter(filterValue) {
-        var from = initializeTimeFilterPart(filterValue, 0);
-        var to = initializeTimeFilterPart(filterValue, 2);
+        var result = new [2];
+        for (var i = 0; i < 2; i++) {
+            var type = filterValue[i*2];
+            if (type > 0 /* Sunset or sunrise */ && _sunsetTime == null) {
+                return null; // Not able to initialize
+            }
 
-        return from == null || to == null ? null : [from, to];
-    }
-
-    private function initializeTimeFilterPart(filterValue, index) {
-        var type = filterValue[index];
-        if (type > 0 /* Sunset or sunrise */ && _sunsetTime == null) {
-            return null; // Not able to initialize
+            var value = filterValue[i*2 + 1];
+            result[i] = getSecondsOfDay(
+                type == 2 /* Sunset */ ? _sunsetTime + value
+                : type == 1 /* Sunrise */ ? _sunriseTime + value
+                : value
+            );
         }
 
-        var value = filterValue[index + 1];
-        return getSecondsOfDay(
-            type == 2 /* Sunset */ ? _sunsetTime + value
-            : type == 1 /* Sunrise */ ? _sunriseTime + value
-            : value
-        );
+        return result;
     }
 
     // <GlobalFilters>#<HeadlightModes>:<HeadlightSerialNumber>#<HeadlightFilters>#<TaillightModes>:<TaillightSerialNumber>#<TaillightFilters>
@@ -1894,23 +1889,33 @@ class BikeLightsView extends  WatchUi.DataField  {
     private function parseTimespan(chars, index, filterResult) {
         var data = new [4];
         filterResult[1] = null; /* Filter operator */
-        parseTimespanPart(chars, index, filterResult, data, 0);
-        parseTimespanPart(chars, filterResult[0] + 1 /* Skip , */, filterResult, data, 2);
+        for (var i = 0; i < 2; i++) {
+            var char = chars[index];
+            var type = char == 's' ? 2 /* Sunset */
+                : char == 'r' ? 1 /* Sunrise */
+                : 0; /* Total minutes of the day */
+            if (type != 0) {
+                index++;
+            }
+
+            data[i*2] = type;
+            data[i*2 + 1] = parse(1 /* NUMBER */, chars, index, filterResult);
+            index = filterResult[0] + 1; /* Skip , */
+        }
 
         return data;
     }
 
-    private function parseTimespanPart(chars, index, filterResult, data, dataIndex) {
-        var char = chars[index];
-        var type = char == 's' ? 2 /* Sunset */
-            : char == 'r' ? 1 /* Sunrise */
-            : 0; /* Total minutes of the day */
-        if (type != 0) {
-            index++;
-        }
+    // I<300>0
+    private function parseBikeRadar(chars, index, filterResult) {
+        filterResult[1] = chars[index]; // Filter operator
+        _bikeRadar = Toybox.AntPlus has :BikeRadar ? new AntPlus.BikeRadar(null) : null;
 
-        data[dataIndex] = type;
-        data[dataIndex + 1] = parse(1 /* NUMBER */, chars, index, filterResult);
+        return [
+            parse(1 /* NUMBER */, chars, index + 1, filterResult), // Range
+            chars[filterResult[0]], // Threat operator
+            parse(1 /* NUMBER */, chars, null, filterResult) // Threat
+        ];
     }
 
     private function parsePolygons(chars, index, filterResult) {
@@ -1926,17 +1931,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
 
         return data;
-    }
-
-    // I<300>0
-    private function parseBikeRadar(chars, index, filterResult) {
-        filterResult[1] = chars[index]; // Filter operator
-
-        return [
-            parse(1 /* NUMBER */, chars, index + 1, filterResult), // Range
-            chars[filterResult[0]], // Threat operator
-            parse(1 /* NUMBER */, chars, null, filterResult) // Threat
-        ];
     }
 
     // <LightModes>(:<LightSerialNumber>)*
