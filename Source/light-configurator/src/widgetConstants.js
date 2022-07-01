@@ -17,6 +17,7 @@ export const deviceList = [
   { id: 'B3843', name: 'Edge 1040 / 1040 Solar', highMemory: true, touchScreen: true, settings: false },
   { id: 'B2067', name: 'Edge 520', highMemory: true, touchScreen: false, settings: true },
   { id: 'B3112', name: 'Edge 520 Plus', highMemory: true, touchScreen: false, settings: true },
+  { id: 'B3121', name: 'Edge 530', highMemory: true, touchScreen: false, settings: true },
   { id: 'B2530', name: 'Edge 820 / Explore', highMemory: true, touchScreen: true, settings: false },
   { id: 'B3122', name: 'Edge 830', highMemory: true, touchScreen: true, settings: false },
   { id: 'B3011', name: 'Edge Explore', highMemory: true, touchScreen: true, settings: false },
