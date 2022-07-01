@@ -14,6 +14,17 @@ import { observer } from 'mobx-react-lite';
 import Configuration from './models/Configuration';
 import { AppContext, getContextValue } from './AppContext';
 import { getAppType } from './constants'
+const classes = {
+  hidden: `hidden-md`
+};
+
+const StyledAppBar = styled(AppBar)(({ theme }) => ({
+  [`& .${classes.hidden}`]: {
+    [theme.breakpoints.up('md')]: {
+      display: 'none !important',
+    }
+  }
+}));
 
 const MainContent = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -32,16 +43,25 @@ const getDefaultConfiguration = (deviceList) => {
   return new Configuration();
 }
 
+const appType = getAppType();
+
+let FirebaseService = null;
+let SignIn = null;
+if (appType === 'datafield') {
+  FirebaseService = require('./services/FirebaseService').default;
+  FirebaseService.initialize();
+  SignIn = require('./components/SignIn').default;
+}
+
 export default observer(() => {
-  var appTitle = process.env.REACT_APP_TITLE;
-  var appType = getAppType();
-  const DataField = React.lazy(() => import('./components/DataFieldConfiguration'));
-  const Widget = React.lazy(() => import('./components/WidgetConfiguration'));
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const appTitle = process.env.REACT_APP_TITLE;
   const { deviceList } = appType === 'datafield'
     ? require('./dataFieldConstants')
     : require('./widgetConstants');
-  const [state, setState] = React.useState(getContextValue(prefersDarkMode ? 'dark' : 'light', getDefaultConfiguration(deviceList)));
+  const DataField = React.lazy(() => import('./components/DataFieldConfiguration'));
+  const Widget = React.lazy(() => import('./components/WidgetConfiguration'));
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const [state, setState] = React.useState(getContextValue(prefersDarkMode ? 'dark' : 'light', getDefaultConfiguration(deviceList), null));
   const setTheme = useMemo(() =>
     (theme) => {
       setState((prevState) => {
@@ -63,7 +83,7 @@ export default observer(() => {
   }, [prefersDarkMode, setTheme]);
 
   const theme = useMemo(() => {
-    var newTheme = createTheme({
+    const newTheme = createTheme({
       palette: {
         mode: state.theme
       },
@@ -73,25 +93,40 @@ export default observer(() => {
   },
   [state.theme]);
 
+  useEffect(() => {
+    if (!FirebaseService) {
+      return;
+    }
+
+    return FirebaseService.subscribeOnUserChanged(user => {
+      setState((prevState) => {
+        return { ...prevState, currentUser: user };
+      })
+    });
+  }, []);
+
   return (
     <AppContext.Provider value={state}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <AppBar position="relative">
+        <StyledAppBar position="relative">
           <Toolbar>
             <Typography variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
-              Lights Configurator ({appTitle})
+              Lights Configurator <br className={classes.hidden} /> ({appTitle})
             </Typography>
+            {
+              SignIn ? <SignIn /> : null
+            }
             <IconButton sx={{ ml: 1 }} onClick={toggleTheme} color="inherit">
               {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
             </IconButton>
           </Toolbar>
-        </AppBar>
+        </StyledAppBar>
         <main>
           <MainContent>
             <Container maxWidth="md">
               <React.Suspense fallback={<></>}>
-                {appType === 'datafield' && <DataField configuration={state.configuration} setConfiguration={setConfiguration} />}
+                {appType === 'datafield' && <DataField configuration={state.configuration} setConfiguration={setConfiguration} currentUser={state.currentUser} />}
                 {appType === 'widget' && <Widget configuration={state.configuration} setConfiguration={setConfiguration} />}
               </React.Suspense>
             </Container>

@@ -41,7 +41,7 @@ export default observer(({ setConfiguration, deviceList }) => {
           marginBottom: 'auto',
           marginTop: 'auto'
         }}>
-        <Button sx={{ width: '100%' }} variant="contained" onClick={() => {parse(state.existingConfigurationValue, deviceList)}}>Parse</Button>
+        <Button sx={{ width: '100%' }} variant="contained" onClick={() => {parse(state.existingConfigurationValue, deviceList)}}>Load</Button>
       </Grid>
       { state.parseError ?
         <Grid item xs={12} sm={12}>
