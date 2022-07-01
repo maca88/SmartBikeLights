@@ -6,10 +6,11 @@ import { timeFormatList, unitList } from '../constants';
 import AppSelect from '../inputs/AppSelect';
 import DeviceConfiguration from './DeviceConfiguration';
 import ParseConfiguration from './ParseConfiguration';
+import UserConfigurations from './UserConfigurations';
 import { getDevice, deviceList } from '../dataFieldConstants';
 import { Alert, Link } from '@mui/material';
 
-export default observer(({ configuration, setConfiguration }) => {
+export default observer(({ configuration, setConfiguration, currentUser }) => {
   const setNewConfiguration = action((newConfiguration) => {
     setConfiguration(newConfiguration);
   });
@@ -19,6 +20,7 @@ export default observer(({ configuration, setConfiguration }) => {
       <Alert severity="info">
         Hard to understand? <Link target="_blank" rel="noopener" href="https://github.com/maca88/SmartBikeLights/wiki/Lights-Configurator">Check the documentation</Link>
       </Alert>
+      <UserConfigurations configuration={configuration} setConfiguration={setConfiguration} deviceList={deviceList} currentUser={currentUser} />
       <ParseConfiguration setConfiguration={setNewConfiguration} deviceList={deviceList} />
       <Grid container spacing={2} justifyContent="center">
         <Grid item xs={12} sm={4}>
