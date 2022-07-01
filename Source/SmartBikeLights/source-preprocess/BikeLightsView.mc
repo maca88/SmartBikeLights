@@ -92,13 +92,13 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
     private var _taillightPanel;
     private var _panelInitialized = false;
 
+  // #if dataField
     // Setting menu
     private var _lastModeTap;
     private var _firstModeTapTime = 0;
     private var _modeTapCount = 0;
     private var _updateSettings = false;
 
-  // #if dataField
     // Light icon tap behavior
     var headlightIconTapBehavior;
     var taillightIconTapBehavior;
@@ -190,7 +190,9 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
             var tlData = taillightData;
             // Free memory before parsing to avoid out of memory exception
             _globalFilters = null;
+// #if dataField
             _bikeRadar = null;
+// #endif
             hlData[15] = null; // Headlight filters
             tlData[15] = null; // Taillight filters
             var configuration = parseConfiguration();
@@ -410,7 +412,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
             onShow();
         }
 
-  // #if touchScreen
+  // #if dataField && touchScreen
         if (_updateSettings) {
             _updateSettings = false;
             onSettingsChanged();
@@ -433,7 +435,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
             preCalculate(dc, width, height);
         }
 
-// #if touchScreen
+// #if dataField && touchScreen
         if (_isFullScreen && DataFieldUi.onUpdate(dc, fgColor, bgColor)) {
             return;
         }
@@ -546,6 +548,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
     }
 
 // #if highMemory
+  // #if dataField
     (:settings)
     function getSettingsView() {
         var menu = null;
@@ -570,6 +573,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
         return [menu, new MenuDelegate(menu)];
     }
+  // #endif
 
     (:settings)
     function getLightSettings(lightType) {
@@ -615,6 +619,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
 // #if touchScreen
     function onTap(location) {
+  // #if dataField
         if (DataFieldUi.onTap(location)) {
             if (!DataFieldUi.isMenuOpen()) {
                 // Call onSettingsChanged in next onUpdate call. We don't want to call the method here in order to prevent Stack Overflow Error.
@@ -623,12 +628,15 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
             return true;
         }
+  // #endif
 
         if (_fieldWidth == null || _initializedLights == 0 || _errorCode != null) {
+  // #if dataField
             if (_isFullScreen) {
                 DataFieldUi.pushMenu(new AppSettings.Menu());
                 return true;
             }
+  // #endif
 
             return false;
         }
@@ -987,6 +995,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
     }
 
     protected function onLightPanelModeChange(lightData, lightType, lightMode, controlMode) {
+  // #if dataField
         if ((System.getTimer() - _firstModeTapTime) > 5000) {
             _lastModeTap = null;
             _modeTapCount = 0;
@@ -1001,6 +1010,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
             DataFieldUi.pushMenu(new AppSettings.Menu());
             return;
         }
+  // #endif
 
         var newControlMode = lightMode < 0 ? controlMode != 0 /* SMART */ && lightData[15] /* Filters */ != null ? 0 : 1 /* NETWORK */
             : controlMode != 2 /* MANUAL */ ? 2
