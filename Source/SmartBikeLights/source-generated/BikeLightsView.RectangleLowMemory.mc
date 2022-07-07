@@ -710,7 +710,20 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
 
         var lightType = light.type;
-        lightData[1] = getLightText(lightType, mode, lightData[3]);
+        var lightModes = lightData[3];
+        var lightModeCharacter = "";
+        if (mode < 0) {
+            lightModeCharacter = "X"; // Disconnected
+        } else if (mode > 0) {
+            var index = lightModes == null
+                ? -1
+                : ((lightModes >> (4 * ((mode > 9 ? mode - 49 : mode) - 1))) & 0x0F).toNumber() - 1;
+            lightModeCharacter = index < 0 || index >= $.lightModeCharacters.size()
+                ? "?" /* Unknown */
+                : $.lightModeCharacters[index];
+        }
+
+        lightData[1] = lightType == (_invertLights ? 2 /* LIGHT_TYPE_TAILLIGHT */ : 0 /* LIGHT_TYPE_HEADLIGHT */) ? lightModeCharacter + ")" : "(" + lightModeCharacter;
         lightData[2] = mode;
         var fitField = lightData[6];
         if (fitField != null) {
@@ -769,22 +782,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         } else {
             _lightNetwork.restoreTaillightsNetworkModeControl();
         }
-    }
-
-    private function getLightText(lightType, mode, lightModes) {
-        var lightModeCharacter = "";
-        if (mode < 0) {
-            lightModeCharacter = "X"; // Disconnected
-        } else if (mode > 0) {
-            var index = lightModes == null
-                ? -1
-                : ((lightModes >> (4 * ((mode > 9 ? mode - 49 : mode) - 1))) & 0x0F).toNumber() - 1;
-            lightModeCharacter = index < 0 || index >= $.lightModeCharacters.size()
-                ? "?" /* Unknown */
-                : $.lightModeCharacters[index];
-        }
-
-        return lightType == (_invertLights ? 2 /* LIGHT_TYPE_TAILLIGHT */ : 0 /* LIGHT_TYPE_HEADLIGHT */) ? lightModeCharacter + ")" : "(" + lightModeCharacter;
     }
 
     private function checkFilters(activityInfo, filters, filterResult, lightData, i) {

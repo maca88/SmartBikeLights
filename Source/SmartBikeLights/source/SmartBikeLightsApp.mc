@@ -49,6 +49,11 @@ class SmartBikeLightsApp extends Application.AppBase {
         _view.onShow(); // Reinitialize lights
     }
 
+    function onStart(state) {
+        //System.println("onStart timer=" + System.getTimer());
+        _view.onShow(); // Initialize light network
+    }
+
     // Return the initial view of your application here
     (:nonTouchScreen)
     function getInitialView() {
