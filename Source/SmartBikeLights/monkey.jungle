@@ -80,6 +80,8 @@ edge_1000.resourcePath = $(edge_1000.resourcePath);resources-highmemory;resource
 edge_1000.sourcePath = $(base.sourcePath);source-touchscreen
 edgeexplore.resourcePath = $(edgeexplore.resourcePath);resources-highmemory;resources-touchscreen
 edgeexplore.sourcePath = $(base.sourcePath);source-touchscreen
+edgeexplore2.resourcePath = $(edgeexplore2.resourcePath);resources-highmemory;resources-touchscreen
+edgeexplore2.sourcePath = $(base.sourcePath);source-touchscreen
 
 # Round non touch screen devices with more than 32KB memory but do not have CIQ 3.2
 d2charlie.excludeAnnotations = $(roundNoSettings)

@@ -22,6 +22,7 @@ export const deviceList = [
   { id: 'B2530', name: 'Edge 820 / Explore', highMemory: true, bikeRadar: true, touchScreen: true, settings: false, profileName: false, barometer: true, solar: false },
   { id: 'B3122', name: 'Edge 830', highMemory: true, bikeRadar: true, touchScreen: true, settings: false, profileName: true, barometer: true, solar: false },
   { id: 'B3011', name: 'Edge Explore', highMemory: true, bikeRadar: true, touchScreen: true, settings: false, profileName: false, barometer: false, solar: false },
+  { id: 'B4169', name: 'Edge Explore 2', highMemory: true, bikeRadar: true, touchScreen: true, settings: false, profileName: true, barometer: true, solar: false },
   { id: 'B3638', name: 'Enduro', highMemory: false, bikeRadar: true, touchScreen: false, settings: false, profileName: true, barometer: true, solar: false },
   { id: 'B3944', name: 'epix (Gen 2)', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true, barometer: true, solar: false },
   { id: 'B2697', name: 'fēnix 5 / quatix 5', highMemory: false, bikeRadar: true, touchScreen: false, settings: false, profileName: false, barometer: true, solar: false },

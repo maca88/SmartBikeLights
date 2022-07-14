@@ -21,6 +21,7 @@ export const deviceList = [
   { id: 'B2530', name: 'Edge 820 / Explore', highMemory: true, touchScreen: true, settings: false },
   { id: 'B3122', name: 'Edge 830', highMemory: true, touchScreen: true, settings: false },
   { id: 'B3011', name: 'Edge Explore', highMemory: true, touchScreen: true, settings: false },
+  { id: 'B4169', name: 'Edge Explore 2', highMemory: true, touchScreen: true, settings: false },
   { id: 'B3638', name: 'Enduro', highMemory: true, touchScreen: false, settings: true },
   { id: 'B3944', name: 'epix (Gen 2)', highMemory: true, touchScreen: false, settings: true },
   { id: 'B2697', name: 'fēnix 5 / quatix 5', highMemory: true, touchScreen: false, settings: true },
