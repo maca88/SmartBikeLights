@@ -405,6 +405,14 @@ const garminVariaRtl515 = [
   { id: 6, name: 'Night Flash' }
 ];
 
+const garminVariaTl300 = [
+  { id: 0, name: 'Off' },
+  { id: 2, name: 'High' },
+  { id: 3, name: 'Medium' },
+  { id: 4, name: 'Low' },
+  { id: 7, name: 'Day Flash' }
+];
+
 const seeSenseIcon2 = [
   { id: 0, name: 'Off' },
   { id: 1, name: 'Steady 100%' },
@@ -467,6 +475,23 @@ export const taillightList = [
         [cycliqFly6Ce[4]],
         [cycliqFly6Ce[6]],
         [cycliqFly6Ce[7]]
+      ]
+    }
+  },
+  {
+    id: 12,
+    name: 'Garmin Varia TL300',
+    modes: garminVariaTl300,
+    individualNetworkOnly: false,
+    lightModes: [0, 67121680], // 67121680
+    defaultLightPanel: {
+      shortName: 'Varia 300',
+      buttonGroups: [
+        [controlMode, garminVariaTl300[0]],
+        [garminVariaTl300[1]],
+        [garminVariaTl300[2]],
+        [garminVariaTl300[3]],
+        [garminVariaTl300[4]],
       ]
     }
   },
