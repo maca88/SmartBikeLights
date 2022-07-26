@@ -413,6 +413,14 @@ const garminVariaTl300 = [
   { id: 7, name: 'Day Flash' }
 ];
 
+const mageneL508 = [
+  { id: 0, name: 'Off' },
+  { id: 4, name: 'Solid' },
+  { id: 5, name: 'Peloton' },
+  { id: 7, name: 'Flash' },
+  { id: 6, name: 'Pulse' }
+];
+
 const seeSenseIcon2 = [
   { id: 0, name: 'Off' },
   { id: 1, name: 'Steady 100%' },
@@ -599,6 +607,23 @@ export const taillightList = [
         [garminVariaRtl515[2]],
         [garminVariaRtl515[3]],
         [garminVariaRtl515[4]],
+      ]
+    }
+  },
+  {
+    id: 13,
+    name: 'Magene L508',
+    modes: mageneL508,
+    individualNetworkOnly: false,
+    lightModes: [0, 73535488], // 73535488
+    defaultLightPanel: {
+      shortName: 'Magene 508',
+      buttonGroups: [
+        [controlMode, mageneL508[0]],
+        [mageneL508[1]],
+        [mageneL508[2]],
+        [mageneL508[3]],
+        [mageneL508[4]],
       ]
     }
   },
