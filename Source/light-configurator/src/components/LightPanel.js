@@ -6,14 +6,15 @@ import LightButtonGroup from '../models/LightButtonGroup';
 import LightButton from '../models/LightButton';
 import ButtonGroup from './ButtonGroup';
 import AddButton from './AddButton';
-import { controlMode } from '../constants';
+import { controlMode, getButtonColors } from '../constants';
 import AppTextInput from '../inputs/AppTextInput';
+import AppSelect from '../inputs/AppSelect';
 
 const getModes = (lightModes) => {
   return [controlMode].concat(lightModes);
 };
 
-export default observer(({ lightPanel, lightModes, }) => {
+export default observer(({ lightPanel, lightModes }) => {
   const [modes, setModes] = React.useState(getModes(lightModes));
   const addButtonGroup = action(() => {
     const group = new LightButtonGroup();
@@ -46,6 +47,9 @@ export default observer(({ lightPanel, lightModes, }) => {
       <Grid container spacing={3}>
         <Grid item xs={6} sm={4}>
           <AppTextInput label="Short light name" setter={lightPanel.setLightName} value={lightPanel.lightName} />
+        </Grid>
+        <Grid item xs={6} sm={4}>
+          <AppSelect required items={getButtonColors()} label="Button color" setter={lightPanel.setButtonColor} value={lightPanel.buttonColor} />
         </Grid>
       </Grid>
       <div>

@@ -1,5 +1,19 @@
 <resources>
     <settings>
+        <setting propertyKey="@Properties.AC" title="@Strings.AC">
+            <settingConfig type="list">
+                <listEntry value="16711680">@Strings.Red</listEntry>
+                <listEntry value="11141120">@Strings.DarkRed</listEntry>
+                <listEntry value="16733440">@Strings.Orange</listEntry>
+                <listEntry value="16755200">@Strings.Yellow</listEntry>
+                <listEntry value="65280">@Strings.Green</listEntry>
+                <listEntry value="43520">@Strings.DarkGreen</listEntry>
+                <listEntry value="43775">@Strings.Blue</listEntry>
+                <listEntry value="255">@Strings.DarkBlue</listEntry>
+                <listEntry value="11141375">@Strings.Purple</listEntry>
+                <listEntry value="16711935">@Strings.Pink</listEntry>
+            </settingConfig>
+        </setting>
         <setting propertyKey="@Properties.CC" title="@Strings.CC">
             <settingConfig type="list">
                 <listEntry value="1">@Strings.Primary</listEntry>

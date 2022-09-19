@@ -6,9 +6,6 @@
         <!-- Whether to record light modes -->
         <property id="RL" type="boolean">true</property>
 
-        <!-- Activity color -->
-        <property id="AC" type="number">43775</property>
-
         <!-- Invert lights -->
         <property id="IL" type="boolean">false</property>
     </properties>

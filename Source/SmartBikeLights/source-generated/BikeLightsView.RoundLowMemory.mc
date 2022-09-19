@@ -53,10 +53,10 @@ class BikeLightsView extends  WatchUi.DataField  {
 
     // Light data:
     // 0. BikeLight instance
-    // 1. Light text (S>)
-    // 2. Light mode
-    // 3. Array [light modes, serial number]
-    // 4. Light control mode:  0 SMART, 1 NETWORK, 2 MANUAL
+    // 1. Light text (S])
+    // 2. Current light mode
+    // 3. Force Smart mode (high memory devices only)
+    // 4. Current light control mode: 0 SMART, 1 NETWORK, 2 MANUAL
     // 5. Title
     // 6. Fit field
     // 7. Next light mode
@@ -66,18 +66,19 @@ class BikeLightsView extends  WatchUi.DataField  {
     // 11. Current filter group deactivation delay
     // 12. Next filter group index
     // 13. Next filter group activation delay
-    // 14. Serial number
-    // 15. Filters
-    // 16. Force Smart mode (high memory devices only)
-    var headlightData = new [16];
-    var taillightData = new [16];
+    // 14. Light modes
+    // 15. Serial number
+    // 16. Icon color
+    // 17. Filters
+    var headlightData = new [18];
+    var taillightData = new [18];
 
     protected var _errorCode;
 
     // Settings
     protected var _separatorWidth;
+    protected var _separatorColor;
     protected var _titleFont;
-    protected var _activityColor;
     protected var _invertLights;
     protected var _batteryY;
     protected var _lightY;
@@ -119,7 +120,6 @@ class BikeLightsView extends  WatchUi.DataField  {
     // Called from SmartBikeLightsApp.onSettingsChanged()
     function onSettingsChanged() {
         //System.println("onSettingsChanged" + " timer=" + System.getTimer());
-        _activityColor = getPropertyValue("AC");
         _invertLights = getPropertyValue("IL");
         _errorCode = null;
         try {
@@ -127,17 +127,29 @@ class BikeLightsView extends  WatchUi.DataField  {
             var tlData = taillightData;
             // Free memory before parsing to avoid out of memory exception
             _globalFilters = null;
+            hlData[17] = null; // Headlight filters
+            tlData[17] = null; // Taillight filters
             _bikeRadar = null;
-            hlData[15] = null; // Headlight filters
-            tlData[15] = null; // Taillight filters
             var configuration = parseConfiguration();
             _globalFilters = configuration[0];
-            hlData[15] = configuration[3]; // Headlight filters
-            tlData[15] = configuration[6]; // Taillight filters
-            hlData[3] = configuration[1];  // Headlight modes
-            hlData[14] = configuration[2]; // Serial number
-            tlData[3] = configuration[4];  // Taillight modes
-            tlData[14] = configuration[5]; // Serial number
+            var separatorColor = configuration[ 9 ];
+            _separatorColor = separatorColor == null || separatorColor == 0
+                ?  43775 /* Blue */ 
+                : separatorColor;
+
+            // configuration[1];  // Headlight modes
+            // configuration[2];  // Headlight serial number
+            // configuration[3];  // Headlight color
+            // configuration[4];  // Headlight filters
+            // configuration[5];  // Taillight modes
+            // configuration[6];  // Taillight serial number
+            // configuration[7];  // Taillight color
+            // configuration[8];  // Taillight filters
+            for (var i = 0; i < 8; i++) {
+                var lightData = i < 4 ? hlData : tlData;
+                lightData[14 + (i % 4)] = configuration[i + 1];
+            }
+
             initializeLights(null);
         } catch (e) {
             _errorCode = 4;
@@ -214,7 +226,7 @@ class BikeLightsView extends  WatchUi.DataField  {
                 globalFilterTitle = filterResult[0];
             }
 
-            var lightFilters = lightData[15];
+            var lightFilters = lightData[17];
             var lightMode = globalFilterResult == 0
                 ? 0 /* OFF */
                 : checkFilters(activityInfo, lightFilters, filterResult, lightData, 0 /* Start index */);
@@ -311,9 +323,13 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
 
         // Draw separator
-        setTextColor(dc, _activityColor);
-        dc.setPenWidth(_separatorWidth);
-        dc.drawLine(width / 2 + _offsetX, 0, width / 2 + _offsetX, height);
+        var separatorColor = _separatorColor;
+        if (separatorColor != -1 /* No separator */) {
+            setTextColor(dc, separatorColor == 1 /* Black/White */ ? fgColor : separatorColor);
+            dc.setPenWidth(_separatorWidth);
+            dc.drawLine(width / 2 + _offsetX, 0, width / 2 + _offsetX, height);
+        }
+
         drawLight(headlightData, 1, dc, width, fgColor, bgColor);
         drawLight(taillightData, 3, dc, width, fgColor, bgColor);
     }
@@ -446,7 +462,7 @@ class BikeLightsView extends  WatchUi.DataField  {
 
         var recordLightModes = getPropertyValue("RL");
         var initializedLights = 0;
-        var hasSerialNumber = headlightData[14] != null || taillightData[14] != null;
+        var hasSerialNumber = headlightData[15] != null || taillightData[15] != null;
         for (var i = 0; i < lights.size(); i++) {
             var light = lights[i];
             var lightType = light != null ? light.type : 7;
@@ -456,8 +472,8 @@ class BikeLightsView extends  WatchUi.DataField  {
             }
 
             var lightData = getLightData(lightType);
-            var serial = lightData[14];
-            if ((hasSerialNumber && lightData[3] == null) ||
+            var serial = lightData[15];
+            if ((hasSerialNumber && lightData[14] == null) ||
                 (hasSerialNumber && serial != null && serial != lightNetwork.getProductInfo(light.identifier).serial)) {
                 continue;
             }
@@ -467,7 +483,7 @@ class BikeLightsView extends  WatchUi.DataField  {
                 break;
             }
 
-            var filters = lightData[15];
+            var filters = lightData[17];
             var capableModes = getLightModes(light);
             // Validate filters light modes
             if (filters != null) {
@@ -579,7 +595,7 @@ class BikeLightsView extends  WatchUi.DataField  {
     protected function onExternalLightModeChange(lightData, mode) {
         //System.println("onExternalLightModeChange mode=" + mode + " lightType=" + lightData[0].type  + " timer=" + System.getTimer());
         var controlMode = lightData[4];
-        if (controlMode == 0 /* SMART */ && lightData[16] == true /* Force smart mode */) {
+        if (controlMode == 0 /* SMART */ && lightData[3] == true /* Force smart mode */) {
             return;
         }
 
@@ -637,6 +653,11 @@ class BikeLightsView extends  WatchUi.DataField  {
 
         if (title != null && _titleY != null) {
             dc.drawText(lightX + (direction * 22), _titleY, _titleFont, title, justification);
+        }
+
+        var iconColor = lightData[16];
+        if (iconColor != null && iconColor != 1 /* Black/White */) {
+            setTextColor(dc, iconColor);
         }
 
         dc.drawText(lightX + (direction * (49 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
@@ -720,7 +741,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
 
         var lightType = light.type;
-        var lightModes = lightData[3];
+        var lightModes = lightData[14];
         var lightModeCharacter = "";
         if (mode < 0) {
             lightModeCharacter = "X"; // Disconnected
@@ -942,19 +963,22 @@ class BikeLightsView extends  WatchUi.DataField  {
     private function parseConfiguration() {
         var value = getPropertyValue("LC");
         if (value == null || value.length() == 0) {
-            return new [7];
+            return new [10];
         }
 
         var filterResult = [0 /* next index */, 0 /* operator type */];
         var chars = value.toCharArray();
         return [
             parseFilters(chars, 0, false, filterResult),       // Global filter
-            parseLightInfo(chars, false, filterResult),        // Headlight light modes
-            parseLightInfo(chars, true, filterResult),         // Headlight serial number
+            parseLightInfo(chars, 0, filterResult),            // Headlight light modes
+            parseLightInfo(chars, 1, filterResult),            // Headlight serial number
+            parseLightInfo(chars, 2, filterResult),            // Headlight icon color
             parseFilters(chars, null, true, filterResult),     // Headlight filters
-            parseLightInfo(chars, false, filterResult),        // Taillight light modes
-            parseLightInfo(chars, true, filterResult),         // Taillight serial number
+            parseLightInfo(chars, 0, filterResult),            // Taillight light modes
+            parseLightInfo(chars, 1, filterResult),            // Taillight serial number
+            parseLightInfo(chars, 2, filterResult),            // Taillight icon color
             parseFilters(chars, null, true, filterResult),     // Taillight filters
+            parse(1 /* NUMBER */, chars, null, filterResult)   // Separator color
         ];
     }
 
@@ -1056,18 +1080,19 @@ class BikeLightsView extends  WatchUi.DataField  {
         ];
     }
 
-    // <LightModes>(:<LightSerialNumber>)*
-    private function parseLightInfo(chars, serial, resultIndex) {
+    // <LightModes>(:<LightSerialNumber>)*(:<LightIconColor>)*
+    private function parseLightInfo(chars, dataType, resultIndex) {
         var index = resultIndex[0];
-        if (serial && (index >= chars.size() || chars[index] == '#')) {
+        if (dataType > 0 && (index >= chars.size() || chars[index] == '#')) {
             return null;
         }
 
         var left = parse(1 /* NUMBER */, chars, null, resultIndex);
-        if (left == null) {
-            return null;
+        if (left == null || dataType == 2 /* Icon color */) {
+            return left;
         }
 
+        var serial = dataType == 1;
         var result = (left.toLong() << (serial ? 31 : 32)) | parse(1 /* NUMBER */, chars, null, resultIndex); // TODO: Change this to 31 when making a major version change
         return serial
             ? result.toNumber()

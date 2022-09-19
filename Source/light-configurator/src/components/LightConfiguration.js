@@ -17,6 +17,7 @@ import LightSettings from './LightSettings';
 import LightPanelModel from '../models/LightPanel';
 import LightSettingsModel from '../models/LightSettings';
 import LightIconTapBehaviorModel from '../models/LightIconTapBehavior';
+import { getLightIconColors } from '../constants';
 
 const PREFIX = 'LightConfiguration';
 
@@ -42,7 +43,7 @@ const getDefaultPanel = (value, lights) => {
 export default observer(({
   device, totalLights, useIndividualNetwork, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
   setLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel, lightSettings, setLightSettings, deviceNumber, setDeviceNumber,
-  serialNumber, setSerialNumber, forceSmartMode, setForceSmartMode, lightIconTapBehavior, setLightIconTapBehavior }) => {
+  serialNumber, setSerialNumber, forceSmartMode, setForceSmartMode, lightIconTapBehavior, setLightIconTapBehavior, lightIconColor, setLightIconColor }) => {
   const [modes, setModes] = React.useState(getModes(light, lightList));
   const setValue = (value) => {
     setLight(value);
@@ -132,43 +133,47 @@ export default observer(({
             </Grid>
             :
             <Grid item xs={12} sm={4}>
-            <AppTextInput label="Serial number" type="number"
-              setter={setSerialNumber}
-              value={serialNumber}
-              help={
-                <React.Fragment>
-                  <Typography>
-                    The light serial number which required only when multiple lights of the same type are paired (e.g. two headlights). To obtain the serial number:
-                  </Typography>
-                  <ol>
-                    <li><Typography>Open the Garmin menu and go to Sensors -&gt; Lights</Typography></li>
-                    <li><Typography>Select the desired light from the list and open About</Typography></li>
-                    <li><Typography>The serial should be displayed with the label <b>Serial #</b></Typography></li>
-                  </ol>
-                </React.Fragment>
-              }
-            />
-          </Grid>
+              <AppTextInput label="Serial number" type="number"
+                setter={setSerialNumber}
+                value={serialNumber}
+                help={
+                  <React.Fragment>
+                    <Typography>
+                      The light serial number which required only when multiple lights of the same type are paired (e.g. two headlights). To obtain the serial number:
+                    </Typography>
+                    <ol>
+                      <li><Typography>Open the Garmin menu and go to Sensors -&gt; Lights</Typography></li>
+                      <li><Typography>Select the desired light from the list and open About</Typography></li>
+                      <li><Typography>The serial should be displayed with the label <b>Serial #</b></Typography></li>
+                    </ol>
+                  </React.Fragment>
+                }
+              />
+            </Grid>
+          }
+          {
+            light
+            ?
+            <Grid item xs={12} sm={4}>
+              <AppSelect required items={getLightIconColors(device)} label="Icon color" setter={setLightIconColor} value={lightIconColor} />
+            </Grid>
+            : null
           }
           {
             setForceSmartMode && light && device?.highMemory
               ?
-              <Grid item xs={12} sm={12}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} sm={4}>
-                    <ElementWithHelp
-                      element={
-                        <AppCheckbox label="Force Smart mode" value={forceSmartMode} setter={setForceSmartMode} />
-                      }
-                      help={
-                        <Typography>
-                         Force Smart mode will prevent external light mode changes (e.g. pressing the button on the light) to switch from Smart
-                         to Manual control mode. This setting works only when the light is in Smart control mode.
-                        </Typography>
-                      }
-                    />
-                  </Grid>
-                </Grid>
+              <Grid item xs={12} sm={4}>
+                <ElementWithHelp
+                  element={
+                    <AppCheckbox label="Force Smart mode" value={forceSmartMode} setter={setForceSmartMode} />
+                  }
+                  help={
+                    <Typography>
+                      Force Smart mode will prevent external light mode changes (e.g. pressing the button on the light) to switch from Smart
+                      to Manual control mode. This setting works only when the light is in Smart control mode.
+                    </Typography>
+                  }
+                />
               </Grid>
               : null
           }

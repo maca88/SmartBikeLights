@@ -103,6 +103,8 @@ export default observer(({ configuration, device, deviceList }) => {
         setForceSmartMode={configuration.setHeadlightForceSmartMode}
         lightIconTapBehavior={configuration.headlightIconTapBehavior}
         setLightIconTapBehavior={configuration.setHeadlightIconTapBehavior}
+        lightIconColor={configuration.headlightIconColor}
+        setLightIconColor={configuration.setHeadlightIconColor}
       />
       <LightConfiguration
         globalFilterGroups={configuration.globalFilterGroups}
@@ -129,6 +131,8 @@ export default observer(({ configuration, device, deviceList }) => {
         setForceSmartMode={configuration.setTaillightForceSmartMode}
         lightIconTapBehavior={configuration.taillightIconTapBehavior}
         setLightIconTapBehavior={configuration.setTaillightIconTapBehavior}
+        lightIconColor={configuration.taillightIconColor}
+        setLightIconColor={configuration.setTaillightIconColor}
       />
       <ConfigurationResult
         configuration={configuration}

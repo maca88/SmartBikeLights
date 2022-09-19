@@ -5,6 +5,7 @@ import LightButton from './LightButton';
 export default class LightPanel {
   buttonGroups = [];
   lightName = null;
+  buttonColor = 0; /* Activity color */
 
   constructor(data) {
     makeAutoObservable(this, {});
@@ -31,5 +32,9 @@ export default class LightPanel {
 
   setLightName = (value) => {
     this.lightName = value;
+  }
+
+  setButtonColor = (value) => {
+    this.buttonColor = value;
   }
 }

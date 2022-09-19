@@ -76,6 +76,22 @@ export const setList = [
   { id: 1, name: 'Is set' }
 ];
 
+export const colors = [
+  { id: 1, name: 'Black/White' },
+  { id: 43775, name: 'Blue' },
+  { id: 255, name: 'Dark Blue' },
+  { id: 65280, name: 'Green' },
+  { id: 43520, name: 'Dark Green' },
+  { id: 16711680, name: 'Red' },
+  { id: 11141120, name: 'Dark Red' },
+  { id: 16733440, name: 'Orange' },
+  { id: 16755200, name: 'Yellow' },
+  { id: 11141375, name: 'Purple' },
+  { id: 16711935, name: 'Pink' }
+];
+
+export const buttonColors = colors.filter(o => o.id !== 1);
+
 export const batteryStateList = [
   null,
   'Bad',
@@ -688,6 +704,23 @@ export const getLight = (taillight, light) => {
 
 export const getDeviceLights = (device, lightsList, useIndividualNetwork) => {
   return device.highMemory && useIndividualNetwork ? lightsList : lightsList.filter(o => !o.individualNetworkOnly);
+};
+
+export const getSeparatorColors = (device) => {
+  var noSeparator = { id: -1, name: 'No separator' };
+  return device.highMemory && device.bitsPerPixel > 1 ? [noSeparator, { id: 0, name: 'Activity color' }].concat(colors)
+    : device.bitsPerPixel === 1 ? [noSeparator, { id: 0, name: 'Black/White' }]
+    : [noSeparator].concat(colors.map(val => val.id !== 43775 /* Blue */ ? val : { id: 0, name: 'Blue' }));
+};
+
+export const getLightIconColors = (device) => {
+  return device.bitsPerPixel === 1
+    ? colors.filter(o => o.id === 1 /* Black/White */)
+    : colors;
+};
+
+export const getButtonColors = () => {
+  return [{ id: 0, name: 'Activity color' }].concat(colors.filter(o => o.id !== 1 /* Black/White */));
 };
 
 export const getBatteryOperator = (operator) => {

@@ -1,4 +1,5 @@
 <strings>
+    <string id="AC">Activity color</string>
     <string id="CC">Current Configuration</string>
     <string id="LC2">Secondary Lights Configuration</string>
     <string id="LC3">Tertiary Lights Configuration</string>
@@ -6,6 +7,17 @@
     <string id="Primary">Primary</string>
     <string id="Secondary">Secondary</string>
     <string id="Tertiary">Tertiary</string>
+
+    <string id="Red">Red</string>
+    <string id="DarkRed">Dark Red</string>
+    <string id="Orange">Orange</string>
+    <string id="Yellow">Yellow</string>
+    <string id="Green">Green</string>
+    <string id="DarkGreen">Dark Green</string>
+    <string id="Blue">Blue</string>
+    <string id="DarkBlue">Dark Blue</string>
+    <string id="Purple">Purple</string>
+    <string id="Pink">Pink</string>
 </strings>
 
 

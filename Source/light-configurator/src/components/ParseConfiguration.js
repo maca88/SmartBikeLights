@@ -32,7 +32,7 @@ export default observer(({ setConfiguration, deviceList }) => {
   };
 
   return (
-    <Grid container spacing={2} sx={{ marginBottom: 4 }}  justifyContent="center">
+    <Grid container spacing={2} sx={{ marginBottom: 4 }} justifyContent="center">
       <Grid item xs={8} sm={10}>
         <AppTextInput label="Existing configuration" value={state.existingConfigurationValue} setter={setExistingConfigurationValue} allowAllCharacters={true} />
       </Grid>
