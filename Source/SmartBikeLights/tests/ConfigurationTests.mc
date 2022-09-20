@@ -118,6 +118,20 @@ function parseTouchScreenConfigurationForSettings(logger) {
     return view.getErrorCode() == 4;
 }
 
+(:test :lowMemory)
+function parseValidOldConfigurationForNoSettings(logger) {
+    var view = new TestBikeLightsView("#4587520,196641#2,2!TEST:1:1:0:0H]0!:1:0:0:0D=1#6291461,1409482753####B3289#1#1#0#0");
+
+    return view.getErrorCode() == null;
+}
+
+(:test :lowMemory)
+function parseValidConfigurationForNoSettings(logger) {
+    var view = new TestBikeLightsView("#4587520,196641::1#2,2!TEST:1:1:0:0H]0!:1:0:0:0D=1#6291461,1409482753::1##0#B3289#1#1#0#0");
+
+    return view.getErrorCode() == null;
+}
+
 (:test :touchScreen)
 function parseSettingsConfigurationForTouchScreen(logger) {
     var view = new TestBikeLightsView("1,1!NIGHT:1Es1800,r0###0,73404416#1,1!:1:6:1D=1##4:Varia 510!Off:0!Solid:4!Day Flash:7!Night Flash:6#0::#0:0#B3121##2#0#0");
