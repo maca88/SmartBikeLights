@@ -526,8 +526,8 @@ export default class Configuration {
     const device = deviceList.find(l => l.id === this.device);
     const headlightData = getLight(false, this.headlight);
     const taillightData = getLight(true, this.taillight);
-    const validColors = getLightIconColors(device);
-    const separatorColors = getSeparatorColors(device);
+    const validColors = device ? getLightIconColors(device) : [];
+    const separatorColors = device ? getSeparatorColors(device) : [];
     return device &&
       this.globalFilterGroups.every(g => g.isValid(device, null)) && (
         (this.headlight !== null || this.taillight !== null) &&
