@@ -66,9 +66,11 @@ export const timeFormatList = [
 ];
 
 export const operatorList = [
-  { id: '=', name: 'Equal to' },
-  { id: '>', name: 'Greater than' },
-  { id: '<', name: 'Lower than' }
+  { id: '=', name: 'Equal' },
+  { id: '>', name: 'Greater Than' },
+  { id: '≥', name: 'Greater Than or Equal' },
+  { id: '<', name: 'Less Than' },
+  { id: '≤', name: 'Less Than or Equal' }
 ];
 
 export const setList = [
@@ -726,6 +728,8 @@ export const getButtonColors = () => {
 export const getBatteryOperator = (operator) => {
   return operator === '<' ? '>'
     : operator === '>' ? '<'
+    : operator === '≤' ? '≥'
+    : operator === '≥' ? '≤'
     : operator;
 };
 

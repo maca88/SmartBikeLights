@@ -900,6 +900,8 @@ class BikeLightsView extends  WatchUi.DataField  {
         return value == null ? isTarget ? filterValue < 0 : false // For bike radar target filterValue will be -1 in case not set
             : operator == '<' || operator == '[' ? value < filterValue
             : operator == '>' || operator == ']' ? value > filterValue
+            : operator == '{' ? value <= filterValue
+            : operator == '}' ? value >= filterValue
             // Use equals method only for string values as it checks also the type. When comparing
             // numeric values we want to ignore the type (e.g. 0 == 0f), so == operator is used instead.
             : operator == '=' ? value instanceof String ? value.equals(filterValue) : value == filterValue

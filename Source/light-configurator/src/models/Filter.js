@@ -44,6 +44,8 @@ const getDistanceName = (value, units) => {
 const getOperatorFromValue = (value) => {
   return value === '[' ? '<'
     : value === ']' ? '>'
+    : value === '{' ? '≤'
+    : value === '}' ? '≥'
     : value;
 };
 
@@ -52,6 +54,8 @@ const getOperatorValue = (operator) => {
   // https://forums.garmin.com/developer/connect-iq/i/bug-reports/garmin-connect-mobile-ios-does-not-accept-and-characters-for-an-alphanumeric-app-setting
   return operator === '<' ? '['
     : operator === '>' ? ']'
+    : operator === '≤' ? '{'
+    : operator === '≥' ? '}'
     : operator;
 };
 
