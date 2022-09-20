@@ -40,7 +40,7 @@ export default observer(({ configuration, setConfiguration }) => {
   return (
     <Root>
       <ParseConfiguration setConfiguration={setNewConfiguration} deviceList={deviceList} />
-      <Grid container spacing={2} justifyContent="center">
+      <Grid container spacing={2} sx={{ marginBottom: 2 }} justifyContent="center">
         <Grid item xs={12} sm={12}>
           <AppSelect required items={deviceList} label="Garmin device" setter={setNewDevice} value={configuration.device} />
         </Grid>
@@ -65,6 +65,8 @@ export default observer(({ configuration, setConfiguration }) => {
             setDeviceNumber={configuration.setHeadlightDeviceNumber}
             serialNumber={configuration.headlightSerialNumber}
             setSerialNumber={configuration.setHeadlightSerialNumber}
+            lightIconColor={configuration.headlightIconColor}
+            setLightIconColor={configuration.setHeadlightIconColor}
           />
           <LightConfiguration
             useIndividualNetwork={configuration.useIndividualNetwork}
@@ -83,6 +85,8 @@ export default observer(({ configuration, setConfiguration }) => {
             setDeviceNumber={configuration.setTaillightDeviceNumber}
             serialNumber={configuration.taillightSerialNumber}
             setSerialNumber={configuration.setTaillightSerialNumber}
+            lightIconColor={configuration.taillightIconColor}
+            setLightIconColor={configuration.setTaillightIconColor}
           />
           <ConfigurationResult
             configuration={configuration}
