@@ -152,6 +152,12 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
   // #endif
 // #endif
 
+// #if highMemory
+    // Callbacks (value must be a weak reference)
+    public var onLightModeChangeCallback;
+    public var onLightControlModeChangeCallback;
+// #endif
+
     private var _lastUpdateTime = 0;
     private var _lastOnShowCallTime = 0;
 
@@ -632,6 +638,10 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         if (newControlMode != null) {
             setLightProperty("CM", lightType, newControlMode);
             lightData[4] = newControlMode;
+            var callback = onLightControlModeChangeCallback;
+            if (callback != null && callback.stillAlive() && callback.get() has :onLightControlModeChange) {
+                callback.get().onLightControlModeChange(lightType, newControlMode);
+            }
         }
     }
 // #endif
@@ -1317,6 +1327,13 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         if (fitField != null) {
             fitField.setData(mode);
         }
+
+// #if highMemory
+        var callback = onLightModeChangeCallback;
+        if (callback != null && callback.stillAlive() && callback.get() has :onLightModeChange) {
+            callback.get().onLightModeChange(lightType, mode);
+        }
+// #endif
 
         return true;
     }

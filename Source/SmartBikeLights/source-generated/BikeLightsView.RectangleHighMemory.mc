@@ -118,6 +118,10 @@ class BikeLightsView extends  WatchUi.DataField  {
         false  // 11. Whether gradient should be calculated
     ];
 
+    // Callbacks (value must be a weak reference)
+    public var onLightModeChangeCallback;
+    public var onLightControlModeChangeCallback;
+
     private var _lastUpdateTime = 0;
     private var _lastOnShowCallTime = 0;
 
@@ -539,6 +543,10 @@ class BikeLightsView extends  WatchUi.DataField  {
         if (newControlMode != null) {
             setLightProperty("CM", lightType, newControlMode);
             lightData[4] = newControlMode;
+            var callback = onLightControlModeChangeCallback;
+            if (callback != null && callback.stillAlive() && callback.get() has :onLightControlModeChange) {
+                callback.get().onLightControlModeChange(lightType, newControlMode);
+            }
         }
     }
 
@@ -948,6 +956,11 @@ class BikeLightsView extends  WatchUi.DataField  {
         var fitField = lightData[6];
         if (fitField != null) {
             fitField.setData(mode);
+        }
+
+        var callback = onLightModeChangeCallback;
+        if (callback != null && callback.stillAlive() && callback.get() has :onLightModeChange) {
+            callback.get().onLightModeChange(lightType, mode);
         }
 
         return true;

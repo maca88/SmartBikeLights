@@ -75,6 +75,10 @@ module LightsSettings {
             var lightSettings = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? context[2] : context[3];
             setTitle(lightSettings[0]);
             _lightType = lightType;
+            // Register callbacks
+            var selfRef = self.weak();
+            view.onLightModeChangeCallback = selfRef;
+            view.onLightControlModeChangeCallback = selfRef;
             var lightData = view.getLightData(lightType);
             var modeIndex = lightSettings.indexOf(lightData[2]);
             addItem(new WatchUi.MenuItem("Control mode", controlModeNames[lightData[4]], 0, null));
@@ -82,6 +86,26 @@ module LightsSettings {
             if (root) {
                 addItem(new WatchUi.MenuItem("Settings", null, 2, null));
             }
+        }
+
+        function onLightModeChange(lightType, lightMode) {
+            if (closed || _lightType != lightType) {
+                return;
+            }
+
+            var lightSettings = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? context[2] : context[3];
+            var modeIndex = lightSettings.indexOf(lightMode);
+            var item = getItem(1);
+            item.setSubLabel(modeIndex < 0 ? null : lightSettings[modeIndex - 1]);
+        }
+
+        function onLightControlModeChange(lightType, controlMode) {
+            if (closed || _lightType != lightType) {
+                return;
+            }
+
+            var item = getItem(0);
+            item.setSubLabel(controlModeNames[controlMode]);
         }
 
         function onSelect(id, menuItem) {
