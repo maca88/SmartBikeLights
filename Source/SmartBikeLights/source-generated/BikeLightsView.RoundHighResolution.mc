@@ -881,6 +881,13 @@ class BikeLightsView extends  WatchUi.DataField  {
         return true;
     }
 
+    protected function recreateLightNetwork() {
+        release();
+        _lightNetwork = _individualNetwork != null
+            ? new AntLightNetwork.IndividualLightNetwork(_individualNetwork[0], _individualNetwork[1], _lightNetworkListener)
+            : new AntPlus.LightNetwork(_lightNetworkListener);
+    }
+
     // The below source code was ported from: https://www.esrl.noaa.gov/gmd/grad/solcalc/main.js
     // which is used for the NOAA Solar Calculator: https://www.esrl.noaa.gov/gmd/grad/solcalc/
     protected function getSunriseSet(rise, time, position) {
@@ -1002,13 +1009,6 @@ class BikeLightsView extends  WatchUi.DataField  {
             headlightData[3] = forceSmartMode[0] == 1;
             taillightData[3] = forceSmartMode[1] == 1;
         }
-    }
-
-    private function recreateLightNetwork() {
-        release();
-        _lightNetwork = _individualNetwork != null
-            ? new AntLightNetwork.IndividualLightNetwork(_individualNetwork[0], _individualNetwork[1], _lightNetworkListener)
-            : new AntPlus.LightNetwork(_lightNetworkListener);
     }
 
     (:lightButtons)

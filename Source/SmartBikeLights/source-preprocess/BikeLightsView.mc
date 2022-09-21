@@ -1256,6 +1256,13 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
         return true;
     }
+
+    protected function recreateLightNetwork() {
+        release();
+        _lightNetwork = _individualNetwork != null
+            ? new AntLightNetwork.IndividualLightNetwork(_individualNetwork[0], _individualNetwork[1], _lightNetworkListener)
+            : new /* #include ANT_NETWORK */(_lightNetworkListener);
+    }
 // #endif
 
     // The below source code was ported from: https://www.esrl.noaa.gov/gmd/grad/solcalc/main.js
@@ -1401,13 +1408,6 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
             headlightData[3] = forceSmartMode[0] == 1;
             taillightData[3] = forceSmartMode[1] == 1;
         }
-    }
-
-    private function recreateLightNetwork() {
-        release();
-        _lightNetwork = _individualNetwork != null
-            ? new AntLightNetwork.IndividualLightNetwork(_individualNetwork[0], _individualNetwork[1], _lightNetworkListener)
-            : new /* #include ANT_NETWORK */(_lightNetworkListener);
     }
 // #endif
 
