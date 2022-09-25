@@ -12,6 +12,7 @@ import AppTextInput from '../inputs/AppTextInput';
 import AppCheckbox from '../inputs/AppCheckbox';
 import ElementWithHelp from './ElementWithHelp';
 import LightPanel from './LightPanel';
+import { createMenuItemColorTemplateFunc } from './Templates';
 import LightIconTapBehavior from './LightIconTapBehavior';
 import LightSettings from './LightSettings';
 import LightPanelModel from '../models/LightPanel';
@@ -39,6 +40,7 @@ const getModes = (value, lights) => {
 const getDefaultPanel = (value, lights) => {
   return value !== null ? lights.find(l => l.id === value)?.defaultLightPanel : null;
 };
+const itemTemplate = createMenuItemColorTemplateFunc();
 
 export default observer(({
   device, totalLights, useIndividualNetwork, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
@@ -155,7 +157,7 @@ export default observer(({
             light
             ?
             <Grid item xs={12} sm={4}>
-              <AppSelect required items={getLightIconColors(device)} label="Icon color" setter={setLightIconColor} value={lightIconColor} />
+              <AppSelect required items={getLightIconColors(device)} label="Icon color" setter={setLightIconColor} value={lightIconColor} itemTemplateFunc={itemTemplate} />
             </Grid>
             : null
           }

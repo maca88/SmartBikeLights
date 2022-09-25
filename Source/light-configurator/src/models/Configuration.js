@@ -147,6 +147,9 @@ const parseLightPanel = (chars, i, filterResult) => {
   panel.buttonColor = chars[filterResult[0]] === ':'
       ? parseNumber(chars, filterResult[0] + 1, filterResult)
       : 0 /* Activity color */; // Old configuration
+  panel.buttonTextColor = chars[filterResult[0]] === ':'
+      ? parseNumber(chars, filterResult[0] + 1, filterResult)
+      : 0xFFFFFF /* White */; // Old configuration
   i = filterResult[0];
   while (i < chars.length) {
     const char = chars[i];
@@ -720,6 +723,7 @@ export default class Configuration {
   getLightPanelConfigurationValue(lightPanel) {
     const lightName = lightPanel.lightName ? lightPanel.lightName : '';
     const buttonColor = lightPanel.buttonColor ? lightPanel.buttonColor : 0;
+    const buttonTextColor = lightPanel.buttonTextColor != null ? lightPanel.buttonTextColor : 0xFFFFFF; /* White */
     let buttonGroups = '';
     let totalButtons = 0;
     for (let i = 0; i < lightPanel.buttonGroups.length; i++) {
@@ -732,7 +736,7 @@ export default class Configuration {
       }
     }
 
-    return `#${totalButtons},${lightPanel.buttonGroups.length}:${lightName}:${buttonColor}${buttonGroups}`;
+    return `#${totalButtons},${lightPanel.buttonGroups.length}:${lightName}:${buttonColor}:${buttonTextColor}${buttonGroups}`;
   }
 
   getFilterGroupsConfigurationValue(filterGroups, defaultMode) {

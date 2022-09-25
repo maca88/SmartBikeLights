@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import { observer } from "mobx-react-lite";
 import AppInputHelp from './AppInputHelp';
 
-export default observer(({ items, label, value, setter, required, help, multiple }) => {
+export default observer(({ items, label, value, setter, required, help, multiple, itemTemplateFunc }) => {
   const id = nanoid();
   const defaultValue = multiple ? [] : '';
   const isDefault = (val) => multiple ? Array.isArray(val) && !val.length : val === '';
@@ -85,7 +85,7 @@ export default observer(({ items, label, value, setter, required, help, multiple
       }}
     >
       {items.map((item) => (
-        <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
+        <MenuItem key={item.id} value={item.id}>{itemTemplateFunc ? itemTemplateFunc(item) : item.name}</MenuItem>
       ))}
     </TextField>
   );

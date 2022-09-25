@@ -80,16 +80,76 @@ export const setList = [
 
 export const colors = [
   { id: 1, name: 'Black/White' },
-  { id: 43775, name: 'Blue' },
-  { id: 255, name: 'Dark Blue' },
-  { id: 65280, name: 'Green' },
-  { id: 43520, name: 'Dark Green' },
-  { id: 16711680, name: 'Red' },
-  { id: 11141120, name: 'Dark Red' },
-  { id: 16733440, name: 'Orange' },
-  { id: 16755200, name: 'Yellow' },
-  { id: 11141375, name: 'Purple' },
-  { id: 16711935, name: 'Pink' }
+
+  { id: 0xFFFFAA, name: 'Shalimar' },
+  { id: 0xFFFF55, name: 'Laser Lemon' },
+  { id: 0xFFFF00, name: 'Yellow' },
+  { id: 0xFFAAFF, name: 'Lavender Rose' },
+  { id: 0xFFAAAA, name: 'Sundown' },
+  { id: 0xFFAA55, name: 'Texas Rose' },
+  { id: 0xFFAA00, name: 'Orange' },
+
+  { id: 0xFF55FF, name: 'Pink Flamingo' },
+  { id: 0xFF55AA, name: 'Brilliant Rose' },
+  { id: 0xFF5555, name: 'Sunset Orange' },
+  { id: 0xFF5500, name: 'International Orange' },
+  { id: 0xFF00FF, name: 'Magenta' },
+  { id: 0xFF00AA, name: 'Hollywood Cerise' },
+  { id: 0xFF0055, name: 'Razzmatazz' },
+  { id: 0xFF0000, name: 'Red' },
+
+  { id: 0xAAFFFF, name: 'Pale Turquoise' },
+  { id: 0xAAFFAA, name: 'Mint Green' },
+  { id: 0xAAFF55, name: 'Conifer' },
+  { id: 0xAAFF00, name: 'Spring Bud' },
+  { id: 0xAAAAFF, name: 'Perano' },
+  { id: 0xAAAAAA, name: 'Dark Gray' },
+  { id: 0xAAAA55, name: 'Olive Green' },
+  { id: 0xAAAA00, name: 'Citrus' },
+
+  { id: 0xAA55FF, name: 'Medium Purple' },
+  { id: 0xAA55AA, name: 'Violet Blue' },
+  { id: 0xAA5555, name: 'Apple Blossom' },
+  { id: 0xAA5500, name: 'Rust' },
+  { id: 0xAA00FF, name: 'Electric Purple' },
+  { id: 0xAA00AA, name: 'Dark Magenta' },
+  { id: 0xAA0055, name: 'Jazzberry Jam' },
+  { id: 0xAA0000, name: 'Free Speech Red' },
+
+  { id: 0x55FFFF, name: 'Baby Blue' },
+  { id: 0x55FFAA, name: 'Medium Aquamarine' },
+  { id: 0x55FF55, name: 'Screamin\' Green' },
+  { id: 0x55FF00, name: 'Bright Green' },
+  { id: 0x55AAFF, name: 'Cornflower Blue' },
+  { id: 0x55AAAA, name: 'Cadet Blue' },
+  { id: 0x55AA55, name: 'Fruit Salad' },
+  { id: 0x55AA00, name: 'Kelly Green' },
+
+  { id: 0x5555FF, name: 'Neon Blue' },
+  { id: 0x5555AA, name: 'Rich Blue' },
+  { id: 0x555555, name: 'Matterhorn' },
+  { id: 0x555500, name: 'Verdun Green' },
+  { id: 0x5500FF, name: 'Electric Indigo' },
+  { id: 0x5500AA, name: 'Indigo' },
+  { id: 0x550055, name: 'Tyrian Purple' },
+  { id: 0x550000, name: 'Maroon' },
+
+  { id: 0x00FFFF, name: 'Aqua' },
+  { id: 0x00FFAA, name: 'Medium Spring Green' },
+  { id: 0x00FF55, name: 'Malachite' },
+  { id: 0x00FF00, name: 'Lime' },
+  { id: 0x00AAFF, name: 'Deep Sky Blue' },
+  { id: 0x00AAAA, name: 'Persian Green' },
+  { id: 0x00AA55, name: 'Pigment Green' },
+  { id: 0x00AA00, name: 'Islamic Green' },
+
+  { id: 0x0055FF, name: 'Navy Blue' },
+  { id: 0x0055AA, name: 'Cobalt' },
+  { id: 0x005555, name: 'Mosque' },
+  { id: 0x005500, name: 'Green' },
+  { id: 0x0000FF, name: 'Blue' },
+  { id: 0x0000AA, name: 'New Midnight Blue' },
+  { id: 0x000055, name: 'Navy' }
 ];
 
 export const buttonColors = colors.filter(o => o.id !== 1);
@@ -723,6 +783,10 @@ export const getLightIconColors = (device) => {
 
 export const getButtonColors = () => {
   return [{ id: 0, name: 'Activity color' }].concat(colors.filter(o => o.id !== 1 /* Black/White */));
+};
+
+export const getButtonTextColors = () => {
+  return [{ id: 0xFFFFFF, name: 'White' }].concat(colors.filter(o => o.id !== 1 /* Black/White */)).concat([{ id: 0x000000, name: 'Black' }]);
 };
 
 export const getBatteryOperator = (operator) => {

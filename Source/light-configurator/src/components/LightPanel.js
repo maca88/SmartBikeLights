@@ -6,13 +6,16 @@ import LightButtonGroup from '../models/LightButtonGroup';
 import LightButton from '../models/LightButton';
 import ButtonGroup from './ButtonGroup';
 import AddButton from './AddButton';
-import { controlMode, getButtonColors } from '../constants';
+import { createMenuItemColorTemplateFunc } from './Templates';
+import { controlMode, getButtonColors, getButtonTextColors } from '../constants';
 import AppTextInput from '../inputs/AppTextInput';
 import AppSelect from '../inputs/AppSelect';
 
 const getModes = (lightModes) => {
   return [controlMode].concat(lightModes);
 };
+const buttonColorTemplate = createMenuItemColorTemplateFunc();
+const buttonTextColorTemplate = createMenuItemColorTemplateFunc(true);
 
 export default observer(({ lightPanel, lightModes }) => {
   const [modes, setModes] = React.useState(getModes(lightModes));
@@ -45,11 +48,14 @@ export default observer(({ lightPanel, lightModes }) => {
   return (
     <div>
       <Grid container spacing={3}>
-        <Grid item xs={6} sm={4}>
+        <Grid item xs={12} sm={4}>
           <AppTextInput label="Short light name" setter={lightPanel.setLightName} value={lightPanel.lightName} />
         </Grid>
-        <Grid item xs={6} sm={4}>
-          <AppSelect required items={getButtonColors()} label="Button color" setter={lightPanel.setButtonColor} value={lightPanel.buttonColor} />
+        <Grid item xs={12} sm={4}>
+          <AppSelect required items={getButtonColors()} label="Active button backgound color" setter={lightPanel.setButtonColor} value={lightPanel.buttonColor} itemTemplateFunc={buttonColorTemplate} />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <AppSelect required items={getButtonTextColors()} label="Active button text color" setter={lightPanel.setButtonTextColor} value={lightPanel.buttonTextColor} itemTemplateFunc={buttonTextColorTemplate} />
         </Grid>
       </Grid>
       <div>

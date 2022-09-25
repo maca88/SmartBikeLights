@@ -51,8 +51,19 @@ function parseValidOld3ConfigurationForTouchScreen(logger) {
 }
 
 (:test :touchScreen)
-function parseValidConfigurationForTouchScreen(logger) {
+function parseValidOld4ConfigurationForTouchScreen(logger) {
     var view = new TestBikeLightsView("1,1!NIGHT:1Es1800,r0###0,73404416::1#2,2!BREAK:1:7:1:0A[-30!:1:6:0:0D=1##5,4:Varia 510:0!2,:-1,Off:0!1,Steady Beam:4!1,Day Flash:7!1,Night Flash:6#0::#0:0#123!:123!#0#B2713##2#0#0");
+    Test.assert(view.headlightPanelSettings == null);
+    Test.assert(view.taillightPanelSettings != null);
+    Test.assert(view.headlightIconTapBehavior != null);
+    Test.assert(view.taillightIconTapBehavior != null);
+
+    return view.getErrorCode() == null;
+}
+
+(:test :touchScreen)
+function parseValidConfigurationForTouchScreen(logger) {
+    var view = new TestBikeLightsView("1,1!NIGHT:1Es1800,r0###0,73404416::1#2,2!BREAK:1:7:1:0A[-30!:1:6:0:0D=1##5,4:Varia 510:0:16777215!2,:-1,Off:0!1,Steady Beam:4!1,Day Flash:7!1,Night Flash:6#0::#0:0#123!:123!#0#B2713##2#0#0");
     Test.assert(view.headlightPanelSettings == null);
     Test.assert(view.taillightPanelSettings != null);
     Test.assert(view.headlightIconTapBehavior != null);

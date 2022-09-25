@@ -998,7 +998,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         var totalButtonGroups = panelData[0];
         var tapX = location[0];
         var tapY = location[1];
-        var groupIndex = 7;
+        var groupIndex = 8;
         while (groupIndex < panelData.size()) {
             var totalButtons = panelData[groupIndex];
             // All buttons in the group have the same y and height, take the first one
@@ -1440,6 +1440,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         data.add(totalButtonGroups); // Total button groups
         data.add(lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? "Headlight" : "Taillight"); // Light name
         data.add(0 /* Activity color */); // Button color
+        data.add(0xFFFFFF /* White */); // Button text color
         for (var i = 0; i < totalButtonGroups; i++) {
             var mode = capableModes[i];
             var totalGroupButtons = mode == 0 /* Off */ ? 2 : 1; // Number of buttons;
@@ -1482,17 +1483,17 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
         var i;
         var totalButtonGroups = panelSettings[1];
-        // [:TotalButtonGroups:, :LightName:, :ButtonColor:, :LightNameX:, :LightNameY:, :BatteryX:, :BatteryY:, (<ButtonGroup>)+]
+        // [:TotalButtonGroups:, :LightName:, :ButtonColor:, :ButtonTextColor:, :LightNameX:, :LightNameY:, :BatteryX:, :BatteryY:, (<ButtonGroup>)+]
         // <ButtonGroup> := [:NumberOfButtons:, :Mode:, :TitleX:, :TitleFont:, (<TitlePart>)+, :ButtonLeftX:, :ButtonTopY:, :ButtonWidth:, :ButtonHeight:){:NumberOfButtons:} ]
         // <TitlePart> := [(:Title:, :TitleY:)+]
-        var panelData = new [7 + (8 * panelSettings[0]) + totalButtonGroups];
+        var panelData = new [8 + (8 * panelSettings[0]) + totalButtonGroups];
         panelData[0] = totalButtonGroups;
         var buttonHeight = (height - 20 /* Battery */).toFloat() / totalButtonGroups;
         var fontResult = [0];
         var buttonPadding = margin * 2;
         var textPadding = margin * 4;
-        var groupIndex = 7;
-        var settingsGroupIndex = 4;
+        var groupIndex = 8;
+        var settingsGroupIndex = 5;
         for (i = 0; i < totalButtonGroups; i++) {
             var totalButtons = panelSettings[settingsGroupIndex];
             var buttonWidth = buttonGroupWidth / totalButtons;
@@ -1545,11 +1546,12 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         var lightNameHeight = dc.getFontHeight(1);
         var lightNameTopPadding = StringHelper.getFontTopPadding(1, fontTopPaddings);
         panelData[1] = lightName; // Light name
-        panelData[2] =  panelSettings[3] == 0 ? _activityColor : panelSettings[3]; // Button color
-        panelData[3] = x - (_batteryWidth / 2) - (margin / 2); // Light name x
-        panelData[4] = y + ((20 - lightNameHeight - lightNameTopPadding) / 2); // Light name y
-        panelData[5] = x + (lightNameWidth / 2) + (margin / 2); // Battery x
-        panelData[6] = y - 1; // Battery y
+        panelData[2] = panelSettings[3] == 0 ? _activityColor : panelSettings[3]; // Button color
+        panelData[3] = panelSettings[4]; // Button text color
+        panelData[4] = x - (_batteryWidth / 2) - (margin / 2); // Light name x
+        panelData[5] = y + ((20 - lightNameHeight - lightNameTopPadding) / 2); // Light name y
+        panelData[6] = x + (lightNameWidth / 2) + (margin / 2); // Battery x
+        panelData[7] = y - 1; // Battery y
 
         if (light.type == 0 /* LIGHT_TYPE_HEADLIGHT */) {
             _headlightPanel = panelData;
@@ -1570,11 +1572,11 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
             return;
         }
 
-        // [:TotalButtonGroups:, :LightName:, :ButtonColor:, :LightNameX:, :LightNameY:, :BatteryX:, :BatteryY:, (<ButtonGroup>)+]
+        // [:TotalButtonGroups:, :LightName:, :ButtonColor:, :ButtonTextColor:, :LightNameX:, :LightNameY:, :BatteryX:, :BatteryY:, (<ButtonGroup>)+]
         // <ButtonGroup> := [:NumberOfButtons:, :Mode:, :TitleX:, :TitleFont:, (<TitlePart>)+, :ButtonLeftX:, :ButtonTopY:, :ButtonWidth:, :ButtonHeight:){:NumberOfButtons:} ]
         // <TitlePart> := [(:Title:, :TitleY:)+]
         var totalButtonGroups = panelData[0];
-        var groupIndex = 7;
+        var groupIndex = 8;
         for (var i = 0; i < totalButtonGroups; i++) {
             var totalButtons = panelData[groupIndex];
             for (var j = 0; j < totalButtons; j++) {
@@ -1594,7 +1596,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
                 dc.fillRoundedRectangle(buttonX, buttonY, buttonWidth, buttonHeight, 8);
                 setTextColor(dc, isNext ? bgColor : fgColor);
                 dc.drawRoundedRectangle(buttonX, buttonY, buttonWidth, buttonHeight, 8);
-                setTextColor(dc, isSelected ? 0xFFFFFF /* COLOR_WHITE */ : isNext ? bgColor : fgColor);
+                setTextColor(dc, isSelected ? panelData[3] : isNext ? bgColor : fgColor);
                 if (mode < 0) {
                     dc.drawText(titleX, titleParts[1], titleFont, $.controlModes[controlMode], 1 /* TEXT_JUSTIFY_CENTER */);
                 } else {
@@ -1609,10 +1611,10 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
         setTextColor(dc, fgColor);
         if (panelData[1] != null) {
-            dc.drawText(panelData[3], panelData[4], 1, panelData[1], 1 /* TEXT_JUSTIFY_CENTER */);
+            dc.drawText(panelData[4], panelData[5], 1, panelData[1], 1 /* TEXT_JUSTIFY_CENTER */);
         }
 
-        drawBattery(dc, fgColor, panelData[5], panelData[6], batteryStatus);
+        drawBattery(dc, fgColor, panelData[6], panelData[7], batteryStatus);
     }
 // #endif
 
@@ -2000,7 +2002,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 // #endif
 
 // #if touchScreen
-    // <TotalButtons>,<TotalButtonGroups>:<LightName>:<ButtonColor>|[<ButtonGroup>| ...]
+    // <TotalButtons>,<TotalButtonGroups>:<LightName>:<ButtonColor>:<ButtonTextColor>|[<ButtonGroup>| ...]
     // <ButtonGroup> := <ButtonsNumber>,[<Button>, ...]
     // <Button> := <ModeTitle>:<LightMode>
     // Example: 7,6:Ion Pro RT|2,:-1,Off:0|1,High:1|1,Medium:2|1,Low:5|1,Night Flash:62|1,Day Flash:63
@@ -2011,18 +2013,21 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         }
 
         var totalButtonGroups = parse(1 /* NUMBER */, chars, null, filterResult);
-        // [:TotalButtons:, :TotalButtonGroups:, :LightName:, :ButtonColor:, (<ButtonGroup>)+]
+        // [:TotalButtons:, :TotalButtonGroups:, :LightName:, :ButtonColor:, :ButtonTextColor:, (<ButtonGroup>)+]
         // <ButtonGroup> = :NumberOfButtons:, (<Button>){:NumberOfButtons:})
         // <Button> = :Mode:, :Title:
-        var data = new [4 + (2 * totalButtons) + totalButtonGroups];
+        var data = new [5 + (2 * totalButtons) + totalButtonGroups];
         data[0] = totalButtons;
         data[1] = totalButtonGroups;
         data[2] = parse(0 /* STRING */, chars, null, filterResult);
         data[3] = chars[filterResult[0]] == ':'
             ? parse(1 /* NUMBER */, chars, null, filterResult)
             : 0 /* Activity color */; // Old configuration
+        data[4] = chars[filterResult[0]] == ':'
+            ? parse(1 /* NUMBER */, chars, null, filterResult)
+            : 0xFFFFFF /* White */; // Old configuration
         i = filterResult[0];
-        var dataIndex = 4;
+        var dataIndex = 5;
 
         while (i < chars.size()) {
             var char = chars[i];
