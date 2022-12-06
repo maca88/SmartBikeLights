@@ -496,7 +496,8 @@ const mageneL508 = [
   { id: 4, name: 'Solid' },
   { id: 5, name: 'Peloton' },
   { id: 7, name: 'Flash' },
-  { id: 6, name: 'Pulse' }
+  { id: 6, name: 'Pulse' },
+  { id: 63, name: 'Rotate' }
 ];
 
 const seeSenseIcon2 = [
@@ -702,6 +703,7 @@ export const taillightList = [
         [mageneL508[2]],
         [mageneL508[3]],
         [mageneL508[4]],
+        [mageneL508[5]],
       ]
     }
   },
