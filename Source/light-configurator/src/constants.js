@@ -524,6 +524,15 @@ const cycliqFly6Ce = [
   { id: 62, name: 'Flash Low' }
 ];
 
+const brytonGardia300 = [
+  { id: 0, name: 'Off' },
+  { id: 2, name: 'High Solid' },
+  { id: 4, name: 'Low Solid' },
+  { id: 6, name: 'Day Flash' },
+  { id: 7, name: 'Night Flash' },
+  { id: 8, name: 'Group Ride' }
+];
+
 export const taillightList = [
   {
     id: 1,
@@ -540,6 +549,24 @@ export const taillightList = [
         [bontragerFlareRtModes[3]],
         [bontragerFlareRtModes[4]],
         [bontragerFlareRtModes[5]]
+      ]
+    }
+  },
+  {
+    id: 14,
+    name: 'Bryton Gardia R300',
+    modes: brytonGardia300,
+    individualNetworkOnly: false,
+    lightModes: [0, 641740816], // 641740816
+    defaultLightPanel: {
+      shortName: 'Gardia 300',
+      buttonGroups: [
+        [controlMode, brytonGardia300[0]],
+        [brytonGardia300[1]],
+        [brytonGardia300[2]],
+        [brytonGardia300[3]],
+        [brytonGardia300[4]],
+        [brytonGardia300[5]],
       ]
     }
   },
