@@ -528,9 +528,9 @@ const brytonGardia300 = [
   { id: 0, name: 'Off' },
   { id: 2, name: 'High Solid' },
   { id: 4, name: 'Low Solid' },
-  { id: 6, name: 'Day Flash' },
-  { id: 7, name: 'Night Flash' },
-  { id: 8, name: 'Group Ride' }
+  { id: 8, name: 'Group Ride' },
+  { id: 6, name: 'Night Flash' },
+  { id: 7, name: 'Day Flash' }
 ];
 
 export const taillightList = [
@@ -557,7 +557,7 @@ export const taillightList = [
     name: 'Bryton Gardia R300',
     modes: brytonGardia300,
     individualNetworkOnly: false,
-    lightModes: [0, 641740816], // 641740816
+    lightModes: [0, 610283536], // 610283536
     defaultLightPanel: {
       shortName: 'Gardia 300',
       buttonGroups: [
