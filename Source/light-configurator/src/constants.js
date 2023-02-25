@@ -156,6 +156,7 @@ export const buttonColors = colors.filter(o => o.id !== 1);
 
 export const batteryStateList = [
   null,
+  'Charging',
   'Bad',
   'Low',
   'Ok',
@@ -827,7 +828,7 @@ export const getBatteryOperator = (operator) => {
 };
 
 export const getBatteryValue = (value) => {
-  return 6 - value;
+  return 7 - value;
 };
 
 export const arrayMove = (array, oldIndex, newIndex) => {

@@ -38,7 +38,7 @@ const Root = styled('div')({
   width: '100%',
 });
 
-export default observer(({ label, value, setter, getLabelText, step, min, max, defaultValue }) => {
+export default observer(({ label, value, setter, getLabelText, step, min, max, defaultValue, disabled }) => {
   const id = nanoid();
   const handleChange = (event, newValue) => {
     setter(newValue);
@@ -52,6 +52,7 @@ export default observer(({ label, value, setter, getLabelText, step, min, max, d
     <Root>
       <Typography id={id} gutterBottom>{label}</Typography>
       <Slider
+        disabled={disabled}
         step={step}
         min={min}
         max={max}

@@ -674,7 +674,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         var lightData = getLightData(_initializedLights == 1 ? null
           : (_fieldWidth / 2) > location[0] ? (_invertLights ? 2 : 0)
           : (_invertLights ? 0 : 2));
-        if (getLightBatteryStatus(lightData) > 5) {
+        if (getLightBatteryStatus(lightData) > 6 /* Charging */) {
             return false; // Battery is disconnected
         }
 
@@ -1075,7 +1075,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 // #endif
         if (status == null) { /* Disconnected */
             updateLightTextAndMode(lightData, -1);
-            return 6;
+            return 7; /* Disconnected */
         }
 
         return status.batteryStatus;
@@ -1568,7 +1568,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         var margin = 2;
         var buttonPadding = margin * 2;
         var batteryStatus = getLightBatteryStatus(lightData);
-        if (batteryStatus > 5) {
+        if (batteryStatus > 6 /* Charging */) {
             return;
         }
 
