@@ -1,4 +1,4 @@
-import TimePicker from '@mui/lab/TimePicker';
+import { TimePicker } from '@mui/x-date-pickers';
 import TextField from '@mui/material/TextField';
 import { observer } from 'mobx-react-lite';
 import { useContext } from 'react';

@@ -1,4 +1,4 @@
-import { ColorButton } from "mui-color";
+import ColorIcon from "./ColorIcon";
 
 export function createMenuItemColorTemplateFunc(iconForAll) {
 
@@ -9,7 +9,7 @@ export function createMenuItemColorTemplateFunc(iconForAll) {
 
     return (
       <div>
-        <ColorButton color={item.id} /> <span>{item.name}</span>
+        <ColorIcon color={item.id} /> <span>{item.name}</span>
       </div>);
   };
 

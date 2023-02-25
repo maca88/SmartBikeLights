@@ -1,6 +1,4 @@
 import React, { useEffect } from 'react';
-import 'firebase/compat/auth';
-import firebase from 'firebase/compat/app';
 import { observer } from 'mobx-react-lite'
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -9,23 +7,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import FirebaseService from '../services/FirebaseService'
-
-// Configure FirebaseUI.
-const uiConfig = {
-  signInFlow: 'popup',
-  signInSuccessUrl: '/',
-  signInOptions: [
-    firebase.auth.GithubAuthProvider.PROVIDER_ID,
-    firebase.auth.EmailAuthProvider.PROVIDER_ID,
-    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-  ],
-  callbacks: {
-    // Avoid redirects after sign-in.
-    signInSuccessWithAuthResult: () => false,
-  }
-};
+import FirebaseAuth from './FirebaseAuth'
 
 export default observer(() => {
   const [open, setOpen] = React.useState(false);
@@ -67,7 +50,7 @@ export default observer(() => {
           <DialogContentText id="login-dialog-description">
             By signing in, it is possible to save the created configurations that can be used for future modifications.
           </DialogContentText>
-          <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+          <FirebaseAuth />
         </DialogContent>
       </Dialog>
       </div>
