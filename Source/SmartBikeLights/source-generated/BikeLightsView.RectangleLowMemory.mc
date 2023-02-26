@@ -555,7 +555,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         var status = _lightNetwork.getBatteryStatus(lightData[0].identifier);
         if (status == null) { /* Disconnected */
             updateLightTextAndMode(lightData, -1);
-            return 6;
+            return 7; /* Disconnected */
         }
 
         return status.batteryStatus;

@@ -263,6 +263,7 @@ const giantReconHl1800 = [
 ];
 
 export const controlMode = {id: -1, name: "Control mode"};
+export const currentConfiguration = {id: -2, name: "Current configuration"};
 
 export const headlightList = [
   {

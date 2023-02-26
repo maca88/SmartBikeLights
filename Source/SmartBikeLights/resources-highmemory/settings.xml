@@ -24,11 +24,20 @@
         <setting propertyKey="@Properties.LC" title="@Strings.LC">
             <settingConfig type="alphaNumeric" maxLength="100000" />
         </setting>
+        <setting propertyKey="@Properties.CN1" title="@Strings.CN1">
+            <settingConfig type="alphaNumeric" maxLength="20" />
+        </setting>
         <setting propertyKey="@Properties.LC2" title="@Strings.LC2">
             <settingConfig type="alphaNumeric" maxLength="100000" />
         </setting>
+        <setting propertyKey="@Properties.CN2" title="@Strings.CN2">
+            <settingConfig type="alphaNumeric" maxLength="20" />
+        </setting>
         <setting propertyKey="@Properties.LC3" title="@Strings.LC3">
             <settingConfig type="alphaNumeric" maxLength="100000" />
+        </setting>
+        <setting propertyKey="@Properties.CN3" title="@Strings.CN3">
+            <settingConfig type="alphaNumeric" maxLength="20" />
         </setting>
     </settings>
 </resources>

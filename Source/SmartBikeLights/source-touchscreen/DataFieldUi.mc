@@ -1,4 +1,5 @@
 using Toybox.Math;
+using Toybox.Lang;
 using Toybox.WatchUi;
 using Toybox.Application.Properties as Properties;
 
@@ -78,7 +79,7 @@ module DataFieldUi {
 
         public function initialize(label, subLabel, identifier, options) {
             self.type = type;
-            self.label = WatchUi.loadResource(label);
+            self.label = label instanceof String ? label : WatchUi.loadResource(label);
             setSubLabel(subLabel);
             self.identifier = identifier;
         }
@@ -88,7 +89,9 @@ module DataFieldUi {
         }
 
         public function setSubLabel(value) {
-            subLabel = value != null ? WatchUi.loadResource(value) : null;
+            subLabel = value instanceof String ? value
+                : value != null ? WatchUi.loadResource(value)
+                : null;
         }
     }
 

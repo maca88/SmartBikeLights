@@ -4,6 +4,10 @@
     <string id="LC2">Secondary Lights Configuration</string>
     <string id="LC3">Tertiary Lights Configuration</string>
 
+    <string id="CN1">Lights Configuration Name</string>
+    <string id="CN2">Secondary LightsConfiguration Name</string>
+    <string id="CN3">Tertiary Lights Configuration Name</string>
+
     <string id="Primary">Primary</string>
     <string id="Secondary">Secondary</string>
     <string id="Tertiary">Tertiary</string>

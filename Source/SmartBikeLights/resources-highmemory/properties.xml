@@ -6,5 +6,8 @@
         <property id="CC" type="number">1</property>
         <property id="LC2" type="string"></property>
         <property id="LC3" type="string"></property>
+        <property id="CN1" type="string">Primary</property>
+        <property id="CN2" type="string">Secondary</property>
+        <property id="CN3" type="string">Tertiary</property>
     </properties>
 </resources>
