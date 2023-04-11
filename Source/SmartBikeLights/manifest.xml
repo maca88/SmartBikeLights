@@ -20,8 +20,10 @@
             <iq:product id="edge130plus"/>
             <iq:product id="edge520plus"/>
             <iq:product id="edge530"/>
+            <iq:product id="edge540"/>
             <iq:product id="edge820"/>
             <iq:product id="edge830"/>
+            <iq:product id="edge840"/>
             <iq:product id="edge_1000"/>
             <iq:product id="edge_520"/>
             <iq:product id="edgeexplore"/>
@@ -45,6 +47,8 @@
             <iq:product id="fr245m"/>
             <iq:product id="fr255"/>
             <iq:product id="fr255m"/>
+            <iq:product id="fr265"/>
+            <iq:product id="fr265s"/>
             <iq:product id="fr645"/>
             <iq:product id="fr645m"/>
             <iq:product id="fr745"/>
@@ -52,8 +56,11 @@
             <iq:product id="fr945"/>
             <iq:product id="fr945lte"/>
             <iq:product id="fr955"/>
+            <iq:product id="fr965"/>
             <iq:product id="legacyherofirstavenger"/>
             <iq:product id="legacysagadarthvader"/>
+            <iq:product id="marq2"/>
+            <iq:product id="marq2aviator"/>
             <iq:product id="marqadventurer"/>
             <iq:product id="marqathlete"/>
             <iq:product id="marqaviator"/>
