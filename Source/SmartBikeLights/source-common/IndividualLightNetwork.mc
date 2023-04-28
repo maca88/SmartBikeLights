@@ -3,7 +3,7 @@ using Toybox.Ant;
 using Toybox.AntPlus;
 using Toybox.Lang;
 
-(:glance :highMemory)
+(:highMemory)
 module AntLightNetwork {
     const retryTimes = 2;
     const controllerId = 99;
@@ -285,7 +285,7 @@ module AntLightNetwork {
 
                 // Each ANT+ controller that is connected to the main ANT+ bike light should send a message to the ANT+ bike light at least once every 30 seconds
                 if (_mainLight == true && _connectionState > 2 && (System.getTimer() - _lastCommandTime) > 20000) {
-                    // If the ANT+ controller does not have any new commands or other messages to send within a given 30 second period, then 
+                    // If the ANT+ controller does not have any new commands or other messages to send within a given 30 second period, then
                     // the main light’s channel ID (page 18) should be sent instead
                     requestPage(18, _lightIndex);
                 }
