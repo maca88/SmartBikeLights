@@ -45,9 +45,9 @@ module TestNetwork {
             LightNetwork.initialize(listener);
             _listener = listener;
             _lights = [
-                new TestBikeLight(0, 0 /* LIGHT_TYPE_HEADLIGHT */, [0, 1, 2, 5, 63, 62], listener, 81 /* Bontrager */, 6 /* ION PRO RT */, 3288461872),
-                new TestBikeLight(1, 2 /* LIGHT_TYPE_TAILLIGHT */, [0, 1, 5, 7, 8, 63], listener, 81 /* Bontrager */, 1 /* Flare RT */, 2368328293)
-                //new TestBikeLight(2, 2 /* LIGHT_TYPE_TAILLIGHT */, [0, 4, 5, 7, 6], listener, 1 /* Garmin */, 1 /* Varia 515 */, 2368328294)
+                new TestBikeLight(0, 0 /* LIGHT_TYPE_HEADLIGHT */, [0, 1, 2, 5, 63, 62], 81 /* Bontrager */, 6 /* ION PRO RT */, 3288461872),
+                new TestBikeLight(1, 2 /* LIGHT_TYPE_TAILLIGHT */, [0, 1, 5, 7, 8, 63], 81 /* Bontrager */, 1 /* Flare RT */, 2368328293)
+                //new TestBikeLight(2, 2 /* LIGHT_TYPE_TAILLIGHT */, [0, 4, 5, 7, 6], 1 /* Garmin */, 1 /* Varia 515 */, 2368328294)
             ];
             lastUpdate = System.getTimer();
         }
@@ -65,6 +65,14 @@ module TestNetwork {
             lastUpdate = System.getTimer();
             if (delta < 1000) {
                 return null;
+            }
+
+            for (var i = 0; i < _lights.size(); i++) {
+                var light = _lights[i];
+                if (light.hasChanges) {
+                    light.hasChanges = false;
+                    _listener.onBikeLightUpdate(light);
+                }
             }
 
             updateBattery += _lights.size();
@@ -103,18 +111,17 @@ module TestNetwork {
         private var _modes;
         private var _batteryStatus = new AntPlus.BatteryStatus();
         private var _batteryCounter = 0;
-        private var _listener;
 
+        public var hasChanges = false;
         public var manufacturerInfo = new AntPlus.ManufacturerInfo();
         public var productInfo = new AntPlus.ProductInfo();
 
-        function initialize(id, lightType, modes, listener, manufacturerId, modelNumber, serial) {
+        function initialize(id, lightType, modes, manufacturerId, modelNumber, serial) {
             BikeLight.initialize();
             identifier = id;
             type = lightType;
             mode = 0;
             _modes = modes;
-            _listener = listener;
             _batteryStatus.batteryStatus = 1;
             manufacturerInfo.manufacturerId = manufacturerId;
             manufacturerInfo.modelNumber = modelNumber;
@@ -127,7 +134,7 @@ module TestNetwork {
 
         function setMode(value) {
             mode = value;
-            _listener.onBikeLightUpdate(self);
+            hasChanges = true;
         }
 
         function updateAndGetBatteryStatus() {
@@ -145,7 +152,7 @@ module TestNetwork {
 
             _batteryStatus.batteryStatus = (_batteryStatus.batteryStatus % 6) + 1;
             if (_batteryStatus.batteryStatus == 1) {
-                _listener.onBikeLightUpdate(self);
+                hasChanges = true;
             }
 
             return _batteryStatus.batteryStatus == 6 ? null /* Simulate a disconnect */ : _batteryStatus;

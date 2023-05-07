@@ -3,3 +3,5 @@ bin/
 Build/
 /Source/light-configurator/*.log
 .vscode
+BikeLightSensor.LightSensor.mc
+networkKeys

@@ -67,7 +67,7 @@ class SmartBikeLightsApp extends Application.AppBase {
 
     (:highMemory)
     function onStop(state) {
-        _view.release();
+        _view.release(true);
     }
 
     (:settings)

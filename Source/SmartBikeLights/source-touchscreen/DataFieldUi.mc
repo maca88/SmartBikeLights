@@ -79,13 +79,17 @@ module DataFieldUi {
 
         public function initialize(label, subLabel, identifier, options) {
             self.type = type;
-            self.label = label instanceof String ? label : WatchUi.loadResource(label);
+            setLabel(label);
             setSubLabel(subLabel);
             self.identifier = identifier;
         }
 
         public function getId() {
             return identifier;
+        }
+
+        public function setLabel(value) {
+            label = value instanceof String ? value : WatchUi.loadResource(value);
         }
 
         public function setSubLabel(value) {
@@ -117,6 +121,14 @@ module DataFieldUi {
 
         public function addItem(item) {
             _items.add(item);
+        }
+
+        public function getItem(index) {
+            return _items[index];
+        }
+
+        public function deleteItem(index) {
+            _items.remove(getItem(index));
         }
 
         public function onUpdate(dc, fgColor, bgColor) {
@@ -195,7 +207,7 @@ module DataFieldUi {
             // Handle top bar
             if (tapY <= _controlBarHeight) {
                 if (tapX < (_width / 3)) {
-                    DataFieldUi.popMenu();
+                    close(); // Tap on back button
                 }
 
                 return true;
@@ -229,6 +241,9 @@ module DataFieldUi {
         }
 
         public function onSelect(identifier, menuItem) {
+        }
+
+        public function close() {
         }
 
         private function preCalculate(dc) {

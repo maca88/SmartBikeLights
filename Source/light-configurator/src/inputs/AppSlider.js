@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import { styled } from '@mui/material/styles';
 import PropTypes from 'prop-types';
@@ -44,9 +45,11 @@ export default observer(({ label, value, setter, getLabelText, step, min, max, d
     setter(newValue);
   };
 
-  if (getLabelText != null && !getLabelText(value)) {
-    value = defaultValue;
-  }
+  useEffect(() => {
+    if (value == null) {
+      setter(defaultValue);
+    }
+  }, [value, defaultValue, setter])
 
   return (
     <Root>

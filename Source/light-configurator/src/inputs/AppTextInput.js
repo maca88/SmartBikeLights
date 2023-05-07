@@ -1,4 +1,3 @@
-import React from 'react';
 import { nanoid } from 'nanoid';
 import TextField from '@mui/material/TextField';
 import { observer } from 'mobx-react-lite';

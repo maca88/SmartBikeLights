@@ -18,6 +18,7 @@ Smart Bike Lights is a [data field](https://developer.garmin.com/connect-iq/conn
 - Support multiple light configurations (only for devices with more than 32KB memory)
 - Support controlling multiple headlights/taillights at once (only for devices with more than 32KB memory)
 - Has a built-in app settings editor (only for Edge touchscreen devices or devices that have CIQ 3.2+ and more than 32KB memory)
+- Support controlling lights and play tones by using external controllers (only for devices that have CIQ 3.2+ and more than 32KB memory)
 
 ## How to use
 
@@ -164,11 +165,27 @@ even if they both supports "Night Flash" mode, it will not be displayed, because
 
 `Smart Bike Lights #2` data field is a copy of the original data field, which can be used along with the original one and configured separately. By using both data fields, it is possible to configure two lights of the same type (e.g. two headlights), one configured in the original data field and the other in the copy data field. When creating the configuration for the lights, it is required to set the `Serial number` input in [Lights Configurator](https://maca88.github.io/SmartBikeLights/), so that the data field will know which of the two lights to control.
 
-## Currently tested Garmin devices:
+## Remote Controllers
 
-- Edge 1000
+This data field can connect to one or more ANT+ light controllers. For connecting to an ANT+ light controller, the data field creates a virtual ANT+ light which has to be paired with the controller. After the virtual light is paired with the controller, the data field can perform various actions configured with the Lights Configurator. These are the currently supported actions:
+- Cycle light modes
+- Change light mode
+- Change configuration
+- Play tone
 
-**NOTE:** Due to differences between simulators and real devices, text may not be correctly aligned. In case you want to help with text alignment, check [FontPaddingTest](https://github.com/maca88/E-Bike-Edge-MultiField/tree/master/Source/FontPaddingTest) project.
+Due to how ANT+ light controllers work, the data field is required to open an ANT channel for every configured button on the remote controller. Before pairing the remote controller, make sure that there are enough free ANT channels left. Check the links below to determine how many simultaneous ANT channels (sensors) your Garmin device supports:
+- [Outdoor watches](https://support.garmin.com/en-US/?faq=pb7Bxcm3x48cQpGy2LfR4A)
+- [Edge devices](https://support.garmin.com/en-US/?faq=RpX8SeCLBd2K8sggJk4L56)
+
+Currently supported remote controllers:
+- Bontrager TransmitR MicroRemote (requires one ANT channel)
+- Bontrager TransmitR Remote (requires four ANT channels to pair all five buttons. The center button does not require an ANT channel)
+
+### How to pair
+
+Check the following videos:
+- [Bontrager TransmitR Remote](https://www.youtube.com/watch?v=dX2CbmVO_LQ)
+- [Bontrager TransmitR MicroRemote](https://www.youtube.com/watch?v=D_vTVkWjrjI)
 
 ## Filters
 
@@ -197,3 +214,5 @@ The following errors can be displayed:
 - **Error 5:** The device does not have enough free ANT channels to be used by the Individual Light Network. Try to disable some sensors from the Garmin Sensors menu.
 - **Error 6:** One of the ANT channels used by the Individual Light Network could not be opened. Make sure that the lights are removed/disabled from the Garmin Sensors menu.
 - **Error 7:** The light with the provided device number does not support the configured light type (headlight/taillight). Make sure that the "Device number" setting on the configured light is not of another light.
+- **Error 8:** One of the ANT channels used for connection to a remote controller could not be opened. Try to disable some sensors from the Garmin Sensors menu.
+- **Error 9:** The device does not have enough free ANT channels to be used for connection to the remote controllers. Try to disable some sensors from the Garmin Sensors menu.

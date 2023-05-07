@@ -11,6 +11,7 @@ using Toybox.Lang;
 using Toybox.Time;
 using Toybox.Time.Gregorian;
 using Toybox.Application.Properties as Properties;
+using Toybox.Attention;
 
 (:lowMemory :rectangle :nonTouchScreen :mediumResolution)
 const lightModeCharacters = [
@@ -136,7 +137,6 @@ class BikeLightsView extends  WatchUi.DataField  {
             _separatorColor = separatorColor == null || separatorColor == 0
                 ?  43775 /* Blue */ 
                 : separatorColor;
-
             // configuration[1];  // Headlight modes
             // configuration[2];  // Headlight serial number
             // configuration[3];  // Headlight color
@@ -420,7 +420,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         _batteryFont = null;
         _controlModeFont = null;
         var fonts = Rez.Fonts;
-        var deviceSettings = System.getDeviceSettings();
         var padding = height - 55 < 0 ? 0 : 3;
         var settings = WatchUi.loadResource(Rez.JsonData.Settings);
         _separatorWidth = settings[0];

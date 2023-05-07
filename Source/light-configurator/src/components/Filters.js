@@ -19,6 +19,7 @@ import { AppContext } from '../AppContext';
 import { action } from 'mobx';
 import { arrayMoveUp, arrayMoveDown } from '../constants';
 import { Typography } from '@mui/material';
+import LightsModeFilter from '../filters/LightsModeFilter';
 
 export default observer(({ filters, filterTypes, device }) => {
   const removeFilter = action((filter) => {
@@ -106,6 +107,7 @@ export default observer(({ filters, filterTypes, device }) => {
                                         </Typography>
                                       }
                                     />
+              : filter.type === 'N' ? <LightsModeFilter filter={filter} />
               : null
             }
           </Grid>

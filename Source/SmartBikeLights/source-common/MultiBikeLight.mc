@@ -38,11 +38,9 @@ class MultiBikeLight extends AntPlus.BikeLight {
 
     function updateLight(light, nextMode) {
         var allUpdated = true;
-        var lightIndex = -1;
         for (var i = 0; i < _lights.size(); i++) {
             if (_lights[i].identifier == light.identifier) {
                 _lights[i] = light;
-                lightIndex = i;
             }
 
             allUpdated &= _lights[i].mode == light.mode;

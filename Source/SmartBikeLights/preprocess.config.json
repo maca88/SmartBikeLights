@@ -75,6 +75,10 @@
       }
     },
     {
+      "name": "LightSensor",
+      "files": ["source-preprocess/BikeLightSensor.mc"]
+    },
+    {
       "name": "TestNetwork",
       "files": ["source-preprocess/TestLightNetwork.mc"]
     }

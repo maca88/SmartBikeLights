@@ -61,7 +61,7 @@ module LightsSettings {
 
         function onSelect(lightType, menuItem) {
             openSubMenu(lightType == 3
-                ? new AppSettings.Menu()
+                ? new AppSettings.Menu(viewRef.get())
                 : new LightMenu(lightType, viewRef.get(), context, false));
         }
     }
@@ -112,7 +112,7 @@ module LightsSettings {
             var view = viewRef.get();
             var menu = id == 0 ? new LightControlModeMenu(_lightType, view, menuItem, context)
                 : id == 1 ? new LightModesMenu(_lightType, view, menuItem, context)
-                : new AppSettings.Menu();
+                : new AppSettings.Menu(view);
             openSubMenu(menu);
         }
     }

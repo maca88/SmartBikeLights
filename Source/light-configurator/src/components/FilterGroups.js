@@ -21,7 +21,7 @@ const getFilterTypes = (hasLightModes, device, totalLights) => {
     return emptyFilters;
   }
 
-  const excludeList = [];
+  const excludeList = ['N' /* Lights modes */];
   if (!hasLightModes) {
     excludeList.push('B'); // Exclude light battery
   }

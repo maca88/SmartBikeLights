@@ -11,6 +11,7 @@ using Toybox.Lang;
 using Toybox.Time;
 using Toybox.Time.Gregorian;
 using Toybox.Application.Properties as Properties;
+using Toybox.Attention;
 
 (:highMemory :round :nonTouchScreen :mediumResolution)
 const lightModeCharacters = [
@@ -93,6 +94,7 @@ class BikeLightsView extends  WatchUi.DataField  {
     (:settings) var headlightSettings;
     (:settings) var taillightSettings;
     private var _individualNetwork;
+    private var _updateSettings = false;
 
     // Fields used to evaluate filters
     protected var _todayMoment;
@@ -117,6 +119,8 @@ class BikeLightsView extends  WatchUi.DataField  {
         0,     // 10. Last gradient
         false  // 11. Whether gradient should be calculated
     ];
+    var remoteControllers; // Used by AppSettings
+    private var _lightSensors = [];
 
     // Callbacks (value must be a weak reference)
     public var onLightModeChangeCallback;
@@ -144,6 +148,178 @@ class BikeLightsView extends  WatchUi.DataField  {
         onSettingsChanged();
     }
 
+
+    function setupLightSensors() {
+        releaseLightSensors();
+        if (remoteControllers == null) {
+            return;
+        }
+
+        for (var i = 0; i < remoteControllers.size(); i++) {
+            var controller = remoteControllers[i];
+            var firstSensorIndex = _lightSensors.size();
+            for (var j = 2 /* Index of the first button */; j < controller.size(); j++) {
+                var error = startLightSensor(i, j, firstSensorIndex, null);
+                if (error != null) {
+                    _errorCode = error;
+                    return;
+                }
+            }
+        }
+    }
+
+    function releaseLightSensors() {
+        var lightSensors = _lightSensors;
+        if (lightSensors != null) {
+            for (var i = 0; i < lightSensors.size(); i++) {
+                lightSensors[i].closeMasterChannel();
+            }
+        }
+
+        _lightSensors = [];
+    }
+
+    function startLightSensor(controllerIndex, buttonIndex, firstSensorIndex, onConnectedCallback) {
+        var controller = remoteControllers[controllerIndex];
+        var button = controller[buttonIndex];
+        var deviceNumber = button[1];
+        var doubleClickDelay = button[2];
+        if (deviceNumber <= 0) {
+            // Only the first button should handle the central button
+            _lightSensors[firstSensorIndex].setCentralButtonIndex(buttonIndex);
+            return null; // Center button
+        }
+
+        var lightSensor = new BikeLightSensor(deviceNumber, controllerIndex, buttonIndex, doubleClickDelay, method(:onRemoteControlClick), onConnectedCallback);
+        var error = lightSensor.checkChannel();
+        if (error != null) {
+            lightSensor.closeMasterChannel();
+        } else {
+            _lightSensors.add(lightSensor);
+        }
+
+        return error;
+    }
+
+    function onRemoteControlClick(controllerIndex, buttonIndex, triggerId) {
+        if (remoteControllers == null || _initializedLights == 0 || _errorCode != null) {
+            return;
+        }
+
+        var controller = remoteControllers[controllerIndex];
+        var button = controller[buttonIndex];
+        var activityInfo = Activity.getActivityInfo();
+        for (var i = 3; i < button.size(); i++) {
+            var action = button[i];
+            if (action[1] /* Trigger id */ != triggerId || !areFiltersConditionsMet(activityInfo, action[3] /* Filters */)) {
+                continue;
+            }
+
+            var actionType = action[0];
+            var toneId = action[2];
+            if (toneId != null) {
+                Attention.playTone(toneId);
+            }
+
+            if (actionType == 1 /* Cycle light modes */) {
+                var headlightTapBehavior = action[4];
+                if (headlightTapBehavior) {
+                    applyTapBehavior(headlightData, headlightTapBehavior);
+                }
+
+                var taillightTapBehavior = action[5];
+                if (taillightTapBehavior) {
+                    applyTapBehavior(taillightData, taillightTapBehavior);
+                }
+            } else if (actionType == 2 /* Change light mode */) {
+                var modes = action[4];
+                if (modes[0] /* Headlight control mode */ != null) {
+                    setLightAndControlMode(headlightData, 0, modes[2] /* Light mode */, modes[0] /* Control mode */);
+                }
+
+                if (modes[3] /* Taillight control mode */ != null) {
+                    setLightAndControlMode(taillightData, 0, modes[5] /* Light mode */, modes[3] /* Control mode */);
+                }
+            } else if (actionType == 3 /* Change configuration */) {
+                var configurationId = action[4];
+                Properties.setValue("CC", configurationId);
+                _updateSettings = true;
+            } else if (actionType == 4 /* Play tone */) {
+                var toneTypeId = action[4];
+                if (toneTypeId == 2 /* Custom tone */) {
+                    Attention.playTone({
+                        :toneProfile => action[6],
+                        :repeatCount => action[5]
+                    });
+                }
+            }
+
+            return;
+        }
+    }
+
+    private function areFiltersConditionsMet(activityInfo, filters) {
+        var i = 0;
+        while (i < filters.size()) {
+            if (!isFilterConditionMet(activityInfo, filters, i)) {
+                return false;
+            }
+
+            i += 3;
+        }
+
+        return true;
+    }
+
+    private function isFilterConditionMet(activityInfo, filters, i) {
+        // TODO: unify with checkFilters
+        var data = filters[i];
+        var filterValue = filters[i + 2];
+        var operator = filters[i + 1];
+        return data == 'E' ? isWithinTimespan(filters, i, filterValue)
+        : data == 'F' ? isInsideAnyPolygon(activityInfo, filterValue)
+        : data == 'I' ? isTargetBehind(activityInfo, operator, filterValue)
+        : data == 'N' ? operator == '|' /* Or */
+            ? matchLightMode(filterValue, 0, false) || matchLightMode(filterValue, 3, false)
+            : matchLightMode(filterValue, 0, true) && matchLightMode(filterValue, 3, true)
+        : data == 'D' ? true
+        : checkOperatorValue(
+            operator,
+            data == 'A' ? _acceleration
+            //: data == 'B' ? lightData != null ? getLightBatteryStatus(lightData) : null
+            : data == 'C' ? activityInfo.currentSpeed
+            : data == 'G' ? (activityInfo.currentLocationAccuracy == null ? 0 : activityInfo.currentLocationAccuracy)
+            : data == 'H' ? activityInfo.timerState
+            : data == 'J' ? activityInfo.startLocation == null ? 0 : 1
+            : data == 'K' && Activity has :getProfileInfo ? Activity.getProfileInfo().name
+            : data == 'L' ? (activityInfo.timerState == 3 /* TIMER_STATE_ON */ ? _gradientData[10] /* Last gradient */ : null)
+            : data == 'M' ? System.getSystemStats() has :solarIntensity ? System.getSystemStats().solarIntensity : null
+            : null,
+            filterValue,
+            false);
+    }
+
+    private function matchLightMode(modes, index, isAndOperator) {
+        var lightControlMode = modes[index];
+        if (lightControlMode == null) {
+            return isAndOperator;
+        }
+
+        var lightData = index == 0 ? headlightData : taillightData;
+        if (lightData[0] == null) {
+            return false;
+        }
+
+        var mustBeEqual = modes[index + 1] == '=';
+        var controlModeMatch = lightControlMode == lightData[4] /* Control mode */;
+        var lightModeMatch = modes[index + 2] == lightData[2] /* Light mode */;
+
+        return mustBeEqual
+            ? controlModeMatch && (lightControlMode != 2 /* Manual */ || lightModeMatch)
+            : !controlModeMatch || (lightControlMode == 2 /* Manual */ && !lightModeMatch);
+    }
+
+
     // Called from SmartBikeLightsApp.onSettingsChanged()
     function onSettingsChanged() {
         //System.println("onSettingsChanged" + " timer=" + System.getTimer());
@@ -158,12 +334,16 @@ class BikeLightsView extends  WatchUi.DataField  {
             hlData[17] = null; // Headlight filters
             tlData[17] = null; // Taillight filters
             _bikeRadar = null;
+            remoteControllers = null;
+            releaseLightSensors();
             var configuration = parseConfiguration();
             _globalFilters = configuration[0];
             var separatorColor = configuration[ 14 ];
             _separatorColor = separatorColor == null || separatorColor == 0
                 ?  _activityColor 
                 : separatorColor;
+            remoteControllers = configuration[15];
+            setupLightSensors();
 
             // configuration[1];  // Headlight modes
             // configuration[2];  // Headlight serial number
@@ -213,7 +393,10 @@ class BikeLightsView extends  WatchUi.DataField  {
         recreateLightNetwork();
     }
 
-    function release() {
+    function release(final) {
+        if (final) {
+            releaseLightSensors();
+        }
         releaseLights();
         if (_lightNetwork != null && _lightNetwork has :release) {
             _lightNetwork.release();
@@ -368,6 +551,11 @@ class BikeLightsView extends  WatchUi.DataField  {
             onShow();
         }
 
+        if (_updateSettings) {
+            _updateSettings = false;
+            onSettingsChanged();
+        }
+
         _lastUpdateTime = timer;
         var width = dc.getWidth();
         var height = dc.getHeight();
@@ -488,7 +676,7 @@ class BikeLightsView extends  WatchUi.DataField  {
             !validateSettingsLightModes(headlightData[0]) ||
             !validateSettingsLightModes(taillightData[0]) ||
             !(WatchUi has :Menu2)) {
-            menu = new AppSettings.Menu();
+            menu = new AppSettings.Menu(self);
             return [menu, new MenuDelegate(menu)];
         }
 
@@ -522,7 +710,6 @@ class BikeLightsView extends  WatchUi.DataField  {
             : lightSettings;
     }
 
-    (:lightButtons)
     function setLightAndControlMode(lightData, lightType, newMode, newControlMode) {
         if (lightData[0] == null || _errorCode != null) {
             return; // This can happen when in menu the network is dropped or an invalid configuration is set
@@ -573,6 +760,47 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
 
         return new MultiBikeLight(currentLight, light);
+    }
+
+    private function applyTapBehavior(lightData, tapBehavior) {
+        var light = lightData[0];
+        var controlMode = lightData[4];
+        var lightType = light.type;
+        var filters = lightData[17];
+        var controlModes = tapBehavior[0];
+        var controlModesSize = controlModes.size();
+        if (controlModesSize == 0 || (controlModesSize == 1 && controlModes.indexOf(0 /* SMART */) == 0 && filters == null)) {
+            return false; // Tapping on light icon is disabled
+        }
+
+        var newMode = null;
+        var newControlMode = null;
+        var controlModeIndex = controlModes.indexOf(controlMode);
+        var lightModes = getLightModes(light);
+        var allowedLightModes = tapBehavior[1] != null ? tapBehavior[1] : lightModes;
+        var lightModeIndex = allowedLightModes.indexOf(lightData[2]);
+        var newLightModeIndex = lightModeIndex + 1;
+        if (controlMode == 2 /* MANUAL */ && controlModeIndex >= 0 && lightModeIndex >= 0 && newLightModeIndex < allowedLightModes.size()) {
+            newMode = allowedLightModes[newLightModeIndex];
+        } else {
+            newControlMode = controlModes[(controlModeIndex + 1) % controlModesSize];
+            if (newControlMode == 0 /* SMART */ && filters == null) {
+                newControlMode = controlModes[(controlModeIndex + 2) % controlModesSize]; // Skip Smart mode
+            }
+
+            if (newControlMode == 2 /* MANUAL */) {
+                newMode = allowedLightModes[0];
+            } else if (controlMode == newControlMode) {
+                return false;
+            }
+        }
+
+        if (newMode != null && lightModes.indexOf(newMode) < 0) {
+            return false; // Invalid light icon configuration
+        }
+
+        setLightAndControlMode(lightData, lightType, newMode, newControlMode);
+        return true;
     }
 
     protected function getPropertyValue(key) {
@@ -900,7 +1128,7 @@ class BikeLightsView extends  WatchUi.DataField  {
     }
 
     protected function recreateLightNetwork() {
-        release();
+        release(false);
         _lightNetwork = _individualNetwork != null
             ? new AntLightNetwork.IndividualLightNetwork(_individualNetwork[0], _individualNetwork[1], _lightNetworkListener)
             : new AntPlus.LightNetwork(_lightNetworkListener);
@@ -1295,7 +1523,7 @@ class BikeLightsView extends  WatchUi.DataField  {
             : "LC";
         var value = getPropertyValue(configKey);
         if (value == null || value.length() == 0) {
-            return new [15];
+            return new [16];
         }
 
         var filterResult = [0 /* next index */, 0 /* operator type */];
@@ -1315,7 +1543,8 @@ class BikeLightsView extends  WatchUi.DataField  {
             parseIndividualNetwork(chars, null, filterResult), // Individual network settings
             parseForceSmartMode(chars, null, filterResult),    // Force smart mode
             null,
-            parse(1 /* NUMBER */, chars, null, filterResult)   // Separator color
+            parseSeparatorColor(chars, null, filterResult),    // Separator color
+            parseRemoteControllers(chars, null, filterResult)  // Remote controllers
         ];
     }
 
@@ -1498,6 +1727,171 @@ class BikeLightsView extends  WatchUi.DataField  {
 
         return data;
     }
+
+    private function parseSeparatorColor(chars, index, filterResult) {
+        var color = parse(1 /* NUMBER */, chars, index, filterResult);
+        if (color == null) { // Old configuration
+            filterResult[0] = filterResult[0] - 1; // Avoid parseRemoteControllers from parsing the next value
+            return null;
+        }
+
+        return color;
+    }
+
+    private function parseRemoteControllers(chars, index, filterResult) {
+        var totalControllers = parse(1 /* NUMBER */, chars, index, filterResult);
+        if (totalControllers == null) {
+            filterResult[0] = filterResult[0] - 1; // Reset current index
+            return null; // Old configuration
+        }
+
+        var remoteControllers = [];
+        for (var i = 0; i < totalControllers; i++) {
+            var controller = [];
+            remoteControllers.add(controller);
+            controller.add(parse(1 /* NUMBER */, chars, null, filterResult)); // Controller id
+            controller.add(parse(0 /* STRING */, chars, null, filterResult)); // Controller name
+
+            var totalButtons = parse(1 /* NUMBER */, chars, null, filterResult);
+            for (var j = 0; j < totalButtons; j++) {
+                var button = [];
+                controller.add(button);
+                button.add(parse(1 /* NUMBER */, chars, null, filterResult)); // Button id
+                button.add(parse(1 /* NUMBER */, chars, null, filterResult)); // Device number
+                button.add(parse(1 /* NUMBER */, chars, null, filterResult)); // Double-click delay
+
+                var totalActions = parse(1 /* NUMBER */, chars, null, filterResult);
+                for (var k = 0; k < totalActions; k++) {
+                    var action = [];
+                    button.add(action);
+                    var actionType = parse(1 /* NUMBER */, chars, null, filterResult);
+                    action.add(actionType);
+                    action.add(parse(1 /* NUMBER */, chars, null, filterResult)); // Trigger id
+                    action.add(parse(1 /* NUMBER */, chars, null, filterResult)); // Tone id
+                    var filters = [];
+                    action.add(filters);
+                    if (actionType == 1 /* Cycle light modes */) {
+                        action.add(parseLightTapBehavior(chars, null, filterResult)); // Headlight cycle modes
+                        action.add(parseLightTapBehavior(chars, null, filterResult)); // Taillight cycle modes
+                    } else if (actionType == 2 /* Change light mode */) {
+                        action.add(parseLightsModes(chars, null, filterResult)); // Headlight & taillight modes
+                    } else if (actionType == 3 /* Change configuration */) {
+                        action.add(parse(1 /* NUMBER */, chars, null, filterResult)); // Configuration id
+                    } else if (actionType == 4 /* Play tone */) {
+                        var toneTypeId = parse(1 /* NUMBER */, chars, null, filterResult);
+                        action.add(toneTypeId);
+                        if (toneTypeId == 2 /* Custom tone */) {
+                            action.add(parse(1 /* NUMBER */, chars, null, filterResult)); // repeatCount
+                            var l = 0;
+                            var totalTones = parse(1 /* NUMBER */, chars, null, filterResult);
+                            var tones = [];
+                            for (; l < totalTones; l++) {
+                                parse(0 /* STRING */, chars, null, filterResult); // Skip name
+                                tones.add(new Attention.ToneProfile(
+                                    parse(1 /* NUMBER */, chars, null, filterResult), // Frequency
+                                    parse(1 /* NUMBER */, chars, null, filterResult) // Duration
+                                ));
+                            }
+
+                            var toneSequence = [];
+                            var totalToneItems = parse(1 /* NUMBER */, chars, null, filterResult);
+                            for (l = 0; l < totalToneItems; l++) {
+                                toneSequence.add(tones[parse(1 /* NUMBER */, chars, null, filterResult)]); // Tone index
+                            }
+
+                            action.add(toneSequence);
+                        }
+                    }
+
+                    filterResult[0]++; /* Skip ! */
+                    index = filterResult[0];
+                    while (index < chars.size()) {
+                        var charNumber = chars[index].toNumber();
+                        if (charNumber == 124 /* | */ || charNumber == 35 /* # */) {
+                            break;
+                        }
+
+                        if (charNumber >= 65 /* A */ && charNumber <= 90 /* Z */) {
+                            var filterType = chars[index];
+                            index++;
+                            filterResult[1] = chars[index]; // Filter operator
+                            // TODO: unify with parseFilters
+                            var filterValue = charNumber == 69 /* E */ ? parseTimespan(chars, index, filterResult)
+                                : charNumber == 70 /* F */? parsePolygons(chars, index, filterResult)
+                                : charNumber == 73 /* I */ ? parseBikeRadar(chars, index, filterResult)
+                                : charNumber == 78 /* N */ ? parseLightsModes(chars, index + 1, filterResult)
+                                // In case of a string value, the last character will be a : character in order to know where the next filter starts.
+                                // The : character will be automatically skipped by else, so we do not have to increment the filterResult index here.
+                                : parse(charNumber == 75 /* Profile name */ ? 0 /* STRING */ : 1 /* NUMBER */, chars, index + 1, filterResult);
+
+                            filters.add(filterType); // Filter type
+                            filters.add(filterResult[1]); // Filter operator
+                            filters.add(filterValue); // Filter value
+                            index = filterResult[0];
+                        } else {
+                            // Skip any extra characters (e.g. character : for a string generic filter)
+                            index++;
+                            filterResult[0] = index;
+                        }
+                    }
+                }
+            }
+        }
+
+        return remoteControllers;
+    }
+
+    private function parseLightsModes(chars, index, filterResult) {
+        var data = new [6];
+        index = index == null ? filterResult[0] + 1 : index;
+        var hasHeadlightMode = chars[index] != ',';
+        // Headlight
+        data[0] = hasHeadlightMode ? parse(1 /* NUMBER */, chars, index, filterResult) : null; // Control mode
+        data[1] = hasHeadlightMode ? chars[filterResult[0]] : null; // Operator
+        data[2] = hasHeadlightMode ? parse(1 /* NUMBER */, chars, filterResult[0] + 2 /* Skip (! or =) and : */, filterResult) : null; // Light mode
+        // Taillight
+        data[3] = parse(1 /* NUMBER */, chars, data[0] == null ? index + 1 : null, filterResult); // Control mode
+        data[4] = data[3] == null ? null : chars[filterResult[0]]; // Operator
+        data[5] = data[3] == null ? null : parse(1 /* NUMBER */, chars, filterResult[0] + 2 /* Skip (! or =) and : */, filterResult); // Light mode
+
+        return data;
+    }
+
+    private function parseLightTapBehavior(chars, i, filterResult) {
+        // HL all modes, TL two modes: 231!:123!0,1
+        // Disabled: 0!:0!
+        var value = parse(1 /* NUMBER */, chars, i, filterResult);
+        if (value == null) {
+            return null; // Old configuration or widget
+        }
+
+        var controlModes = [];
+        var manualModes = [];
+        var controlModeChars = value.toString().toCharArray();
+        // Parse control modes
+        for (var j = 0; j < controlModeChars.size(); j++) {
+            var controlMode = controlModeChars[j].toString().toNumber();
+            if (controlMode != null && controlMode > 0 && controlMode < 4) {
+                controlModes.add(controlMode - 1);
+            }
+        }
+
+        // Parse manual light modes
+        do {
+            value = parse(1 /* NUMBER */, chars, null, filterResult);
+            if (value != null) {
+                manualModes.add(value);
+            }
+
+            i = filterResult[0];
+        } while (value != null && i < chars.size() && chars[i] == ',');
+
+        return [
+            controlModes,
+            manualModes.size() == 0 ? null : manualModes
+        ];
+    }
+
 
     // <LightModes>(:<LightSerialNumber>)*(:<LightIconColor>)*
     private function parseLightInfo(chars, dataType, resultIndex) {

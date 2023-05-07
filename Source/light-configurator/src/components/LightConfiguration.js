@@ -17,7 +17,7 @@ import LightIconTapBehavior from './LightIconTapBehavior';
 import LightSettings from './LightSettings';
 import LightPanelModel from '../models/LightPanel';
 import LightSettingsModel from '../models/LightSettings';
-import LightIconTapBehaviorModel from '../models/LightIconTapBehavior';
+import LightModeCycleBehavior from '../models/LightModeCycleBehavior';
 import { getLightIconColors } from '../constants';
 
 const PREFIX = 'LightConfiguration';
@@ -64,7 +64,7 @@ export default observer(({
 
   useEffect(() => {
     if (lightIconTapBehavior == null && setLightIconTapBehavior != null) {
-      setLightIconTapBehavior(new LightIconTapBehaviorModel());
+      setLightIconTapBehavior(new LightModeCycleBehavior());
     }
   }, [lightIconTapBehavior, setLightIconTapBehavior]);
 

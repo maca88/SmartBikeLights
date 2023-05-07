@@ -2,11 +2,12 @@ import { nanoid } from 'nanoid';
 import { makeAutoObservable } from 'mobx';
 import {
   filterMap, batteryStateList, gpsAccuracyList, timerStateList, timespanTypeMap, speedUnitList, getBatteryOperator,
-  getBatteryValue, vehicleThreatList, distanceUnitList, setList
+  getBatteryValue, vehicleThreatList, distanceUnitList, setList, logicalOperators
 } from '../constants';
 import addSeconds from 'date-fns/addSeconds';
 import startOfToday from 'date-fns/startOfToday';
 import format from 'date-fns/format';
+import LightMode from './LightMode';
 
 const getTimespanPartName = (type, value, timeFormat) => {
   if (value === null) {
@@ -74,6 +75,9 @@ export default class Filter {
   // Bike radar fields
   threatOperator = null;
   threat = null;
+  // Light mode fields
+  headlightMode = new LightMode();
+  taillightMode = new LightMode();
   // Ui properties
   open = true;
 
@@ -94,9 +98,17 @@ export default class Filter {
       case 'I':
         return (!this.operator || this.isValidOperator(this.operator, this.value)) &&
           (!this.threatOperator || this.isValidOperator(this.threatOperator, this.threat));
+      case 'N':
+        return (this.headlightMode.controlMode != null || this.taillightMode.controlMode != null) &&
+          this.headlightMode.isValid() && this.taillightMode.isValid() &&
+          ((this.areBothLightsModesSet() && this.operator != null) || !this.areBothLightsModesSet());
       default:
         return this.type && this.isValidOperator(this.operator, this.value);
     }
+  }
+
+  areBothLightsModesSet() {
+    return this.headlightMode.controlMode != null && this.taillightMode.controlMode != null;
   }
 
   isValidOperator(operator, value) {
@@ -133,6 +145,11 @@ export default class Filter {
     if (this.type === 'I') {
       config += this.operator ? `${getOperatorValue(this.operator)}${(this.value)}` : ']-1';
       config += this.threatOperator ? `${getOperatorValue(this.threatOperator)}${(this.threat)}` : ']-1';
+      return config;
+    }
+
+    if (this.type === 'N') {
+      config += `${(this.operator || '!' /* And */)}${this.headlightMode.getConfigurationValue()},${this.taillightMode.getConfigurationValue()}`;
       return config;
     }
 
@@ -174,6 +191,19 @@ export default class Filter {
 
       if (this.operator === null && this.threatOperator === null) {
         name += 'Any vehicle';
+      }
+    } else if (this.type === 'N' /* Lights modes */) {
+      if (this.headlightMode.isValid()) {
+        name += this.headlightMode.getDisplayName(0);
+        name += ' ';
+      }
+
+      if (this.areBothLightsModesSet()) {
+        name += `${logicalOperators.find(o => o.id === this.operator).name} `;
+      }
+
+      if (this.taillightMode.isValid()) {
+        name += this.taillightMode.getDisplayName(2);
       }
     } else if (this.value !== null && !Number.isNaN(this.value)) {
       switch (this.type) {

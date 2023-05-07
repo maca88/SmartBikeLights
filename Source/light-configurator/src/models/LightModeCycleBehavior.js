@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { controlModeList } from '../constants';
 
-export default class LightIconTapBehavior {
+export default class LightModeCycleBehavior {
   lightModes = null;
   manualModeBehavior = 0;
   controlModes = [];
@@ -16,7 +16,7 @@ export default class LightIconTapBehavior {
       return false;
     }
 
-    if (this.lightModes) {
+    if (this.lightModes && lightData) {
       return this.lightModes.every(lm => lightData.modes.find(m => m.id === lm) !== undefined) && this.controlModes.indexOf(2 /* MANUAL*/) !== -1;
     }
 

@@ -10,7 +10,8 @@ export const filterList = [
   { id: 'J', name: 'Start location' },
   { id: 'K', name: 'Profile name' },
   { id: 'L', name: 'Gradient' },
-  { id: 'M', name: 'Solar intensity' }
+  { id: 'M', name: 'Solar intensity' },
+  { id: 'N', name: 'Lights modes' },
 ];
 
 let map = {};
@@ -152,6 +153,11 @@ export const colors = [
   { id: 0x000055, name: 'Navy' }
 ];
 
+export const logicalOperators = [
+  { id: '!', name: 'And' },
+  { id: '|', name: 'Or' },
+];
+
 export const buttonColors = colors.filter(o => o.id !== 1);
 
 export const batteryStateList = [
@@ -184,6 +190,119 @@ export const vehicleThreatList = [
   'Medium',
   'High'
 ];
+
+export const toneTypeList = [
+  { id: 1, name: "Built-in" },
+  { id: 2, name: "Custom" }
+];
+
+export const configurationList = [
+  { id: 1, name: "Primary" },
+  { id: 2, name: "Secondary" },
+  { id: 3, name: "Tertiary" }
+];
+
+export const toneList = [
+  { id: 0, name: "Key press" },
+  { id: 1, name: "Activity start" },
+  { id: 2, name: "Activity stop" },
+  { id: 3, name: "Message available" },
+  { id: 4, name: "Alert high note" },
+  { id: 5, name: "Alert low note" },
+  { id: 6, name: "Loud beep" },
+  { id: 7, name: "Interval change" },
+  { id: 8, name: "Alarm trigger" },
+  { id: 9, name: "Activity reset" },
+  { id: 10, name: "Lap completed" },
+  { id: 11, name: "Annoying sound" },
+  { id: 12, name: "Time threshold met" },
+  { id: 13, name: "Distance threshold met" },
+  { id: 14, name: "Activity failure" },
+  { id: 15, name: "Activity success" },
+  { id: 16, name: "Power on" },
+  { id: 17, name: "Low battery" },
+  { id: 18, name: "Error" },
+];
+
+export const buttonActionTypeList = [
+  { id: 1, name: "Cycle light modes" },
+  { id: 2, name: "Change light mode" },
+  { id: 3, name: "Change configuration" },
+  { id: 4, name: "Play tone" }
+];
+
+map = {};
+buttonActionTypeList.forEach(item => map[item.id] = item.name);
+
+export const buttonActionTypeMap = map;
+
+export const buttonTriggerList = [
+  { id: 1, name: "Single-click" },
+  { id: 2, name: "Press and one second hold" },
+  { id: 3, name: "Double-click" }
+];
+
+map = {};
+buttonTriggerList.forEach(item => map[item.id] = item.name);
+
+export const buttonTriggerMap = map;
+
+const remoteControllerButtonList = [
+  {
+    id: 1,
+    name: "Center button",
+    triggers: [...buttonTriggerList]
+  },
+  {
+    id: 2,
+    name: "Top button",
+    triggers: [...buttonTriggerList]
+  },
+  {
+    id: 3,
+    name: "Right button",
+    triggers: [...buttonTriggerList]
+  },
+  {
+    id: 4,
+    name: "Bottom button",
+    triggers: [...buttonTriggerList]
+  },
+  {
+    id: 5,
+    name: "Left button",
+    triggers: [...buttonTriggerList]
+  }
+];
+
+map = {};
+remoteControllerButtonList.forEach(item => map[item.id] = item);
+
+export const remoteControllerButtonMap = map;
+
+export const remoteControllerList = [
+  {
+    id: 1,
+    name: 'Bontrager TransmitR MicroRemote',
+    shortName: 'MicroRemote',
+    standaloneCenterButton: true,
+    buttons: [
+      remoteControllerButtonList[0]
+    ]
+  },
+  {
+    id: 2,
+    name: 'Bontrager TransmitR Remote',
+    standaloneCenterButton: false,
+    shortName: 'Remote',
+    buttons: [...remoteControllerButtonList]
+  }
+];
+
+map = {};
+remoteControllerList.forEach(item => map[item.id] = item);
+
+export const remoteControllerMap = map;
 
 const lightModes = [
   { id: 0, name: 'Off - 0' },
@@ -829,7 +948,7 @@ export const getBatteryOperator = (operator) => {
 };
 
 export const getBatteryValue = (value) => {
-  return 7 - value;
+  return value == null ? null : 7 - value;
 };
 
 export const arrayMove = (array, oldIndex, newIndex) => {
@@ -870,4 +989,8 @@ export const getAppType = () => {
 
 export const isDataField = () => {
   return getAppType() === 'datafield';
+}
+
+export const areRemoteControllersSupported = (device) => {
+  return isDataField() && device.highMemory && device.profileName;
 }

@@ -11,7 +11,8 @@ import LightConfiguration from './LightConfiguration';
 import ConfigurationResult from './ConfigurationResult';
 import ElementWithHelp from './ElementWithHelp';
 import IndividualLightNetwork from './IndividualLightNetwork';
-import { headlightList, taillightList, getDeviceLights } from '../constants';
+import RemoteControllers from './RemoteControllers';
+import { headlightList, taillightList, getDeviceLights, areRemoteControllersSupported } from '../constants';
 
 const Root = styled('div')(({ theme }) => ({
   [`& .MuiCardHeader-root`]: {
@@ -134,6 +135,9 @@ export default observer(({ configuration, device, deviceList }) => {
         lightIconColor={configuration.taillightIconColor}
         setLightIconColor={configuration.setTaillightIconColor}
       />
+      {
+        areRemoteControllersSupported(device) ? <RemoteControllers configuration={configuration} device={device} /> : null
+      }
       <ConfigurationResult
         configuration={configuration}
         deviceList={deviceList}
