@@ -838,6 +838,20 @@ export const taillightList = [
     }
   },
   {
+    id: 15,
+    name: 'Garmin Varia RCT716',
+    modes: garminVariaRtl511,
+    individualNetworkOnly: false,
+    lightModes: [0, 4096], // 4096
+    defaultLightPanel: {
+      shortName: 'Varia 716',
+      buttonGroups: [
+        [controlMode, garminVariaRtl511[0]],
+        [garminVariaRtl511[1]]
+      ]
+    }
+  },
+  {
     id: 13,
     name: 'Magene L508',
     modes: mageneL508,
