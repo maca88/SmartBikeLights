@@ -30,6 +30,9 @@
             <iq:product id="edgeexplore2"/>
             <iq:product id="enduro"/>
             <iq:product id="epix2"/>
+            <iq:product id="epix2pro42mm"/>
+            <iq:product id="epix2pro47mm"/>
+            <iq:product id="epix2pro51mm"/>
             <iq:product id="fenix5"/>
             <iq:product id="fenix5plus"/>
             <iq:product id="fenix5splus"/>
@@ -41,8 +44,11 @@
             <iq:product id="fenix6spro"/>
             <iq:product id="fenix6xpro"/>
             <iq:product id="fenix7"/>
+            <iq:product id="fenix7pro"/>
             <iq:product id="fenix7s"/>
+            <iq:product id="fenix7spro"/>
             <iq:product id="fenix7x"/>
+            <iq:product id="fenix7xpro"/>
             <iq:product id="fr245"/>
             <iq:product id="fr245m"/>
             <iq:product id="fr255"/>
