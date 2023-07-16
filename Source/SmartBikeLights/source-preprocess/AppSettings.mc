@@ -12,7 +12,9 @@ module AppSettings {
     const configurationNameValues = ["CN1", "CN2", "CN3"];
     const configurationValues = [1, 2, 3];
     const settingValues = ["IL", "AC", "CC"];
+// #if dataField
     const buttonNames = ["", "Center", "Top", "Right", "Bottom", "Left"];
+// #endif
 
     class BaseMenu extends /* #include UIMODULE */Menu2 {
         protected var viewRef;
@@ -53,12 +55,15 @@ module AppSettings {
             // Current configuration
             var configurationIndex = configurationValues.indexOf((Properties.getValue("CC")));
             Menu2.addItem(new /* #include UIMODULE */MenuItem(Rez.Strings.CC, (configurationIndex < 0 ? null : Properties.getValue(configurationNameValues[configurationIndex])), 2, null));
+// #if dataField
             // Remote controllers
             if (view.remoteControllers != null && view.remoteControllers.size() > 0) {
                 Menu2.addItem(new /* #include UIMODULE */MenuItem(Rez.Strings.RemoteControllers, null, 3, null));
             }
+// #endif
         }
 
+// #if dataField
         // This method will be called only for native Menu2
         // As the current configuration is not updated for Edge touchscreen devices until the menu is closed,
         // there is no point in supporting onShow for custom Menu2
@@ -72,6 +77,7 @@ module AppSettings {
                 Menu2.deleteItem(index);
             }
         }
+// #endif
 
         public function onSelect(index, menuItem) {
             var key = index < settingValues.size() ? settingValues[index] : null;
@@ -83,13 +89,20 @@ module AppSettings {
                 Application.getApp().onSettingsChanged();
 // #endif
             } else {
+// #if dataField
                 openSubMenu(index == 1 ? new ListMenu("Color", key, menuItem, colorValues, colorNames, null)
                     : index == 2 ? new ListMenu("Configuration", key, menuItem, configurationValues, configurationNames, configurationNameValues)
                     : new ControllersMenu(viewRef.get()));
+// #else
+                openSubMenu(index == 1
+                    ? new ListMenu("Color", key, menuItem, colorValues, colorNames, null)
+                    : new ListMenu("Configuration", key, menuItem, configurationValues, configurationNames, configurationNameValues));
+// #endif
             }
         }
     }
 
+// #if dataField
     class ControllersMenu extends BaseMenu {
 
         public function initialize(view) {
@@ -173,6 +186,7 @@ module AppSettings {
             }
         }
     }
+// #endif
 
     class ListMenu extends BaseMenu {
 
