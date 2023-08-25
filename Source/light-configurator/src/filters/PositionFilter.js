@@ -18,7 +18,12 @@ const Polygons = observer(({ polygons }) => {
   const handleDrawStart = e => {
     e.workingLayer.on('pm:vertexadded', e => {
       if (e.sourceTarget.getLatLngs().length >= 4) {
-        map.pm.Draw.Polygon._finishShape(e);
+        const polygon = map.pm.Draw.Polygon;
+        polygon._finishShape(e);
+        // Remove the last vertex if the polygon is not connected after adding the fourth vertex
+        if (polygon._enabled) {
+          polygon._removeLastVertex();
+        }
       }
     });
   };
