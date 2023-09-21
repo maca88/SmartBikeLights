@@ -103,6 +103,7 @@ The initial control mode will be determined based on the configuration from the 
 - Garmin Varia UT800
 - Giant Recon HL1800
 - Magene L508
+- Trek Commuter Pro RT
 - Cycliq Fly12 CE (supported only by using Individual Light Network)
 - Cycliq Fly6 CE (supported only by using Individual Light Network)
 - See.Sense ACE Front/Rear (supported only by using Individual Light Network)

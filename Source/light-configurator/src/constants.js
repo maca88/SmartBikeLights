@@ -381,6 +381,13 @@ const giantReconHl1800 = [
   { id: 8, name: 'Day Flash' }
 ];
 
+const trekCommuterProRtModes = [
+  { id: 0, name: 'Off' },
+  { id: 1, name: 'High' },
+  { id: 5, name: 'Low' },
+  { id: 63, name: 'Day Flash' }
+];
+
 export const controlMode = {id: -1, name: "Control mode"};
 export const currentConfiguration = {id: -2, name: "Current configuration"};
 
@@ -551,6 +558,22 @@ export const headlightList = [
         [seeSenseBeam[5]],
         [seeSenseBeam[6]],
         [seeSenseBeam[7]]
+      ]
+    }
+  },
+  {
+    id: 10,
+    name: 'Trek Commuter Pro RT',
+    modes: trekCommuterProRtModes,
+    individualNetworkOnly: false,
+    lightModes: [4587520, 196641], // 19703248369942561
+    defaultLightPanel: {
+      shortName: 'Pro RT',
+      buttonGroups: [
+        [controlMode, trekCommuterProRtModes[0]],
+        [trekCommuterProRtModes[1]],
+        [trekCommuterProRtModes[2]],
+        [trekCommuterProRtModes[3]]
       ]
     }
   },
