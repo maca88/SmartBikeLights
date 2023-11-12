@@ -839,6 +839,10 @@ class BikeLightsView extends  WatchUi.DataField  {
 
     private function applyTapBehavior(lightData, tapBehavior) {
         var light = lightData[0];
+        if (light == null) {
+            return false; // Light not connected
+        }
+
         var controlMode = lightData[4];
         var lightType = light.type;
         var filters = lightData[17];
