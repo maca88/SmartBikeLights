@@ -763,7 +763,7 @@ export default class Configuration {
     }
 
     let config = `${this.getNumberArray(lightModes)}:`;
-    if (serialNumber && !this.useIndividualNetwork) {
+    if (serialNumber != null && !this.useIndividualNetwork) {
       var long = bigint(serialNumber);
       config += `${long.shiftRight(31)},${long.and(0x7FFFFFFF)}`;
     }
