@@ -102,7 +102,7 @@ class BikeLightsView extends  WatchUi.DataField  {
     var taillightIconTapBehavior;
     var defaultLightIconTapBehavior = [[0 /* SMART */, 1 /* NETWORK */, 2 /* MANUAL */], null /* All light modes */];
 
-    // Pre-calculated positions
+    // Pre-calculated fields
     protected var _isFullScreen;
     protected var _fieldWidth;
     protected var _batteryWidth = 49;
@@ -110,6 +110,7 @@ class BikeLightsView extends  WatchUi.DataField  {
     protected var _lightY;
     protected var _titleY;
     protected var _offsetX;
+    private var _useLargeIcons;
 
     // Parsed filters
     protected var _globalFilters;
@@ -901,7 +902,8 @@ class BikeLightsView extends  WatchUi.DataField  {
         var deviceSettings = System.getDeviceSettings();
         _fieldWidth = width;
         _isFullScreen = width == deviceSettings.screenWidth && height == deviceSettings.screenHeight;
-        if (_initializedLights == 1  && !_isFullScreen ) {
+        _useLargeIcons = (_initializedLights == 1 || width == deviceSettings.screenWidth)  && !_isFullScreen ;
+        if (_useLargeIcons) {
             _lightsFont = WatchUi.loadResource(fonts[:lightsLargeFont]);
             _batteryFont = WatchUi.loadResource(fonts[:batteryLargeFont]);
             _controlModeFont = WatchUi.loadResource(fonts[:controlModeLargeFont]);
@@ -1209,7 +1211,7 @@ class BikeLightsView extends  WatchUi.DataField  {
             setTextColor(dc, iconColor);
         }
 
-        if (position == 2 && _batteryY != null) { // Use larger icons when only one light is paired
+        if (_useLargeIcons) { // Use larger icons when only one light is paired
             lightX -= 10; // Center by subtracting half of battery width
             dc.drawText(lightX + (direction * (68 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
             dc.drawText(lightX + (direction * 10), _lightY + 16, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);

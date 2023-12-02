@@ -86,7 +86,6 @@ class BikeLightsView extends  WatchUi.DataField  {
     protected var _lightY;
     protected var _titleY;
     protected var _offsetX;
-
     // Parsed filters
     protected var _globalFilters;
 

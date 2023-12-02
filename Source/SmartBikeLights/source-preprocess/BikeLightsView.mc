@@ -104,7 +104,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
     var defaultLightIconTapBehavior = [[0 /* SMART */, 1 /* NETWORK */, 2 /* MANUAL */], null /* All light modes */];
   // #endif
 
-    // Pre-calculated positions
+    // Pre-calculated fields
     protected var _isFullScreen;
     protected var _fieldWidth;
     protected var _batteryWidth = 49;
@@ -113,6 +113,9 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
     protected var _lightY;
     protected var _titleY;
     protected var _offsetX;
+// #if dataField && highMemory && mediumResolution
+    private var _useLargeIcons;
+// #endif
 
     // Parsed filters
     protected var _globalFilters;
@@ -913,7 +916,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         return new MultiBikeLight(currentLight, light);
     }
 
-    // #if dataField
+  // #if dataField
     private function applyTapBehavior(lightData, tapBehavior) {
         var light = lightData[0];
         if (light == null) {
@@ -972,10 +975,10 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
 // #if widget
     protected function preCalculate(dc, width, height) {
-// #if touchScreen
+  // #if touchScreen
         _fieldWidth = width;
         _isFullScreen = true;
-// #endif
+  // #endif
     }
 // #elif rectangle
     protected function preCalculate(dc, width, height) {
@@ -990,13 +993,16 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         _titleFont = settings[1];
         var titleTopPadding = settings[2];
         _offsetX = settings[3];
-  // #if touchScreen
+  // #if highMemory && mediumResolution
         var deviceSettings = System.getDeviceSettings();
+  // #endif
+  // #if touchScreen
         _fieldWidth = width;
         _isFullScreen = width == deviceSettings.screenWidth && height == deviceSettings.screenHeight;
   // #endif
   // #if highMemory && mediumResolution
-        if (_initializedLights == 1 /* #if touchScreen */ && !_isFullScreen /* #endif */) {
+        _useLargeIcons = (_initializedLights == 1 || width == deviceSettings.screenWidth) /* #if touchScreen */ && !_isFullScreen /* #endif */;
+        if (_useLargeIcons) {
             _lightsFont = WatchUi.loadResource(fonts[:lightsLargeFont]);
             _batteryFont = WatchUi.loadResource(fonts[:batteryLargeFont]);
             _controlModeFont = WatchUi.loadResource(fonts[:controlModeLargeFont]);
@@ -1049,7 +1055,9 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         var offsetDirection = ((1415136409 >> (flags * 2)) & 0x03) - 1;
         _offsetX = settings[3] * offsetDirection;
   // #if highMemory && mediumResolution
-        if (_initializedLights == 1 && !excludeBattery) {
+        var deviceSettings = System.getDeviceSettings();
+        _useLargeIcons = _initializedLights == 1 && !excludeBattery;
+        if (_useLargeIcons) {
             _lightsFont = WatchUi.loadResource(fonts[:lightsLargeFont]);
             _batteryFont = WatchUi.loadResource(fonts[:batteryLargeFont]);
             _controlModeFont = WatchUi.loadResource(fonts[:controlModeLargeFont]);
@@ -1414,7 +1422,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         dc.drawText(lightX + (direction * 10), _lightY + 16, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
   // #else
     // #if highMemory
-        if (position == 2 && _batteryY != null) { // Use larger icons when only one light is paired
+        if (_useLargeIcons) { // Use larger icons when only one light is paired
             lightX -= 10; // Center by subtracting half of battery width
             dc.drawText(lightX + (direction * (68 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
             dc.drawText(lightX + (direction * 10), _lightY + 16, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
