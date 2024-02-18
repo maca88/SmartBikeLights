@@ -1,7 +1,7 @@
 SplineFontDB: 3.2
-FontName: Battery16
-FullName: Battery16
-FamilyName: Battery16
+FontName: Battery16LowMemory
+FullName: Battery16LowMemory
+FamilyName: Battery16LowMemory
 Weight: Light
 Copyright: Copyright (c) 2024, maca88
 UComments: "2020-11-7: Created with FontForge (http://fontforge.org)"
@@ -22,7 +22,7 @@ OS2Version: 0
 OS2_WeightWidthSlopeOnly: 0
 OS2_UseTypoMetrics: 1
 CreationTime: 1604753893
-ModificationTime: 1708268576
+ModificationTime: 1708268610
 OS2TypoAscent: 0
 OS2TypoAOffset: 1
 OS2TypoDescent: 0
@@ -216,13 +216,23 @@ Flags: HW
 LayerCount: 2
 Fore
 SplineSet
-403 51 m 1
- 1363 627 l 1
- 1427 371 l 1
- 2259 563 l 1
- 1299 -13 l 1
- 1235 243 l 1
- 403 51 l 1
+544 499 m 1
+ 800 499 l 1
+ 800 627 l 1
+ 1184 627 l 1
+ 1184 371 l 1
+ 2080 371 l 1
+ 2080 243 l 1
+ 1184 243 l 1
+ 1184 -13 l 1
+ 800 -13 l 1
+ 800 115 l 1
+ 544 115 l 1
+ 544 243 l 1
+ 800 243 l 1
+ 800 371 l 1
+ 544 371 l 1
+ 544 499 l 1
 EndSplineSet
 Validated: 1
 EndChar

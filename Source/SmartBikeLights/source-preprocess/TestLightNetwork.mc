@@ -150,12 +150,12 @@ module TestNetwork {
                 return _batteryStatus;
             }
 
-            _batteryStatus.batteryStatus = (_batteryStatus.batteryStatus % 6) + 1;
+            _batteryStatus.batteryStatus = (_batteryStatus.batteryStatus % 7) + 1;
             if (_batteryStatus.batteryStatus == 1) {
                 hasChanges = true;
             }
 
-            return _batteryStatus.batteryStatus == 6 ? null /* Simulate a disconnect */ : _batteryStatus;
+            return _batteryStatus.batteryStatus == 7 ? null /* Simulate a disconnect */ : _batteryStatus;
         }
     }
 }

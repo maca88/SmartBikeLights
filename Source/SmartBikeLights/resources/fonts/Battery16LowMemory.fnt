@@ -1,0 +1,11 @@
+info face="Battery16LowMemory" size=16 bold=0 italic=0 smooth=0 spacing=0,0
+common lineHeight=17 base=13 scaleW=64 scaleH=64 pages=1
+page id=0 file="Battery16LowMemory.png"
+chars count=7
+char id=53 x=1 y=1 width=5 height=10 xoffset=4 yoffset=3 xadvance=45 page=0
+char id=52 x=7 y=1 width=12 height=10 xoffset=4 yoffset=3 xadvance=45 page=0
+char id=51 x=20 y=1 width=19 height=10 xoffset=4 yoffset=3 xadvance=45 page=0
+char id=54 x=1 y=12 width=24 height=10 xoffset=8 yoffset=3 xadvance=45 page=0
+char id=50 x=26 y=12 width=26 height=10 xoffset=4 yoffset=3 xadvance=45 page=0
+char id=49 x=1 y=23 width=33 height=10 xoffset=4 yoffset=3 xadvance=45 page=0
+char id=66 x=1 y=34 width=45 height=16 xoffset=0 yoffset=0 xadvance=45 page=0

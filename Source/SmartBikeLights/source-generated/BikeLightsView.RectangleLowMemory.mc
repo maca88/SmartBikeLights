@@ -419,7 +419,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         _batteryFont = null;
         _controlModeFont = null;
         var fonts = Rez.Fonts;
-        var padding = height - 55 < 0 ? 0 : 3;
+        var padding = height - 55 < 0 ? 1 : 3;
         var settings = WatchUi.loadResource(Rez.JsonData.Settings);
         _separatorWidth = settings[0];
         _titleFont = settings[1];
@@ -428,7 +428,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         _lightsFont = WatchUi.loadResource(fonts[:lightsFont]);
         _batteryFont = WatchUi.loadResource(fonts[:batteryFont]);
         _controlModeFont = WatchUi.loadResource(fonts[:controlModeFont]);
-        _batteryY = height - 19 - padding;
+        _batteryY = height - 17 - padding;
         _lightY = _batteryY - padding - 32 /* Lights font size */;
         _titleY = (_lightY - dc.getFontHeight(_titleFont) - titleTopPadding) >= 0 ? titleTopPadding : null;
     }
@@ -662,12 +662,13 @@ class BikeLightsView extends  WatchUi.DataField  {
 
         // Do not draw the indicator in case the light is not connected anymore or an invalid status is given
         // The only way to detect whether the light is still connected is to check whether the its battery status is not null
-        if (batteryStatus > 5) {
+        if (batteryStatus > 6) {
             return;
         }
 
         // Draw the battery indicator
-        var color = batteryStatus == 5 /* BATT_STATUS_CRITICAL */ ? 0xFF0000 /* COLOR_RED */
+        var color = batteryStatus == 6 /* BATT_STATUS_CHARGE */ ? fgColor
+            : batteryStatus == 5 /* BATT_STATUS_CRITICAL */ ? 0xFF0000 /* COLOR_RED */
             : batteryStatus > 2 /* BATT_STATUS_GOOD */ ? 0xFF5500 /* COLOR_ORANGE */
             : 0x00AA00; /* COLOR_DK_GREEN */
         setTextColor(dc, color);

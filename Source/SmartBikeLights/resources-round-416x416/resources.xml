@@ -1,5 +1,5 @@
 <resources>
     <font id="lightsFont" filename="../resources/fonts/Lights48.fnt" antialias="true" />
-    <font id="batteryFont" filename="../resources/fonts/Battery24.fnt" antialias="false" />
+    <font id="batteryFont" filename="../resources/fonts/Battery24.fnt" antialias="true" />
     <font id="controlModeFont" filename="../resources/fonts/ControlMode18.fnt" antialias="true" />
 </resources>

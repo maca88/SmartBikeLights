@@ -22,7 +22,7 @@ OS2Version: 0
 OS2_WeightWidthSlopeOnly: 0
 OS2_UseTypoMetrics: 1
 CreationTime: 1647656788
-ModificationTime: 1647658698
+ModificationTime: 1708269080
 OS2TypoAscent: 0
 OS2TypoAOffset: 1
 OS2TypoDescent: 0
@@ -36,6 +36,7 @@ HheadAscent: 0
 HheadAOffset: 1
 HheadDescent: 0
 HheadDOffset: 1
+OS2Vendor: 'PfEd'
 MarkAttachClasses: 1
 DEI: 91125
 Encoding: ISO8859-1
@@ -47,7 +48,7 @@ FitToEm: 0
 WinInfo: 0 26 11
 BeginPrivate: 0
 EndPrivate
-BeginChars: 256 6
+BeginChars: 256 7
 
 StartChar: B
 Encoding: 66 66 0
@@ -75,6 +76,7 @@ SplineSet
  2702 520 2631 520 2560 520 c 1
  2560 591 2560 663 2560 734 c 1
 EndSplineSet
+Validated: 1
 EndChar
 
 StartChar: one
@@ -110,6 +112,7 @@ SplineSet
  555 -77 l 1
  213 -77 l 1
 EndSplineSet
+Validated: 1
 EndChar
 
 StartChar: two
@@ -140,6 +143,7 @@ SplineSet
  555 -77 l 1
  213 -77 l 1
 EndSplineSet
+Validated: 1
 EndChar
 
 StartChar: three
@@ -165,6 +169,7 @@ SplineSet
  555 -77 l 1
  213 -77 l 1
 EndSplineSet
+Validated: 1
 EndChar
 
 StartChar: four
@@ -185,6 +190,7 @@ SplineSet
  555 -77 l 1
  213 -77 l 1
 EndSplineSet
+Validated: 1
 EndChar
 
 StartChar: five
@@ -200,6 +206,25 @@ SplineSet
  555 -77 l 1
  213 -77 l 1
 EndSplineSet
+Validated: 1
+EndChar
+
+StartChar: six
+Encoding: 54 54 6
+Width: 2879
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+426 51 m 1
+ 1364 648 l 1
+ 1407 350 l 1
+ 2218 563 l 1
+ 1279 -34 l 1
+ 1236 264 l 1
+ 426 51 l 1
+EndSplineSet
+Validated: 1
 EndChar
 EndChars
 EndSplineFont

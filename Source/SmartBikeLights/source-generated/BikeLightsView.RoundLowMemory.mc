@@ -673,12 +673,13 @@ class BikeLightsView extends  WatchUi.DataField  {
 
         // Do not draw the indicator in case the light is not connected anymore or an invalid status is given
         // The only way to detect whether the light is still connected is to check whether the its battery status is not null
-        if (batteryStatus > 5) {
+        if (batteryStatus > 6) {
             return;
         }
 
         // Draw the battery indicator
-        var color = batteryStatus == 5 /* BATT_STATUS_CRITICAL */ ? 0xFF0000 /* COLOR_RED */
+        var color = batteryStatus == 6 /* BATT_STATUS_CHARGE */ ? fgColor
+            : batteryStatus == 5 /* BATT_STATUS_CRITICAL */ ? 0xFF0000 /* COLOR_RED */
             : batteryStatus > 2 /* BATT_STATUS_GOOD */ ? 0xFF5500 /* COLOR_ORANGE */
             : 0x00AA00; /* COLOR_DK_GREEN */
         setTextColor(dc, color);
