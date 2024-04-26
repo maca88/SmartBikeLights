@@ -794,7 +794,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         var lightData = getLightData(_initializedLights == 1 ? null
           : (_fieldWidth / 2) > location[0] ? (_invertLights ? 2 : 0)
           : (_invertLights ? 0 : 2));
-        if (getLightBatteryStatus(lightData) > 6 /* Charging */) {
+        if (getLightBatteryStatus(lightData) > 7 /* Invalid */) {
             return false; // Battery is disconnected
         }
 
@@ -1113,7 +1113,7 @@ class BikeLightsView extends  WatchUi.DataField  {
             : _lightNetwork.getBatteryStatus(light.identifier);
         if (status == null) { /* Disconnected */
             updateLightTextAndMode(lightData, -1);
-            return 7; /* Disconnected */
+            return 8; /* Disconnected */
         }
 
         return status.batteryStatus;
@@ -1226,15 +1226,15 @@ class BikeLightsView extends  WatchUi.DataField  {
     }
 
     protected function drawBattery(dc, fgColor, x, y, batteryStatus) {
-        // Draw the battery shell
-        setTextColor(dc, fgColor);
-        dc.drawText(x, y, _batteryFont, "B", 1 /* TEXT_JUSTIFY_CENTER */);
-
         // Do not draw the indicator in case the light is not connected anymore or an invalid status is given
         // The only way to detect whether the light is still connected is to check whether the its battery status is not null
         if (batteryStatus > 6) {
             return;
         }
+
+        // Draw the battery shell
+        setTextColor(dc, fgColor);
+        dc.drawText(x, y, _batteryFont, "B", 1 /* TEXT_JUSTIFY_CENTER */);
 
         // Draw the battery indicator
         var color = batteryStatus == 6 /* BATT_STATUS_CHARGE */ ? fgColor
@@ -1576,7 +1576,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         var margin = 2;
         var buttonPadding = margin * 2;
         var batteryStatus = getLightBatteryStatus(lightData);
-        if (batteryStatus > 6 /* Charging */) {
+        if (batteryStatus > 7 /* Varia eRTL615 - Invalid */) {
             return;
         }
 

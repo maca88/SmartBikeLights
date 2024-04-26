@@ -97,6 +97,7 @@ The initial control mode will be determined based on the configuration from the 
 - Garmin Varia RTL511
 - Garmin Varia RTL515
 - Garmin Varia RTL516
+- Garmin Varia eRTL615
 - Garmin Varia RCT715
 - Garmin Varia RCT716
 - Garmin Varia HL500
