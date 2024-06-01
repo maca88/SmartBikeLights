@@ -677,6 +677,14 @@ const brytonGardia300 = [
   { id: 7, name: 'Day Flash' }
 ];
 
+const trekCarBack = [
+  { id: 0, name: 'Off' },
+  { id: 1, name: 'Day Steady' },
+  { id: 5, name: 'Night Steady' },
+  { id: 8, name: 'Day Flash' },
+  { id: 63, name: 'Night Flash' }
+];
+
 export const taillightList = [
   {
     id: 1,
@@ -946,6 +954,23 @@ export const taillightList = [
         [seeSenseIcon2[5]],
         [seeSenseIcon2[6]],
         [seeSenseIcon2[7]]
+      ]
+    }
+  },
+  {
+    id: 17,
+    name: 'Trek CarBack',
+    modes: trekCarBack,
+    individualNetworkOnly: false,
+    lightModes: [6291461, 1073938433], // 27021620312997889
+    defaultLightPanel: {
+      shortName: 'CarBack',
+      buttonGroups: [
+        [controlMode, trekCarBack[0]],
+        [trekCarBack[1]],
+        [trekCarBack[2]],
+        [trekCarBack[3]],
+        [trekCarBack[4]]
       ]
     }
   },
