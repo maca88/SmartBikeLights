@@ -1,0 +1,7 @@
+info face="ControlMode" size=56 bold=0 italic=0 charset="" unicode=1 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=1,1 outline=0
+common lineHeight=32 base=32 scaleW=128 scaleH=64 pages=1 packed=0 alphaChnl=1 redChnl=0 greenChnl=0 blueChnl=0
+page id=0 file="ControlMode54.png"
+chars count=3
+char id=77   x=23    y=0     width=21    height=30    xoffset=0     yoffset=0    xadvance=20    page=0  chnl=15
+char id=78   x=45    y=0     width=20    height=30    xoffset=0     yoffset=0    xadvance=20    page=0  chnl=15
+char id=83   x=0     y=0     width=22    height=32    xoffset=0     yoffset=0    xadvance=22    page=0  chnl=15

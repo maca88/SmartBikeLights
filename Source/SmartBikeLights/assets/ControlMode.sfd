@@ -1,9 +1,9 @@
 SplineFontDB: 3.2
-FontName: RobotoMono-SemiBold
-FullName: Roboto Mono SemiBold
-FamilyName: Roboto Mono SemiBold
-Weight: Demi
-Copyright: Copyright 2015 The Roboto Mono Project Authors (https://github.com/googlefonts/robotomono)
+FontName: ControlMode
+FullName: ControlMode
+FamilyName: ControlMode
+Weight: Bold
+Copyright: Copyright 2015 The Roboto Mono Project Authors (https://github.com/googlefonts/robotomono) - Roboto Mono SemiBold
 Version: 3.000
 ItalicAngle: 0
 UnderlinePosition: -200
@@ -15,14 +15,14 @@ sfntRevision: 0x00030000
 LayerCount: 2
 Layer: 0 1 "Back" 1
 Layer: 1 1 "Fore" 0
-XUID: [1021 821 541848759 21274]
+XUID: [1021 821 541848759 18359]
 StyleMap: 0x0040
 FSType: 0
 OS2Version: 4
 OS2_WeightWidthSlopeOnly: 0
 OS2_UseTypoMetrics: 0
 CreationTime: 1221222574
-ModificationTime: 1605036799
+ModificationTime: 1720266395
 PfmFamily: 81
 TTFWeight: 600
 TTFWidth: 5
@@ -58,6 +58,7 @@ OS2Vendor: 'GOOG'
 OS2CodePages: 2000019f.4f010000
 OS2UnicodeRanges: e00002ff.1000205b.00000020.00000000
 Lookup: 1 0 0 "'smcp' Lowercase to Small Capitals lookup 0" { "'smcp' Lowercase to Small Capitals lookup 0 subtable"  } ['smcp' ('DFLT' <'dflt' > 'cyrl' <'dflt' > 'grek' <'dflt' > 'latn' <'dflt' > ) ]
+MarkAttachClasses: 1
 DEI: 91125
 TtTable: prep
 PUSHW_1
@@ -85,7 +86,7 @@ ShortTable: maxp 16
   3
   1
 EndShort
-LangName: 1033 "" "" "Regular" "3.000;GOOG;RobotoMono-SemiBold" "" "Version 3.000" "" "Roboto Mono is a trademark of Google." "" "Google" "" "Google.com" "Christian Robertson" "Licensed under the Apache License, Version 2.0" "http://www.apache.org/licenses/LICENSE-2.0" "" "Roboto Mono" "SemiBold"
+LangName: 1033 "" "" "Regular" "" "" "Version 3.000" "" "Roboto Mono is a trademark of Google." "" "Google" "" "Google.com" "Christian Robertson" "Licensed under the Apache License, Version 2.0" "http://www.apache.org/licenses/LICENSE-2.0" "" "Roboto Mono" "SemiBold"
 GaspTable: 1 65535 15 1
 Encoding: UnicodeBmp
 UnicodeInterp: none
@@ -93,7 +94,9 @@ NameList: AGL For New Fonts
 DisplaySize: -48
 AntiAlias: 1
 FitToEm: 0
-WinInfo: 0 38 16
+WinInfo: 38 38 16
+BeginPrivate: 0
+EndPrivate
 BeginChars: 65663 3
 
 StartChar: M

@@ -107,13 +107,13 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
     // Pre-calculated fields
     protected var _isFullScreen;
     protected var _fieldWidth;
-    protected var _batteryWidth = 49;
+    protected var _batteryWidth = /* #include H_BATTERY_WIDTH */;
 // #endif
     protected var _batteryY;
     protected var _lightY;
     protected var _titleY;
     protected var _offsetX;
-// #if dataField && highMemory && mediumResolution
+// #if dataField && highMemory && (mediumResolution || !round)
     private var _useLargeIcons;
 // #endif
 
@@ -993,20 +993,20 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         _titleFont = settings[1];
         var titleTopPadding = settings[2];
         _offsetX = settings[3];
-  // #if highMemory && mediumResolution
+  // #if highMemory
         var deviceSettings = System.getDeviceSettings();
   // #endif
   // #if touchScreen
         _fieldWidth = width;
         _isFullScreen = width == deviceSettings.screenWidth && height == deviceSettings.screenHeight;
   // #endif
-  // #if highMemory && mediumResolution
+  // #if highMemory
         _useLargeIcons = (_initializedLights == 1 || width == deviceSettings.screenWidth) /* #if touchScreen */ && !_isFullScreen /* #endif */;
         if (_useLargeIcons) {
             _lightsFont = WatchUi.loadResource(fonts[:lightsLargeFont]);
             _batteryFont = WatchUi.loadResource(fonts[:batteryLargeFont]);
             _controlModeFont = WatchUi.loadResource(fonts[:controlModeLargeFont]);
-            _lightY = height - 50 - padding;
+            _lightY = height - /* #include LIGHT_L_HEIGHT */ - padding;
             _batteryY = _lightY;
             _titleY = (_lightY - dc.getFontHeight(_titleFont) - titleTopPadding) >= 0 ? titleTopPadding : null;
             return;
@@ -1015,8 +1015,8 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         _lightsFont = WatchUi.loadResource(fonts[:lightsFont]);
         _batteryFont = WatchUi.loadResource(fonts[:batteryFont]);
         _controlModeFont = WatchUi.loadResource(fonts[:controlModeFont]);
-        _batteryY = height - 17 - padding;
-        _lightY = _batteryY - padding - 32 /* Lights font size */;
+        _batteryY = height - /* #include H_BATTERY_HEIGHT */ - padding;
+        _lightY = _batteryY - padding - /* #include LIGHT_HEIGHT */;
         _titleY = (_lightY - dc.getFontHeight(_titleFont) - titleTopPadding) >= 0 ? titleTopPadding : null;
     }
 // #elif round
@@ -1397,18 +1397,18 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         var lightX = Math.round(width * 0.25f * position);
   // #else
         var lightX = Math.round(width * 0.25f * position) + _offsetX;
-        lightX += _initializedLights == 2 ? (direction * ((width / 4) - /* #if highResolution */36/* #else */25/* #endif */)) : 0;
+        lightX += _initializedLights == 2 ? (direction * ((width / 4) - /* #include LIGHT_OFFSET_X */)) : 0;
   // #endif
         var batteryStatus = getLightBatteryStatus(lightData);
         var title = lightData[5];
-        var lightXOffset = justification == 0 ? -4 : 2;
+        var lightXOffset = justification == 0 ? -/* #include H_LIGHT_FONT_OFFSET_X */ : /* #include T_LIGHT_FONT_OFFSET_X */;
         dc.setColor(fgColor, bgColor);
 
         if (title != null && _titleY != null) {
   // #if rectangle
             dc.drawText(lightX, _titleY, _titleFont, title, 1 /* TEXT_JUSTIFY_CENTER */);
   // #else
-            dc.drawText(lightX + (direction * /* #if highResolution */32/* #else */22/* #endif */), _titleY, _titleFont, title, justification);
+            dc.drawText(lightX + (direction * /* #include TITLE_OFFSET_X */), _titleY, _titleFont, title, justification);
   // #endif
         }
 
@@ -1417,22 +1417,18 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
             setTextColor(dc, iconColor);
         }
 
-  // #if highResolution
-        dc.drawText(lightX + (direction * (68 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
-        dc.drawText(lightX + (direction * 10), _lightY + 16, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
-  // #else
-    // #if highMemory
+    // #if highMemory && (mediumResolution || !round)
         if (_useLargeIcons) { // Use larger icons when only one light is paired
-            lightX -= 10; // Center by subtracting half of battery width
-            dc.drawText(lightX + (direction * (68 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
-            dc.drawText(lightX + (direction * 10), _lightY + 16, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
-            drawBattery(dc, fgColor, lightX + 60, _batteryY, batteryStatus);
+            lightXOffset = justification == 0 ? -/* #include H_LIGHT_L_FONT_OFFSET_X */ : /* #include T_LIGHT_L_FONT_OFFSET_X */;
+            lightX -= (/* #include V_BATTERY_L_WIDTH */ / 2); // Center by subtracting half of battery width
+            dc.drawText(lightX + (direction * (/* #include LIGHT_L_WIDTH */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
+            dc.drawText(lightX + (direction * /* #include CTRL_MODE_L_OFFSET_X */), _lightY + /* #include CTRL_MODE_L_OFFSET_Y */, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
+            drawBattery(dc, fgColor, lightX + /* #include LIGHT_L_V_BATTERY_OFFSET_X */, _batteryY, batteryStatus);
             return;
         }
     // #endif
-        dc.drawText(lightX + (direction * (49 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
-        dc.drawText(lightX + (direction * 8), _lightY + 11, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
-  // #endif
+        dc.drawText(lightX + (direction * (/* #include H_BATTERY_WIDTH */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
+        dc.drawText(lightX + (direction * /* #include CTRL_MODE_OFFSET_X */), _lightY + /* #include CTRL_MODE_OFFSET_Y */, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
         if (_batteryY != null) {
             drawBattery(dc, fgColor, lightX, _batteryY, batteryStatus);
         }
@@ -1701,7 +1697,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
     private function initializeLightPanel(dc, lightData, position, width, height) {
         var x = position < 3 ? 0 : (width / 2); // Left x
         var y = 0;
-        var margin = 2;
+        var margin = /* #include LIGHT_PANEL_MARGIN */;
         var buttonGroupWidth = (position != 2 ? width / 2 : width);
         var light = lightData[0];
         var capableModes = getLightModes(light);
@@ -1718,7 +1714,8 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         // <TitlePart> := [(:Title:, :TitleY:)+]
         var panelData = new [8 + (8 * panelSettings[0]) + totalButtonGroups];
         panelData[0] = totalButtonGroups;
-        var buttonHeight = (height - 20 /* Battery */).toFloat() / totalButtonGroups;
+        var footerHeight = /* #include LIGHT_PANEL_FOOTER_HEIGHT */;
+        var buttonHeight = (height - footerHeight).toFloat() / totalButtonGroups;
         var fontResult = [0];
         var buttonPadding = margin * 2;
         var textPadding = margin * 4;
@@ -1783,9 +1780,9 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         panelData[2] = panelSettings[3] == 0 ? _activityColor : panelSettings[3]; // Button color
         panelData[3] = panelSettings[4]; // Button text color
         panelData[4] = x - (_batteryWidth / 2) - (margin / 2); // Light name x
-        panelData[5] = y + ((20 - lightNameHeight - lightNameTopPadding) / 2); // Light name y
+        panelData[5] = y + ((footerHeight - lightNameHeight - lightNameTopPadding) / 2); // Light name y
         panelData[6] = x + (lightNameWidth / 2) + (margin / 2); // Battery x
-        panelData[7] = y - 1; // Battery y
+        panelData[7] = y - /* #include LIGHT_PANEL_BATTERY_OFFSET_Y */; // Battery y
 
         if (light.type == 0 /* LIGHT_TYPE_HEADLIGHT */) {
             _headlightPanel = panelData;

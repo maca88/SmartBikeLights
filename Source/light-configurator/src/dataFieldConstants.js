@@ -14,6 +14,7 @@ export const deviceList = [
   { id: 'B3095', name: 'Edge 1030 / Bontrager', highMemory: true, bikeRadar: true, touchScreen: true, settings: false, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 },
   { id: 'B3570', name: 'Edge 1030 Plus', highMemory: true, bikeRadar: true, touchScreen: true, settings: false, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 },
   { id: 'B3843', name: 'Edge 1040 / 1040 Solar', highMemory: true, bikeRadar: true, touchScreen: true, settings: false, profileName: true, barometer: true, solar: true, bitsPerPixel: 16 },
+  { id: 'B4440', name: 'Edge 1050', highMemory: true, bikeRadar: true, touchScreen: true, settings: false, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 },
   { id: 'B2909', name: 'Edge 130', highMemory: false, bikeRadar: true, touchScreen: false, settings: false, profileName: false, barometer: true, solar: false, bitsPerPixel: 1 },
   { id: 'B3558', name: 'Edge 130 Plus', highMemory: false, bikeRadar: true, touchScreen: false, settings: false, profileName: false, barometer: true, solar: false, bitsPerPixel: 1 },
   { id: 'B2067', name: 'Edge 520', highMemory: false, bikeRadar: false, touchScreen: false, settings: false, profileName: false, barometer: true, solar: false, bitsPerPixel: 16 },

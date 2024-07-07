@@ -1,0 +1,221 @@
+SplineFontDB: 3.2
+FontName: BatteryV82
+FullName: BatteryV82
+FamilyName: BatteryV82
+Weight: Regular
+Copyright: Copyright (c) 2024, Maca
+UComments: "2024-7-6: Created with FontForge (http://fontforge.org)"
+Version: 001.000
+ItalicAngle: 0
+UnderlinePosition: -102.4
+UnderlineWidth: 51.2
+Ascent: 819
+Descent: 205
+InvalidEm: 0
+LayerCount: 2
+Layer: 0 0 "Back" 1
+Layer: 1 0 "Fore" 0
+XUID: [1021 213 -1312993357 5304]
+OS2Version: 0
+OS2_WeightWidthSlopeOnly: 0
+OS2_UseTypoMetrics: 1
+CreationTime: 1720262321
+ModificationTime: 1720262676
+OS2TypoAscent: 0
+OS2TypoAOffset: 1
+OS2TypoDescent: 0
+OS2TypoDOffset: 1
+OS2TypoLinegap: 0
+OS2WinAscent: 0
+OS2WinAOffset: 1
+OS2WinDescent: 0
+OS2WinDOffset: 1
+HheadAscent: 0
+HheadAOffset: 1
+HheadDescent: 0
+HheadDOffset: 1
+OS2Vendor: 'PfEd'
+MarkAttachClasses: 1
+DEI: 91125
+Encoding: ISO8859-1
+UnicodeInterp: none
+NameList: AGL For New Fonts
+DisplaySize: -48
+AntiAlias: 1
+FitToEm: 0
+WinInfo: 0 26 11
+BeginPrivate: 0
+EndPrivate
+BeginChars: 256 7
+
+StartChar: one
+Encoding: 49 49 0
+Width: 1024
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+50 -142 m 1
+ 50 -5 l 1
+ 349 -5 l 1
+ 349 -142 l 1
+ 50 -142 l 1
+50 33 m 1
+ 50 170 l 1
+ 349 170 l 1
+ 349 33 l 1
+ 50 33 l 1
+50 207 m 1
+ 50 345 l 1
+ 349 345 l 1
+ 349 207 l 1
+ 50 207 l 1
+50 382 m 1
+ 50 519 l 1
+ 349 519 l 1
+ 349 382 l 1
+ 50 382 l 1
+50 557 m 1
+ 50 694 l 1
+ 349 694 l 1
+ 349 557 l 1
+ 50 557 l 1
+EndSplineSet
+EndChar
+
+StartChar: two
+Encoding: 50 50 1
+Width: 1024
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+50 -142 m 1
+ 50 -5 l 1
+ 349 -5 l 1
+ 349 -142 l 1
+ 50 -142 l 1
+50 33 m 1
+ 50 170 l 1
+ 349 170 l 1
+ 349 33 l 1
+ 50 33 l 1
+50 207 m 1
+ 50 345 l 1
+ 349 345 l 1
+ 349 207 l 1
+ 50 207 l 1
+50 382 m 1
+ 50 519 l 1
+ 349 519 l 1
+ 349 382 l 1
+ 50 382 l 1
+EndSplineSet
+EndChar
+
+StartChar: three
+Encoding: 51 51 2
+Width: 1024
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+50 -142 m 1
+ 50 -5 l 1
+ 349 -5 l 1
+ 349 -142 l 1
+ 50 -142 l 1
+50 33 m 1
+ 50 170 l 1
+ 349 170 l 1
+ 349 33 l 1
+ 50 33 l 1
+50 207 m 1
+ 50 345 l 1
+ 349 345 l 1
+ 349 207 l 1
+ 50 207 l 1
+EndSplineSet
+EndChar
+
+StartChar: four
+Encoding: 52 52 3
+Width: 1024
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+50 -142 m 1
+ 50 -5 l 1
+ 349 -5 l 1
+ 349 -142 l 1
+ 50 -142 l 1
+50 33 m 1
+ 50 170 l 1
+ 349 170 l 1
+ 349 33 l 1
+ 50 33 l 1
+EndSplineSet
+EndChar
+
+StartChar: five
+Encoding: 53 53 4
+Width: 1024
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+50 -142 m 1
+ 50 -5 l 1
+ 349 -5 l 1
+ 349 -142 l 1
+ 50 -142 l 1
+EndSplineSet
+EndChar
+
+StartChar: six
+Encoding: 54 54 5
+Width: 1024
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+274 620 m 1
+ 212 319 l 1
+ 337 319 l 1
+ 113 -55 l 1
+ 187 245 l 1
+ 62 245 l 1
+ 274 620 l 1
+EndSplineSet
+EndChar
+
+StartChar: B
+Encoding: 66 66 6
+Width: 1024
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+0 -205 m 1
+ 0 757 l 1
+ 34 757 66 757 100 757 c 1
+ 100 777 100 799 100 819 c 1
+ 300 819 l 1
+ 300 799 300 777 300 757 c 1
+ 334 757 365 757 399 757 c 1
+ 399 -205 l 1
+ 0 -205 l 1
+375 -180 m 1
+ 375 732 l 1
+ 341 732 308 732 274 732 c 1
+ 274 752 274 775 274 795 c 1
+ 125 795 l 1
+ 125 775 125 752 125 732 c 1
+ 91 732 59 732 25 732 c 1
+ 25 -180 l 1
+ 375 -180 l 1
+EndSplineSet
+EndChar
+EndChars
+EndSplineFont

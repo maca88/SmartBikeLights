@@ -916,7 +916,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         _batteryFont = WatchUi.loadResource(fonts[:batteryFont]);
         _controlModeFont = WatchUi.loadResource(fonts[:controlModeFont]);
         _batteryY = height - 17 - padding;
-        _lightY = _batteryY - padding - 32 /* Lights font size */;
+        _lightY = _batteryY - padding - 32;
         _titleY = (_lightY - dc.getFontHeight(_titleFont) - titleTopPadding) >= 0 ? titleTopPadding : null;
     }
     protected function initializeLights(newNetworkMode) {
@@ -1212,13 +1212,14 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
 
         if (_useLargeIcons) { // Use larger icons when only one light is paired
-            lightX -= 10; // Center by subtracting half of battery width
-            dc.drawText(lightX + (direction * (68 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
-            dc.drawText(lightX + (direction * 10), _lightY + 16, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
+            lightXOffset = justification == 0 ? -4 : 4;
+            lightX -= (20 / 2); // Center by subtracting half of battery width
+            dc.drawText(lightX + (direction * (68 / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
+            dc.drawText(lightX + (direction * 10), _lightY + 14, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
             drawBattery(dc, fgColor, lightX + 60, _batteryY, batteryStatus);
             return;
         }
-        dc.drawText(lightX + (direction * (49 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
+        dc.drawText(lightX + (direction * (49 / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
         dc.drawText(lightX + (direction * 8), _lightY + 11, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
         if (_batteryY != null) {
             drawBattery(dc, fgColor, lightX, _batteryY, batteryStatus);
@@ -1493,7 +1494,8 @@ class BikeLightsView extends  WatchUi.DataField  {
         // <TitlePart> := [(:Title:, :TitleY:)+]
         var panelData = new [8 + (8 * panelSettings[0]) + totalButtonGroups];
         panelData[0] = totalButtonGroups;
-        var buttonHeight = (height - 20 /* Battery */).toFloat() / totalButtonGroups;
+        var footerHeight = 20;
+        var buttonHeight = (height - footerHeight).toFloat() / totalButtonGroups;
         var fontResult = [0];
         var buttonPadding = margin * 2;
         var textPadding = margin * 4;
@@ -1558,7 +1560,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         panelData[2] = panelSettings[3] == 0 ? _activityColor : panelSettings[3]; // Button color
         panelData[3] = panelSettings[4]; // Button text color
         panelData[4] = x - (_batteryWidth / 2) - (margin / 2); // Light name x
-        panelData[5] = y + ((20 - lightNameHeight - lightNameTopPadding) / 2); // Light name y
+        panelData[5] = y + ((footerHeight - lightNameHeight - lightNameTopPadding) / 2); // Light name y
         panelData[6] = x + (lightNameWidth / 2) + (margin / 2); // Battery x
         panelData[7] = y - 1; // Battery y
 

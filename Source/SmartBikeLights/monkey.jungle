@@ -16,6 +16,7 @@ rectangleLowMemory = $(lowMemory);round;monochromeScreen
 rectangleMonochromeLowMemory = $(lowMemory);round;colorScreen
 rectangleNoSettings = $(excludeBase);touchScreen;lowMemory;settings;lightButtons;round;monochromeScreen;highResolution
 rectangleNonTouchScreen = $(excludeBase);touchScreen;lowMemory;noLightButtons;round;monochromeScreen;highResolution
+rectangleHighResolution = $(excludeBase);nonTouchScreen;lowMemory;noLightButtons;round;settings;monochromeScreen;mediumResolution
 
 # maps default
 rectangle.excludeAnnotations = $(excludeBase);nonTouchScreen;lowMemory;noLightButtons;round;settings;monochromeScreen;highResolution
@@ -70,25 +71,19 @@ edge540.resourcePath = $(edge540.resourcePath);resources-highmemory
 
 # Rectangle touch screen devices
 edge1030.resourcePath = $(edge1030.resourcePath);resources-highmemory;resources-touchscreen
-edge1030.sourcePath = $(base.sourcePath);source-touchscreen
 edge1030bontrager.resourcePath = $(edge1030bontrager.resourcePath);resources-highmemory;resources-touchscreen
-edge1030bontrager.sourcePath = $(base.sourcePath);source-touchscreen
 edge1030plus.resourcePath = $(edge1030plus.resourcePath);resources-highmemory;resources-touchscreen
-edge1030plus.sourcePath = $(base.sourcePath);source-touchscreen
 edge1040.resourcePath = $(edge1040.resourcePath);resources-highmemory;resources-touchscreen
-edge1040.sourcePath = $(base.sourcePath);source-touchscreen
 edge820.resourcePath = $(edge820.resourcePath);resources-highmemory;resources-touchscreen
-edge820.sourcePath = $(base.sourcePath);source-touchscreen
 edge830.resourcePath = $(edge830.resourcePath);resources-highmemory;resources-touchscreen
-edge830.sourcePath = $(base.sourcePath);source-touchscreen
 edge840.resourcePath = $(edge840.resourcePath);resources-highmemory;resources-touchscreen
-edge840.sourcePath = $(base.sourcePath);source-touchscreen
 edge_1000.resourcePath = $(edge_1000.resourcePath);resources-highmemory;resources-touchscreen
-edge_1000.sourcePath = $(base.sourcePath);source-touchscreen
 edgeexplore.resourcePath = $(edgeexplore.resourcePath);resources-highmemory;resources-touchscreen
-edgeexplore.sourcePath = $(base.sourcePath);source-touchscreen
 edgeexplore2.resourcePath = $(edgeexplore2.resourcePath);resources-highmemory;resources-touchscreen
-edgeexplore2.sourcePath = $(base.sourcePath);source-touchscreen
+
+# Rectangle touch screen devices with high resolution
+edge1050.resourcePath = resources-highmemory;$(edge1050.resourcePath)
+edge1050.excludeAnnotations = $(rectangleHighResolution)
 
 # Round non touch screen devices with more than 32KB memory but do not have CIQ 3.2
 d2charlie.excludeAnnotations = $(roundNoSettings)

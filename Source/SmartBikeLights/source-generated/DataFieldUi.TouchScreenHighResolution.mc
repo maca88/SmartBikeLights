@@ -3,12 +3,14 @@ using Toybox.Lang;
 using Toybox.WatchUi;
 using Toybox.Application.Properties as Properties;
 
+(:touchScreen :highResolution)
 module DataFieldUi {
 
     var _openedMenus = [];
     var _menuIndex = -1;
     var _arrowsFont;
     var _iconsFont;
+    var _fontPaddings;
 
     public function isMenuOpen() {
         return _openedMenus.size() > 0;
@@ -18,6 +20,7 @@ module DataFieldUi {
         if (_arrowsFont == null) {
             _arrowsFont = WatchUi.loadResource(Rez.Fonts[:menuArrows]);
             _iconsFont = WatchUi.loadResource(Rez.Fonts[:menuIcons]);
+            _fontPaddings = WatchUi.loadResource(Rez.JsonData.FontTopPaddings)[0];
         }
 
         _openedMenus.add(menu);
@@ -102,9 +105,9 @@ module DataFieldUi {
     class Menu2 {
 
         private var _title;
-        private var _controlBarHeight = 40;
+        private var _controlBarHeight = 70;
         private var _items = [];
-        private var _itemHeight = 70;
+        private var _itemHeight = 120;
         private var _startItemIndex = 0;
         private var _maxStartItemIndex = 0;
         private var _width;
@@ -148,7 +151,7 @@ module DataFieldUi {
                 y += _controlBarHeight;
             }
 
-            var labelX = 10;
+            var labelX = width * 0.04f;
             dc.setPenWidth(2);
             for (var i = _startItemIndex; i < _items.size(); i++) {
                 if (y > height) {
@@ -158,8 +161,10 @@ module DataFieldUi {
                 var item = _items[i];
                 dc.setColor(fgColor, -1);
                 if (item.subLabel != null) {
-                    dc.drawText(labelX, y + 8, 3, item.label, 2 /* TEXT_JUSTIFY_LEFT */);
-                    dc.drawText(labelX, y + 39, 2, item.subLabel, 2 /* TEXT_JUSTIFY_LEFT */);
+                    var labelOffsetY = (_itemHeight * 0.2f) - StringHelper.getFontTopPadding(3, _fontPaddings);
+                    var subLabelOffsetY = (_itemHeight * 0.6f) - StringHelper.getFontTopPadding(2, _fontPaddings);
+                    dc.drawText(labelX, y + labelOffsetY, 3, item.label, 2 /* TEXT_JUSTIFY_LEFT */);
+                    dc.drawText(labelX, y + subLabelOffsetY, 2, item.subLabel, 2 /* TEXT_JUSTIFY_LEFT */);
                 } else {
                     dc.drawText(labelX, y + _itemHeight / 2, 3, item.label, 2 /* TEXT_JUSTIFY_LEFT */ | 4 /* TEXT_JUSTIFY_VCENTER */);
                 }

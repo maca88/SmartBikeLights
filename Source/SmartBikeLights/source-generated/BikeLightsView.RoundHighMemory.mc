@@ -1075,13 +1075,14 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
 
         if (_useLargeIcons) { // Use larger icons when only one light is paired
-            lightX -= 10; // Center by subtracting half of battery width
-            dc.drawText(lightX + (direction * (68 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
-            dc.drawText(lightX + (direction * 10), _lightY + 16, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
+            lightXOffset = justification == 0 ? -4 : 4;
+            lightX -= (20 / 2); // Center by subtracting half of battery width
+            dc.drawText(lightX + (direction * (68 / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
+            dc.drawText(lightX + (direction * 10), _lightY + 14, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
             drawBattery(dc, fgColor, lightX + 60, _batteryY, batteryStatus);
             return;
         }
-        dc.drawText(lightX + (direction * (49 /* _batteryWidth */ / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
+        dc.drawText(lightX + (direction * (49 / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
         dc.drawText(lightX + (direction * 8), _lightY + 11, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
         if (_batteryY != null) {
             drawBattery(dc, fgColor, lightX, _batteryY, batteryStatus);
