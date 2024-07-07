@@ -1055,7 +1055,6 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         var offsetDirection = ((1415136409 >> (flags * 2)) & 0x03) - 1;
         _offsetX = settings[3] * offsetDirection;
   // #if highMemory && mediumResolution
-        var deviceSettings = System.getDeviceSettings();
         _useLargeIcons = _initializedLights == 1 && !excludeBattery;
         if (_useLargeIcons) {
             _lightsFont = WatchUi.loadResource(fonts[:lightsLargeFont]);
