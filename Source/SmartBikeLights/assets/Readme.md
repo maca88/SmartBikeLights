@@ -6,7 +6,7 @@
 2. Add the missing line "chars count=7" after "page" line
 3. Use GIMP to change the backgound color to black and replace the charge icon by pasting the SVG (GIMP does fo smoothing when pasting)
   - Before importing the charge icon to GIMP change the svg fill to white: `fill="#FFFFFF"`
-4. Compress the final image with https://tinypng.com/
+4. Compress the final image with https://tinypng.com/ and https://compresspng.com/
 
 ## Lights
 
@@ -14,3 +14,4 @@
 - "Font smoothing", "TrueType hinting" and "Render from TrueType outline" enabled
 - Zero paddings
 - 1 spacings
+2. Compress the final image with https://tinypng.com/ and https://compresspng.com/

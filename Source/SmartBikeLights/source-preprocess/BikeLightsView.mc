@@ -1019,6 +1019,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         _lightY = _batteryY - padding - /* #include LIGHT_HEIGHT */;
         _titleY = (_lightY - dc.getFontHeight(_titleFont) - titleTopPadding) >= 0 ? titleTopPadding : null;
     }
+
 // #elif round
     protected function preCalculate(dc, width, height) {
         // Free resources
@@ -1072,6 +1073,39 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
   // #else
         _batteryY = excludeBattery ? null : _lightY + 35;
   // #endif
+    }
+
+// #elif semioctagon
+    protected function preCalculate(dc, width, height) {
+        // Free resources
+        _lightsFont = null;
+        _batteryFont = null;
+        _controlModeFont = null;
+        var fonts = Rez.Fonts;
+        var flags = getObscurityFlags();
+        var padding = height - 30 < 0 ? 0 : 2;
+        var settings = WatchUi.loadResource(Rez.JsonData.Settings);
+        _separatorWidth = settings[0];
+        _titleFont = settings[1];
+        var titleTopPadding = settings[2];
+        var titleHeight = dc.getFontHeight(_titleFont) + titleTopPadding;
+        var offsetDirection = ((1431654869 >> (flags * 2)) & 0x03) - 1;
+        _offsetX = settings[3] * offsetDirection;
+
+        var includeTitle = height > 60 && width > 70;
+        var excludeBattery = height < 40;
+        var lightHeight = excludeBattery ? 25 : 40;
+        var totalHeight = includeTitle ? lightHeight + titleHeight : lightHeight;
+        var startY = (12800 >> flags) & 0x01 == 1 ? 2 /* From top */
+            : (((200 >> flags) & 0x01 == 1 ? height - totalHeight /* From bottom */
+            : (height - totalHeight) / 2) - padding);  /* From center */
+
+        _titleY = includeTitle ? startY : null;
+        _lightY = includeTitle ? _titleY + titleHeight : startY;
+        _batteryY = excludeBattery ? null : _lightY + 25;
+        _lightsFont = WatchUi.loadResource(fonts[:lightsFont]);
+        _batteryFont = WatchUi.loadResource(fonts[:batteryFont]);
+        _controlModeFont = WatchUi.loadResource(fonts[:controlModeFont]);
     }
 // #endif
 

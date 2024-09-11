@@ -69,6 +69,7 @@ export const deviceList = [
   { id: 'B3652', name: 'Forerunner 945 LTE', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 8 },
   { id: 'B4024', name: 'Forerunner 955', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 8 },
   { id: 'B4315', name: 'Forerunner 965', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 },
+  { id: 'B3888', name: 'Instinct 2 / 2S / 2X', highMemory: false, bikeRadar: true, touchScreen: false, settings: false, profileName: true, barometer: false, solar: false, bitsPerPixel: 1 },
   { id: 'B4105', name: 'MARQ (Gen 2) Athlete / Adventurer / Captain / Golfer', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 },
   { id: 'B4124', name: 'MARQ (Gen 2) Aviator', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 },
   { id: 'B3624', name: 'MARQ Adventurer', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 8 },

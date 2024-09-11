@@ -13,7 +13,7 @@ using Toybox.Time.Gregorian;
 using Toybox.Application.Properties as Properties;
 using Toybox.Attention;
 
-(:lowMemory :rectangle :nonTouchScreen :mediumResolution)
+(:lowMemory :semioctagon :nonTouchScreen :mediumResolution)
 const lightModeCharacters = [
     "S", /* High steady beam */
     "M", /* Medium steady beam */
@@ -23,14 +23,14 @@ const lightModeCharacters = [
     "f"  /* Low flash */
 ];
 
-(:lowMemory :rectangle :nonTouchScreen :mediumResolution)
+(:lowMemory :semioctagon :nonTouchScreen :mediumResolution)
 const controlModes = [
     "S", /* SMART */
     "N", /* NETWORK */
     "M"  /* MANUAL */
 ];
 
-(:lowMemory :rectangle :nonTouchScreen :mediumResolution)
+(:lowMemory :semioctagon :nonTouchScreen :mediumResolution)
 const networkModes = [
     "INDV", /* LIGHT_NETWORK_MODE_INDIVIDUAL */
     "AUTO", /* LIGHT_NETWORK_MODE_AUTO */
@@ -38,7 +38,7 @@ const networkModes = [
     "TRAIL"
 ];
 
-(:lowMemory :rectangle :nonTouchScreen :mediumResolution)
+(:lowMemory :semioctagon :nonTouchScreen :mediumResolution)
 class BikeLightsView extends  WatchUi.DataField  {
 
     // Fonts
@@ -419,18 +419,30 @@ class BikeLightsView extends  WatchUi.DataField  {
         _batteryFont = null;
         _controlModeFont = null;
         var fonts = Rez.Fonts;
-        var padding = height - 55 < 0 ? 1 : 3;
+        var flags = getObscurityFlags();
+        var padding = height - 30 < 0 ? 0 : 2;
         var settings = WatchUi.loadResource(Rez.JsonData.Settings);
         _separatorWidth = settings[0];
         _titleFont = settings[1];
         var titleTopPadding = settings[2];
-        _offsetX = settings[3];
+        var titleHeight = dc.getFontHeight(_titleFont) + titleTopPadding;
+        var offsetDirection = ((1431654869 >> (flags * 2)) & 0x03) - 1;
+        _offsetX = settings[3] * offsetDirection;
+
+        var includeTitle = height > 60 && width > 70;
+        var excludeBattery = height < 40;
+        var lightHeight = excludeBattery ? 25 : 40;
+        var totalHeight = includeTitle ? lightHeight + titleHeight : lightHeight;
+        var startY = (12800 >> flags) & 0x01 == 1 ? 2 /* From top */
+            : (((200 >> flags) & 0x01 == 1 ? height - totalHeight /* From bottom */
+            : (height - totalHeight) / 2) - padding);  /* From center */
+
+        _titleY = includeTitle ? startY : null;
+        _lightY = includeTitle ? _titleY + titleHeight : startY;
+        _batteryY = excludeBattery ? null : _lightY + 25;
         _lightsFont = WatchUi.loadResource(fonts[:lightsFont]);
         _batteryFont = WatchUi.loadResource(fonts[:batteryFont]);
         _controlModeFont = WatchUi.loadResource(fonts[:controlModeFont]);
-        _batteryY = height - 17 - padding;
-        _lightY = _batteryY - padding - 32;
-        _titleY = (_lightY - dc.getFontHeight(_titleFont) - titleTopPadding) >= 0 ? titleTopPadding : null;
     }
 
     protected function initializeLights(newNetworkMode) {
@@ -634,14 +646,15 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
 
         var direction = justification == 0 ? 1 : -1;
-        var lightX = Math.round(width * 0.25f * position);
+        var lightX = Math.round(width * 0.25f * position) + _offsetX;
+        lightX += _initializedLights == 2 ? (direction * ((width / 4) - 18)) : 0;
         var batteryStatus = getLightBatteryStatus(lightData);
         var title = lightData[5];
-        var lightXOffset = justification == 0 ? -4 : 2;
+        var lightXOffset = justification == 0 ? -1 : 1;
         dc.setColor(fgColor, bgColor);
 
         if (title != null && _titleY != null) {
-            dc.drawText(lightX, _titleY, _titleFont, title, 1 /* TEXT_JUSTIFY_CENTER */);
+            dc.drawText(lightX + (direction * 16), _titleY, _titleFont, title, justification);
         }
 
         var iconColor = lightData[16];
@@ -649,8 +662,8 @@ class BikeLightsView extends  WatchUi.DataField  {
             setTextColor(dc, iconColor);
         }
 
-        dc.drawText(lightX + (direction * (49 / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
-        dc.drawText(lightX + (direction * 8), _lightY + 11, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
+        dc.drawText(lightX + (direction * (34 / 2)) + lightXOffset, _lightY, _lightsFont, lightData[1], justification);
+        dc.drawText(lightX + (direction * 5), _lightY + 7, _controlModeFont, $.controlModes[lightData[4]], 1 /* TEXT_JUSTIFY_CENTER */);
         if (_batteryY != null) {
             drawBattery(dc, fgColor, lightX, _batteryY, batteryStatus);
         }

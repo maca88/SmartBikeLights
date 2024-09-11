@@ -1,0 +1,233 @@
+SplineFontDB: 3.2
+FontName: Battery14LowMemory
+FullName: Battery14LowMemory
+FamilyName: Battery14LowMemory
+Weight: Light
+Copyright: Copyright (c) 2024, maca88
+UComments: "2020-11-7: Created with FontForge (http://fontforge.org)"
+Version: 001.000
+ItalicAngle: 0
+UnderlinePosition: -102
+UnderlineWidth: 51
+Ascent: 819
+Descent: 205
+InvalidEm: 0
+LayerCount: 2
+Layer: 0 0 "Back" 1
+Layer: 1 0 "Fore" 0
+XUID: [1021 821 541848759 8489]
+StyleMap: 0x0000
+FSType: 0
+OS2Version: 0
+OS2_WeightWidthSlopeOnly: 0
+OS2_UseTypoMetrics: 1
+CreationTime: 1604753893
+ModificationTime: 1726093225
+OS2TypoAscent: 0
+OS2TypoAOffset: 1
+OS2TypoDescent: 0
+OS2TypoDOffset: 1
+OS2TypoLinegap: 92
+OS2WinAscent: 0
+OS2WinAOffset: 1
+OS2WinDescent: 0
+OS2WinDOffset: 1
+HheadAscent: 0
+HheadAOffset: 1
+HheadDescent: 0
+HheadDOffset: 1
+OS2Vendor: 'PfEd'
+MarkAttachClasses: 1
+DEI: 91125
+Encoding: ISO8859-1
+UnicodeInterp: none
+NameList: AGL For New Fonts
+DisplaySize: -48
+AntiAlias: 1
+FitToEm: 0
+WinInfo: 0 38 16
+BeginPrivate: 0
+EndPrivate
+BeginChars: 256 7
+
+StartChar: B
+Encoding: 66 66 0
+Width: 2880
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+0 819 m 1
+ 2194 819 l 1
+ 2194 746 2194 673 2194 600 c 0
+ 2267 600 2341 600 2414 600 c 1
+ 2414 14 l 1
+ 2341 14 2267 14 2194 14 c 1
+ 2194 -59 2194 -132 2194 -205 c 1
+ 0 -205 l 1
+ 0 819 l 1
+2048 673 m 1
+ 146 673 l 1
+ 146 -59 l 1
+ 2048 -59 l 2
+ 2048 14 2048 88 2048 161 c 0
+ 2121 161 2194 161 2267 161 c 1
+ 2267 453 l 1
+ 2194 453 2121 453 2048 453 c 1
+ 2048 526 2048 600 2048 673 c 1
+EndSplineSet
+EndChar
+
+StartChar: one
+Encoding: 49 49 1
+Width: 2880
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+219 14 m 1
+ 219 600 l 1
+ 512 600 l 1
+ 512 14 l 1
+ 219 14 l 1
+585 14 m 1
+ 585 600 l 1
+ 878 600 l 1
+ 878 14 l 1
+ 585 14 l 1
+951 14 m 1
+ 951 600 l 1
+ 1243 600 l 1
+ 1243 14 l 1
+ 951 14 l 1
+1317 14 m 1
+ 1317 600 l 1
+ 1609 600 l 1
+ 1609 14 l 1
+ 1317 14 l 1
+1682 14 m 1
+ 1682 600 l 1
+ 1975 600 l 1
+ 1975 14 l 1
+ 1682 14 l 1
+EndSplineSet
+EndChar
+
+StartChar: two
+Encoding: 50 50 2
+Width: 2880
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+219 14 m 1
+ 219 600 l 1
+ 512 600 l 1
+ 512 14 l 1
+ 219 14 l 1
+585 14 m 1
+ 585 600 l 1
+ 878 600 l 1
+ 878 14 l 1
+ 585 14 l 1
+951 14 m 1
+ 951 600 l 1
+ 1243 600 l 1
+ 1243 14 l 1
+ 951 14 l 1
+1317 14 m 1
+ 1317 600 l 1
+ 1609 600 l 1
+ 1609 14 l 1
+ 1317 14 l 1
+EndSplineSet
+EndChar
+
+StartChar: three
+Encoding: 51 51 3
+Width: 2880
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+219 14 m 1
+ 219 600 l 1
+ 512 600 l 1
+ 512 14 l 1
+ 219 14 l 1
+585 14 m 1
+ 585 600 l 1
+ 878 600 l 1
+ 878 14 l 1
+ 585 14 l 1
+951 14 m 1
+ 951 600 l 1
+ 1243 600 l 1
+ 1243 14 l 1
+ 951 14 l 1
+EndSplineSet
+EndChar
+
+StartChar: four
+Encoding: 52 52 4
+Width: 2880
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+219 14 m 1
+ 219 600 l 1
+ 512 600 l 1
+ 512 14 l 1
+ 219 14 l 1
+585 14 m 1
+ 585 600 l 1
+ 878 600 l 1
+ 878 14 l 1
+ 585 14 l 1
+EndSplineSet
+EndChar
+
+StartChar: five
+Encoding: 53 53 5
+Width: 2880
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+219 14 m 1
+ 219 600 l 1
+ 512 600 l 1
+ 512 14 l 1
+ 219 14 l 1
+EndSplineSet
+EndChar
+
+StartChar: six
+Encoding: 54 54 6
+Width: 1024
+Flags: H
+LayerCount: 2
+Fore
+SplineSet
+219 526 m 1
+ 512 526 l 1
+ 512 600 l 1
+ 951 600 l 1
+ 951 380 l 1
+ 1975 380 l 1
+ 1975 234 l 1
+ 951 234 l 1
+ 951 14 l 1
+ 512 14 l 1
+ 512 88 l 1
+ 219 88 l 1
+ 219 234 l 1
+ 512 234 l 1
+ 512 380 l 1
+ 219 380 l 1
+ 219 526 l 1
+EndSplineSet
+EndChar
+EndChars
+EndSplineFont

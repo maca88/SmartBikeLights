@@ -919,6 +919,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         _lightY = _batteryY - padding - 32;
         _titleY = (_lightY - dc.getFontHeight(_titleFont) - titleTopPadding) >= 0 ? titleTopPadding : null;
     }
+
     protected function initializeLights(newNetworkMode) {
         //System.println("initializeLights=" + newNetworkMode + " timer=" + System.getTimer());
         var errorCode = _errorCode;

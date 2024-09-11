@@ -120,6 +120,28 @@
       }
     },
     {
+        "name": "SemioctagonLowMemory",
+        "files": ["source-preprocess/BikeLightsView.mc"],
+        "definedSymbols": ["lowMemory", "semioctagon", "nonTouchScreen", "mediumResolution"],
+        "includeSymbols": {
+          "TARGET": ":lowMemory :semioctagon :nonTouchScreen :mediumResolution",
+
+          "H_LIGHT_FONT_OFFSET_X": "1",
+          "T_LIGHT_FONT_OFFSET_X": "1",
+
+          "TITLE_OFFSET_X": "16",
+
+          "LIGHT_HEIGHT": "24",
+          "LIGHT_OFFSET_X": "18",
+
+          "CTRL_MODE_OFFSET_X": "5",
+          "CTRL_MODE_OFFSET_Y": "7",
+
+          "H_BATTERY_HEIGHT": "14",
+          "H_BATTERY_WIDTH": "34"
+        }
+      },
+    {
       "name": "Settings",
       "files": ["source-preprocess/AppSettings.mc"],
       "definedSymbols": ["settings"],
