@@ -1,0 +1,24 @@
+{
+  "name": "ciq-test-runner",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "A test runner for Garmin CIQ",
+  "main": "index.js",
+  "bin": {
+    "ciq-test-runner": "./index.js"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "author": "maca88",
+  "license": "(MIT OR Apache-2.0)",
+  "engines": {
+    "node": ">=15.9.0"
+  },
+  "devDependencies": {
+    "jest": "^27.4.7"
+  },
+  "dependencies": {
+    "commander": "^8.3.0"
+  }
+}

@@ -49,7 +49,7 @@ const parseNumber = (chars, index, resultIndex) => {
     : parseInt(stringValue);
 };
 
-const parseLong = (chars, index, resultIndex) => {
+const parseSerialNumber = (chars, index, resultIndex) => {
   var array = parseNumberArray(chars, index, resultIndex);
   //console.log(bigint(array[0]).shiftLeft(31).or(bigint(array[1])));
   return !array ? null : bigint(array[0]).shiftLeft(31).or(bigint(array[1]));
@@ -545,6 +545,8 @@ export default class Configuration {
   taillightDeviceNumber = null;
   headlightSerialNumber = null;
   taillightSerialNumber = null;
+  headlightAdditionalModes = null;
+  taillightAdditionalModes = null;
   remoteControllers = [];
 
   constructor() {
@@ -564,11 +566,14 @@ export default class Configuration {
 
     configuration.headlightModes = parseNumberArray(value, filterResult[0] + 1, filterResult);
     configuration.headlightSerialNumber = value[filterResult[0]] === ':'
-      ? parseLong(value, filterResult[0] + 1, filterResult)
+      ? parseSerialNumber(value, filterResult[0] + 1, filterResult)
       : null;
     configuration.headlightIconColor = value[filterResult[0]] === ':'
       ? parseNumber(value, filterResult[0] + 1, filterResult)
       : 1;
+    configuration.headlightAdditionalModes = value[filterResult[0]] === ':'
+      ? parseNumberArray(value, filterResult[0] + 1, filterResult)
+      : null;
     let filterGroups = parseToFilterGroups(value, filterResult[0] + 1, true, filterResult);
     let defaultGroup;
     if (filterGroups.length) {
@@ -580,11 +585,14 @@ export default class Configuration {
 
     configuration.taillightModes = parseNumberArray(value, filterResult[0] + 1, filterResult);
     configuration.taillightSerialNumber = value[filterResult[0]] === ':'
-      ? parseLong(value, filterResult[0] + 1, filterResult)
+      ? parseSerialNumber(value, filterResult[0] + 1, filterResult)
       : null;
     configuration.taillightIconColor = value[filterResult[0]] === ':'
       ? parseNumber(value, filterResult[0] + 1, filterResult)
       : 1;
+    configuration.taillightAdditionalModes = value[filterResult[0]] === ':'
+      ? parseNumberArray(value, filterResult[0] + 1, filterResult)
+      : null;
     filterGroups = parseToFilterGroups(value, filterResult[0] + 1, true, filterResult);
     if (filterGroups.length) {
       defaultGroup = filterGroups.splice(filterGroups.length - 1, 1)[0];
@@ -723,7 +731,7 @@ export default class Configuration {
       return false;
     }
 
-    return lightData.modes != null && lightFilterGroups.every(g => g.isValid(device, lightData.modes)) &&
+    return lightData.modes != null && lightFilterGroups.every(g => g.isValid(device, lightData)) &&
           (
             (!lightFilterGroups.length && !this.globalFilterGroups.length) ||
             lightDefaultMode !== null
@@ -737,9 +745,9 @@ export default class Configuration {
 
     const device = deviceList.find(l => l.id === this.device);
     let config = this.getFilterGroupsConfigurationValue(this.globalFilterGroups, null);
-    config += `#${this.getLightInfo(this.headlight, this.headlightModes, this.headlightSerialNumber, this.headlightIconColor)}`;
+    config += `#${this.getLightInfo(this.headlight, this.headlightModes, this.headlightSerialNumber, this.headlightIconColor, this.headlightAdditionalModes)}`;
     config += `#${this.headlight === null ? '' : this.getFilterGroupsConfigurationValue(this.headlightFilterGroups, this.headlightDefaultMode)}`;
-    config += `#${this.getLightInfo(this.taillight, this.taillightModes, this.taillightSerialNumber, this.taillightIconColor)}`;
+    config += `#${this.getLightInfo(this.taillight, this.taillightModes, this.taillightSerialNumber, this.taillightIconColor, this.taillightAdditionalModes)}`;
     config += `#${this.taillight === null ? '' : this.getFilterGroupsConfigurationValue(this.taillightFilterGroups, this.taillightDefaultMode)}`;
     config += this.getLightPanelOrSettingsConfigurationValue(this.headlightPanel, this.headlightSettings, device);
     config += this.getLightPanelOrSettingsConfigurationValue(this.taillightPanel, this.taillightSettings, device);
@@ -757,7 +765,7 @@ export default class Configuration {
     return config;
   }
 
-  getLightInfo(light, lightModes, serialNumber, iconColor) {
+  getLightInfo(light, lightModes, serialNumber, iconColor, additionalLightModes) {
     if (!light) {
       return '';
     }
@@ -769,6 +777,7 @@ export default class Configuration {
     }
 
     config += `:${iconColor}`;
+    config += `:${this.getNumberArray(additionalLightModes)}`;
 
     return config;
   }
@@ -1091,8 +1100,16 @@ export default class Configuration {
     this.headlightSerialNumber = Number.isNaN(value) ? null : value;
   }
 
+  setHeadlightAdditionalModes = (value) => {
+    this.headlightAdditionalModes = value;
+  }
+
   setTaillightSerialNumber = (value) => {
     this.taillightSerialNumber = Number.isNaN(value) ? null : value;
+  }
+
+  setTaillightAdditionalModes = (value) => {
+    this.taillightAdditionalModes = value;
   }
 
   setTaillightForceSmartMode = (value) => {

@@ -48,14 +48,6 @@ fr645.excludeAnnotations = $(roundLowMemory)
 fr645.resourcePath = $(fr645.resourcePath);resources-lowmemory
 fr935.excludeAnnotations = $(roundLowMemory)
 fr935.resourcePath = $(fr935.resourcePath);resources-lowmemory
-
-instinct2.excludeAnnotations = $(semioctagonLowMemory)
-instinct2.resourcePath = resources-lowmemory;$(instinct2.resourcePath)
-instinct2s.excludeAnnotations = $(semioctagonLowMemory)
-instinct2s.resourcePath = resources-lowmemory;$(instinct2s.resourcePath)
-instinct2x.excludeAnnotations = $(semioctagonLowMemory)
-instinct2x.resourcePath = resources-lowmemory;$(instinct2x.resourcePath)
-
 vivoactive3.excludeAnnotations = $(roundLowMemory)
 vivoactive3.resourcePath = $(vivoactive3.resourcePath);resources-lowmemory
 vivoactive3d.excludeAnnotations = $(roundLowMemory)
@@ -70,6 +62,13 @@ legacysagadarthvader.excludeAnnotations = $(roundLowMemory)
 legacysagadarthvader.resourcePath = $(legacysagadarthvader.resourcePath);resources-lowmemory
 legacyherofirstavenger.excludeAnnotations = $(roundLowMemory)
 legacyherofirstavenger.resourcePath = $(legacyherofirstavenger.resourcePath);resources-lowmemory
+  # Semioctagon screen devices
+instinct2.excludeAnnotations = $(semioctagonLowMemory)
+instinct2.resourcePath = resources-lowmemory;$(instinct2.resourcePath)
+instinct2s.excludeAnnotations = $(semioctagonLowMemory)
+instinct2s.resourcePath = resources-lowmemory;$(instinct2s.resourcePath)
+instinct2x.excludeAnnotations = $(semioctagonLowMemory)
+instinct2x.resourcePath = resources-lowmemory;$(instinct2x.resourcePath)
 
 # Rectangle non touch screen devices with more than 32KB memory
 edge520plus.excludeAnnotations = $(rectangleNoSettings)

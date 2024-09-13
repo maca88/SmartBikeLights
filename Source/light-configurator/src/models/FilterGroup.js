@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import { makeAutoObservable } from 'mobx';
+import { isLightModeValid } from '../constants';
 
 export default class FilterGroup {
   _hasLightMode;
@@ -39,8 +40,12 @@ export default class FilterGroup {
     return config;
   }
 
-  isValid(device, lightModes) {
-    if ((this._hasLightMode && (this.lightMode === null || !lightModes.some(o => o.id === this.lightMode))) || !this.filters.length) {
+  isValid(device, lightData) {
+    if (!this.filters.length) {
+      return false;
+    }
+
+    if (this._hasLightMode && !isLightModeValid(lightData, this.lightMode)) {
       return false;
     }
 

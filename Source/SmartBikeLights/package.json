@@ -1,5 +1,9 @@
 {
   "scripts": {
-    "start": "directive-preprocessor watch preprocess.config.json -p"
+    "start": "directive-preprocessor watch preprocess.config.json -p",
+    "tests": "ciq-test-runner test edge130 fenix6 instinct2 edge540 edge1040 edge1050 fenix5x fenix7 epix2 --keyPath unit_test_key"
+  },
+  "dependencies": {
+    "ciq-test-runner": "file:../ciq-test-runner"
   }
 }

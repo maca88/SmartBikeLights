@@ -1,6 +1,7 @@
 // #if ANT_NETWORK == "TestNetwork.TestLightNetwork"
 // #include HEADER
 using Toybox.AntPlus;
+using Toybox.System;
 
 (:glance :highMemory)
 module TestAntPlus {
@@ -32,9 +33,8 @@ module TestNetwork {
     var counter = 0;
     var mode = 0;
     var lastUpdate = 0;
-    var updateBattery = 0;
 
-    class TestLightNetwork extends AntPlus.LightNetwork {
+    class TestLightNetwork {
 
         private var _listener;
         private var _lights;
@@ -42,12 +42,12 @@ module TestNetwork {
         private var _initialized = false;
 
         function initialize(listener) {
-            LightNetwork.initialize(listener);
             _listener = listener;
             _lights = [
                 new TestBikeLight(0, 0 /* LIGHT_TYPE_HEADLIGHT */, [0, 1, 2, 5, 63, 62], 81 /* Bontrager */, 6 /* ION PRO RT */, 3288461872l),
                 new TestBikeLight(1, 2 /* LIGHT_TYPE_TAILLIGHT */, [0, 1, 5, 7, 8, 63], 81 /* Bontrager */, 1 /* Flare RT */, 2368328293l)
                 //new TestBikeLight(2, 2 /* LIGHT_TYPE_TAILLIGHT */, [0, 4, 5, 7, 6], 1 /* Garmin */, 1 /* Varia 515 */, 2368328294)
+                //new TestBikeLight(0, 0 /* LIGHT_TYPE_HEADLIGHT */, [0, 2, 3, 4, 8], 108 /* Giant */, 6 /* Recon HL1800 */, 1234554)
             ];
             lastUpdate = System.getTimer();
         }
@@ -75,7 +75,6 @@ module TestNetwork {
                 }
             }
 
-            updateBattery += _lights.size();
             counter = (counter + 1) % 120;
             if (counter == 0) {
                 _state = 0; /* LIGHT_NETWORK_STATE_NOT_FORMED */
@@ -83,11 +82,6 @@ module TestNetwork {
             } else if (!_initialized && _state == 0 && counter > 1) {
                 _state = 2; /* LIGHT_NETWORK_STATE_FORMED */
                 _listener.onLightNetworkStateUpdate(_state);
-            }
-
-            if (counter % 50 == 0) {
-                mode = mode != null ? (mode + 1) % 4 : 0;
-                mode = mode == 3 ? null : mode; // Simulate TRAIL mode that is not in the API
             }
 
             return null;
@@ -102,27 +96,34 @@ module TestNetwork {
         }
 
         function getBatteryStatus(identifier) {
-            return _lights[identifier].updateAndGetBatteryStatus();
+            return _lights[identifier].batteryStatus;
+        }
+
+        function restoreHeadlightsNetworkModeControl() {
+        }
+
+        function restoreTaillightsNetworkModeControl() {
         }
     }
 
-    class TestBikeLight extends AntPlus.BikeLight {
+    class TestBikeLight {
 
         private var _modes;
-        private var _batteryStatus = new AntPlus.BatteryStatus();
-        private var _batteryCounter = 0;
 
         public var hasChanges = false;
+        public var batteryStatus = new AntPlus.BatteryStatus();
         public var manufacturerInfo = new AntPlus.ManufacturerInfo();
         public var productInfo = new AntPlus.ProductInfo();
+        public var identifier;
+        public var type;
+        public var mode;
 
         function initialize(id, lightType, modes, manufacturerId, modelNumber, serial) {
-            BikeLight.initialize();
             identifier = id;
             type = lightType;
             mode = 0;
             _modes = modes;
-            _batteryStatus.batteryStatus = 1;
+            batteryStatus.batteryStatus = 1;
             manufacturerInfo.manufacturerId = manufacturerId;
             manufacturerInfo.modelNumber = modelNumber;
             productInfo.serial = serial;
@@ -135,27 +136,6 @@ module TestNetwork {
         function setMode(value) {
             mode = value;
             hasChanges = true;
-        }
-
-        function updateAndGetBatteryStatus() {
-            if (updateBattery == 0) {
-                return _batteryStatus;
-            }
-
-            return _batteryStatus;
-
-            updateBattery--;
-            _batteryCounter++;
-            if (_batteryCounter % 4 != 0) {
-                return _batteryStatus;
-            }
-
-            _batteryStatus.batteryStatus = (_batteryStatus.batteryStatus % 7) + 1;
-            if (_batteryStatus.batteryStatus == 1) {
-                hasChanges = true;
-            }
-
-            return _batteryStatus.batteryStatus == 7 ? null /* Simulate a disconnect */ : _batteryStatus;
         }
     }
 }

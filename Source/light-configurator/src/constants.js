@@ -1,3 +1,5 @@
+import bigint from 'big-integer';
+
 export const filterList = [
   { id: 'A', name: 'Acceleration' },
   { id: 'B', name: 'Light Battery' },
@@ -378,7 +380,8 @@ const giantReconHl1800 = [
   { id: 2, name: 'High' },
   { id: 3, name: 'Medium' },
   { id: 4, name: 'Low' },
-  { id: 8, name: 'Day Flash' }
+  { id: 8, name: 'Day Flash' },
+  { id: 9, name: 'Smart' }
 ];
 
 const trekCommuterProRtModes = [
@@ -398,6 +401,7 @@ export const headlightList = [
     modes: bontragerIonProRtModes,
     individualNetworkOnly: false,
     lightModes: [4587520, 196641], // 19703248369942561
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Ion Pro RT',
       buttonGroups: [
@@ -416,6 +420,7 @@ export const headlightList = [
     modes: bontragerIonProRtModes,
     individualNetworkOnly: false,
     lightModes: [4587520, 196641], // 19703248369942561
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Ion 200 RT',
       buttonGroups: [
@@ -434,6 +439,7 @@ export const headlightList = [
     modes: bontragerIonProRtModes,
     individualNetworkOnly: false,
     lightModes: [4587520, 196641], // 19703248369942561
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Ion 800 RT',
       buttonGroups: [
@@ -474,6 +480,7 @@ export const headlightList = [
     modes: garminVariaHl500,
     individualNetworkOnly: false,
     lightModes: [0, 67121681], // 67121681
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Varia 500',
       buttonGroups: [
@@ -492,6 +499,7 @@ export const headlightList = [
     modes: garminVariaUt800,
     individualNetworkOnly: false,
     lightModes: [0, 73413136], // 73413136
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Varia 800',
       buttonGroups: [
@@ -509,7 +517,8 @@ export const headlightList = [
     name: 'Giant Recon HL1800',
     modes: giantReconHl1800,
     individualNetworkOnly: false,
-    lightModes: [0, 1073754640], // 1073754640
+    lightModes: [5, 1073754640], // 22548591120
+    additionalLightModes: [0, 512],
     defaultLightPanel: {
       shortName: 'HL 1800',
       buttonGroups: [
@@ -517,7 +526,8 @@ export const headlightList = [
         [giantReconHl1800[1]],
         [giantReconHl1800[2]],
         [giantReconHl1800[3]],
-        [giantReconHl1800[4]]
+        [giantReconHl1800[4]],
+        [giantReconHl1800[5]]
       ]
     }
   },
@@ -527,6 +537,7 @@ export const headlightList = [
     modes: seeSenseBeam,
     individualNetworkOnly: true,
     lightModes: [0, 73605649], // 73605649
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'ACE F',
       buttonGroups: [
@@ -547,6 +558,7 @@ export const headlightList = [
     modes: seeSenseBeam,
     individualNetworkOnly: true,
     lightModes: [0, 73605649], // 73605649
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'BEAM',
       buttonGroups: [
@@ -567,6 +579,7 @@ export const headlightList = [
     modes: trekCommuterProRtModes,
     individualNetworkOnly: false,
     lightModes: [4587520, 196641], // 19703248369942561
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Pro RT',
       buttonGroups: [
@@ -583,6 +596,7 @@ export const headlightList = [
     modes: lightModes,
     individualNetworkOnly: false,
     lightModes: null,
+    additionalLightModes: null,
     defaultLightPanel: null
   }
 ];
@@ -692,6 +706,7 @@ export const taillightList = [
     modes: bontragerFlareRtModes,
     individualNetworkOnly: false,
     lightModes: [6291461, 1409482753], // 27021620648542209
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Flare RT',
       buttonGroups: [
@@ -710,6 +725,7 @@ export const taillightList = [
     modes: brytonGardia300,
     individualNetworkOnly: false,
     lightModes: [0, 610283536], // 610283536
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Gardia 300',
       buttonGroups: [
@@ -728,6 +744,7 @@ export const taillightList = [
     modes: cycliqFly6Ce,
     individualNetworkOnly: true,
     lightModes: [415312, 71303969], // 1783751528940321
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Fly6 CE',
       buttonGroups: [
@@ -750,6 +767,7 @@ export const taillightList = [
     modes: garminVariaTl300,
     individualNetworkOnly: false,
     lightModes: [0, 67121680], // 67121680
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Varia 300',
       buttonGroups: [
@@ -767,6 +785,7 @@ export const taillightList = [
     modes: garminVariaRtl500,
     individualNetworkOnly: false,
     lightModes: [0, 67108865], // 67108865
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Varia 500',
       buttonGroups: [
@@ -782,6 +801,7 @@ export const taillightList = [
     modes: garminVariaRtl501,
     individualNetworkOnly: false,
     lightModes: [0, 1], // 1
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Varia 501',
       buttonGroups: [
@@ -796,6 +816,7 @@ export const taillightList = [
     modes: garminVariaRtl510,
     individualNetworkOnly: false,
     lightModes: [0, 73404416], // 73404416
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Varia 510',
       buttonGroups: [
@@ -812,6 +833,7 @@ export const taillightList = [
     modes: garminVariaRtl511,
     individualNetworkOnly: false,
     lightModes: [0, 4096], // 4096
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Varia 511',
       buttonGroups: [
@@ -826,6 +848,7 @@ export const taillightList = [
     modes: garminVariaRtl515,
     individualNetworkOnly: false,
     lightModes: [0, 73535488], // 73535488
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Varia 515',
       buttonGroups: [
@@ -843,6 +866,7 @@ export const taillightList = [
     modes: garminVariaRtl511,
     individualNetworkOnly: false,
     lightModes: [0, 4096], // 4096
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Varia 516',
       buttonGroups: [
@@ -857,6 +881,7 @@ export const taillightList = [
     modes: garminVariaRtl515,
     individualNetworkOnly: false,
     lightModes: [0, 73535488], // 73535488
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Varia 615',
       buttonGroups: [
@@ -874,6 +899,7 @@ export const taillightList = [
     modes: garminVariaRtl515,
     individualNetworkOnly: false,
     lightModes: [0, 73535488], // 73535488
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Varia 715',
       buttonGroups: [
@@ -891,6 +917,7 @@ export const taillightList = [
     modes: garminVariaRtl511,
     individualNetworkOnly: false,
     lightModes: [0, 4096], // 4096
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Varia 716',
       buttonGroups: [
@@ -905,6 +932,7 @@ export const taillightList = [
     modes: mageneL508,
     individualNetworkOnly: false,
     lightModes: [0, 73535488], // 73535488
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Magene 508',
       buttonGroups: [
@@ -923,6 +951,7 @@ export const taillightList = [
     modes: seeSenseIcon2,
     individualNetworkOnly: true,
     lightModes: [0, 73605649], // 73605649
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'ACE R',
       buttonGroups: [
@@ -943,6 +972,7 @@ export const taillightList = [
     modes: seeSenseIcon2,
     individualNetworkOnly: true,
     lightModes: [0, 73605649], // 73605649
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'ICON2',
       buttonGroups: [
@@ -963,6 +993,7 @@ export const taillightList = [
     modes: trekCarBack,
     individualNetworkOnly: false,
     lightModes: [6291461, 1073938433], // 27021620312997889
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'CarBack',
       buttonGroups: [
@@ -980,6 +1011,7 @@ export const taillightList = [
     modes: lightModes,
     individualNetworkOnly: false,
     lightModes: null,
+    additionalLightModes: null,
     defaultLightPanel: null
   }
 ];
@@ -1072,4 +1104,26 @@ export const isDataField = () => {
 
 export const areRemoteControllersSupported = (device) => {
   return isDataField() && device.highMemory && device.profileName;
+}
+
+export const isLightModeValid = (lightData, lightMode) => {
+  if (lightMode === null) {
+    return false;
+  }
+
+  if (lightData.modes.some(o => o.id === lightMode)) {
+    return true;
+  }
+
+  const additionalLightModes = lightData.additionalLightModes;
+  if (additionalLightModes === null) {
+    return false;
+  }
+
+  return bigint(additionalLightModes[0])
+    .shiftLeft(32)
+    .or(bigint(additionalLightModes[1]))
+    .shiftRight(lightMode)
+    .and(1)
+    .equals(1);
 }

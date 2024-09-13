@@ -51,7 +51,8 @@ const getFilterTypes = (hasLightModes, device, totalLights) => {
     : filterList.filter(f => excludeList.indexOf(f.id) < 0);
 };
 
-export default observer(({ filterGroups, lightModes, device, totalLights }) => {
+export default observer(({ filterGroups, lightData, device, totalLights }) => {
+  const lightModes = lightData?.modes;
   const [filterTypes, setFilterTypes] = React.useState(getFilterTypes(lightModes, device, totalLights));
 
   const createFilterGroup = action(() => {
@@ -113,7 +114,7 @@ export default observer(({ filterGroups, lightModes, device, totalLights }) => {
             removeLabel="Remove group"
             removeCallback={removeFilterGroup}
             validationParameter={device}
-            validationParameter2={lightModes}
+            validationParameter2={lightData}
             canMoveUpCallback={canMoveUpFilterGroup}
             moveUpCallback={moveUpFilterGroup}
             canMoveDownCallback={canMoveDownFilterGroup}

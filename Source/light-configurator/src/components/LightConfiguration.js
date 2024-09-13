@@ -33,8 +33,8 @@ const StyledCard = styled(Card)(({ theme }) => ({
   }
 }));
 
-const getModes = (value, lights) => {
-  return value !== null ? lights.find(l => l.id === value)?.modes : null;
+const getLightData = (value, lights) => {
+  return value !== null ? lights.find(l => l.id === value) : null;
 };
 
 const getDefaultPanel = (value, lights) => {
@@ -44,17 +44,19 @@ const itemTemplate = createMenuItemColorTemplateFunc();
 
 export default observer(({
   device, totalLights, useIndividualNetwork, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
-  setLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel, lightSettings, setLightSettings, deviceNumber, setDeviceNumber,
+  setLightModes, setAdditionalLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel, lightSettings, setLightSettings, deviceNumber, setDeviceNumber,
   serialNumber, setSerialNumber, forceSmartMode, setForceSmartMode, lightIconTapBehavior, setLightIconTapBehavior, lightIconColor, setLightIconColor }) => {
-  const [modes, setModes] = React.useState(getModes(light, lightList));
+  const [lightData, setLightData] = React.useState(getLightData(light, lightList));
   const setValue = (value) => {
     setLight(value);
-    setLightModes(value !== null ? lightList.find(l => l.id === value).lightModes : null);
+    const data = getLightData(value, lightList);
+    setLightModes(data !== null ? data.lightModes : null);
+    setAdditionalLightModes(data !== null ? data.additionalLightModes : null);
   };
   var hasFilters = !!setDefaultMode;
 
   useEffect(() => {
-    setModes(getModes(light, lightList));
+    setLightData(getLightData(light, lightList));
     if (light == null) {
       setLightPanel(null);
     } else if (lightPanel == null) {
@@ -88,12 +90,12 @@ export default observer(({
             <AppSelect items={lightList} label={lightType} setter={setValue} value={light} />
           </Grid>
           {
-            modes && hasFilters
+            lightData && hasFilters
             ?
             <Grid item xs={12} sm={4}>
               <AppSelect
                   required={globalFilterGroups.length || lightFilterGroups.length ? true : false}
-                  items={modes}
+                  items={lightData.modes}
                   label="Default mode"
                   setter={setDefaultMode}
                   value={defaultMode}
@@ -181,7 +183,7 @@ export default observer(({
           }
         </Grid>
         {
-          modes && hasFilters
+          lightData && hasFilters
           ? <React.Fragment>
               <ElementWithHelp
                 sx={{marginBottom: 1, marginTop: 1}}
@@ -194,12 +196,12 @@ export default observer(({
                   </Typography>
                 }
               />
-              <FilterGroups filterGroups={lightFilterGroups} lightModes={modes} device={device} totalLights={totalLights} />
+              <FilterGroups filterGroups={lightFilterGroups} lightData={lightData} device={device} totalLights={totalLights} />
           </React.Fragment>
           : null
         }
         {
-          modes && lightIconTapBehavior && device?.touchScreen
+          lightData && lightIconTapBehavior && device?.touchScreen
           ? <React.Fragment>
               <ElementWithHelp
                 className={classes.sectionTitle}
@@ -210,12 +212,12 @@ export default observer(({
                   </Typography>
                 }
               />
-              <LightIconTapBehavior lightIconTapBehavior={lightIconTapBehavior} lightModes={modes} />
+              <LightIconTapBehavior lightIconTapBehavior={lightIconTapBehavior} lightModes={lightData.modes} />
           </React.Fragment>
           : null
         }
         {
-          modes && lightPanel && device?.touchScreen
+          lightData && lightPanel && device?.touchScreen
           ? <React.Fragment>
               <ElementWithHelp
                 className={classes.sectionTitle}
@@ -228,12 +230,12 @@ export default observer(({
                   </Typography>
                 }
               />
-            <LightPanel lightPanel={lightPanel} lightModes={modes} />
+            <LightPanel lightPanel={lightPanel} lightModes={lightData.modes} />
           </React.Fragment>
           : null
         }
         {
-          modes && lightSettings && device?.settings
+          lightData && lightSettings && device?.settings
           ? <React.Fragment>
               <ElementWithHelp
                 className={classes.sectionTitle}
@@ -247,7 +249,7 @@ export default observer(({
                 }
               />
 
-            <LightSettings lightSettings={lightSettings} lightModes={modes} />
+            <LightSettings lightSettings={lightSettings} lightModes={lightData.modes} />
           </React.Fragment>
           : null
         }
