@@ -98,6 +98,7 @@ class BikeLightsView extends  WatchUi.DataField  {
     private var _bikeRadar;
     private var _lastUpdateTime = 0;
     private var _lastOnShowCallTime = 0;
+    private var _lastLightNetworkFormedTime = 0;
 
     // Used as an out parameter for getting the group filter data
     // 0. Filter group title
@@ -171,10 +172,15 @@ class BikeLightsView extends  WatchUi.DataField  {
         // When start button is pressed onShow is called, skip re-initialization in such case. This also prevents
         // a re-initialization when switching between two data screens that both contain this data field.
         if (timer - _lastUpdateTime < 1500) {
+            //System.println("onShow=initializeLights" + " timer=" + System.getTimer());
             initializeLights(null);
             return;
         }
 
+        // In case the user modifies the network mode outside the data field by using the built-in Garmin lights menu,
+        // the LightNetwork mode will not be updated (LightNetwork.getNetworkMode). The only way to update it is to
+        // create a new LightNetwork.
+        //System.println("onShow=recreateLightNetwork" + " timer=" + System.getTimer());
         releaseLights();
         _lightNetwork = null; // Release light network
         _lightNetwork = new AntPlus.LightNetwork(_lightNetworkListener);
@@ -288,6 +294,7 @@ class BikeLightsView extends  WatchUi.DataField  {
             for (var i = 0; i < 3; i += 2) {
                 var prevControlMode = getLightProperty("PCM", i, null);
                 if (prevControlMode != null) {
+                    //System.println("Update CM=" + getLightData(i)[4] + " to PCM=" + prevControlMode + " LT=" + i + " timer=" + System.getTimer());
                     setLightProperty("CM", i, prevControlMode);
                 }
             }
@@ -338,6 +345,7 @@ class BikeLightsView extends  WatchUi.DataField  {
 
     function onNetworkStateUpdate(networkState) {
         //System.println("onNetworkStateUpdate=" + networkState  + " timer=" + System.getTimer());
+        _lastLightNetworkFormedTime = networkState == 2 ? System.getTimer() : 0;
         if (_initializedLights > 0 && networkState != 2 /* LIGHT_NETWORK_STATE_FORMED */) {
             // Set the mode to disconnected in order to be recorded in case lights recording is enabled
             updateLightTextAndMode(headlightData, -1);
@@ -400,7 +408,7 @@ class BikeLightsView extends  WatchUi.DataField  {
             // In the first few seconds during and after the network formation the lights may automatically switch to different
             // light modes, which can change their control mode to manual. In order to avoid changing the control mode, we
             // ignore initial light mode changes. This mostly helps when a device wakes up after only a few seconds of sleep.
-            (System.getTimer() - _lastOnShowCallTime) > 5000) {
+            (System.getTimer() - _lastLightNetworkFormedTime) > 5000) {
             // Change was done outside the data field.
             onExternalLightModeChange(lightData, mode);
         }
@@ -604,7 +612,7 @@ class BikeLightsView extends  WatchUi.DataField  {
 
     (:lightButtons)
     protected function onExternalLightModeChange(lightData, mode) {
-        //System.println("onExternalLightModeChange mode=" + mode + " lightType=" + lightData[0].type  + " timer=" + System.getTimer());
+        //System.println("onExternalLightModeChange mode=" + mode + " lightType=" + lightData[0].type + " CM=" + lightData[4] + " timer=" + System.getTimer());
         var controlMode = lightData[4];
         if (controlMode == 0 /* SMART */ && lightData[3] == true /* Force smart mode */) {
             return;
@@ -617,6 +625,7 @@ class BikeLightsView extends  WatchUi.DataField  {
 
     (:noLightButtons)
     protected function onExternalLightModeChange(lightData, mode) {
+        //System.println("onExternalLightModeChange mode=" + mode + " lightType=" + lightData[0].type + " CM=" + lightData[4] + " timer=" + System.getTimer());
         var controlMode = lightData[4];
         lightData[4] = 2; /* MANUAL */
         lightData[5] = null;
