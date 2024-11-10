@@ -283,7 +283,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
                 }
 
                 if (modes[3] /* Taillight control mode */ != null) {
-                    setLightAndControlMode(taillightData, 0, modes[5] /* Light mode */, modes[3] /* Control mode */);
+                    setLightAndControlMode(taillightData, 2, modes[5] /* Light mode */, modes[3] /* Control mode */);
                 }
             } else if (actionType == 3 /* Change configuration */) {
                 var configurationId = action[4];
