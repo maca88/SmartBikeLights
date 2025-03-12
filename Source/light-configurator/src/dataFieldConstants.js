@@ -27,7 +27,7 @@ export const deviceList = [
   { id: 'B3011', name: 'Edge Explore', highMemory: true, bikeRadar: true, touchScreen: true, settings: false, profileName: false, barometer: false, solar: false, bitsPerPixel: 16 },
   { id: 'B4169', name: 'Edge Explore 2', highMemory: true, bikeRadar: true, touchScreen: true, settings: false, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 },
   { id: 'B3638', name: 'Enduro', highMemory: false, bikeRadar: true, touchScreen: false, settings: false, profileName: true, barometer: true, solar: false, bitsPerPixel: 8 },
-  { id: 'B4575', name: 'Enduro 3', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 8 },
+  { id: 'B4575', name: 'Enduro 3', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true, barometer: true, solar: true, bitsPerPixel: 8 },
   { id: 'B3944', name: 'epix (Gen 2)', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 },
   { id: 'B4312', name: 'epix Pro (Gen 2) 42mm', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 },
   { id: 'B4313', name: 'epix Pro (Gen 2) 47mm', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 },
