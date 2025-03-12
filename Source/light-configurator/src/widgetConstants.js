@@ -45,7 +45,7 @@ export const deviceList = [
   { id: 'B4375', name: 'fēnix 7 Pro', highMemory: true, touchScreen: false, settings: true, bitsPerPixel: 8 },
   { id: 'B3905', name: 'fēnix 7S', highMemory: true, touchScreen: false, settings: true, bitsPerPixel: 8 },
   { id: 'B4374', name: 'fēnix 7S Pro', highMemory: true, touchScreen: false, settings: true, bitsPerPixel: 8 },
-  { id: 'B3907', name: 'fēnix 7X', highMemory: true, touchScreen: false, settings: true, bitsPerPixel: 8 },
+  { id: 'B3907', name: 'fēnix 7X / tactix 7 / quatix 7X Solar / Enduro 2', highMemory: true, touchScreen: false, settings: true, bitsPerPixel: 8 },
   { id: 'B4376', name: 'fēnix 7X Pro', highMemory: true, touchScreen: false, settings: true, bitsPerPixel: 8 },
   { id: 'B4534', name: 'fēnix 8', highMemory: true, touchScreen: false, settings: true, bitsPerPixel: 16 },
   { id: 'B4532', name: 'fēnix 8 Solar', highMemory: true, touchScreen: false, settings: true, bitsPerPixel: 8 },
