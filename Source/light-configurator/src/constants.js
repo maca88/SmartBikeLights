@@ -894,6 +894,21 @@ export const taillightList = [
     }
   },
   {
+    id: 18,
+    name: 'Garmin Varia eRTL616',
+    modes: garminVariaRtl511,
+    individualNetworkOnly: false,
+    lightModes: [0, 4096], // 4096
+    additionalLightModes: null,
+    defaultLightPanel: {
+      shortName: 'Varia 616',
+      buttonGroups: [
+        [controlMode, garminVariaRtl511[0]],
+        [garminVariaRtl511[1]]
+      ]
+    }
+  },
+  {
     id: 11,
     name: 'Garmin Varia RCT715',
     modes: garminVariaRtl515,
