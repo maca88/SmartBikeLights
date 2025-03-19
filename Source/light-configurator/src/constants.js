@@ -391,6 +391,18 @@ const trekCommuterProRtModes = [
   { id: 63, name: 'Day Flash' }
 ];
 
+const mageneAt1200Modes = [
+  { id: 0, name: 'Off' },
+  { id: 1, name: 'Very High' },
+  { id: 2, name: 'High' },
+  { id: 3, name: 'Medium' },
+  { id: 4, name: 'Medium-Low' },
+  { id: 5, name: 'Low' },
+  { id: 6, name: 'Slow Flash' },
+  { id: 7, name: 'Strobe' },
+  { id: 63, name: 'Fast Strobe' }
+];
+
 export const controlMode = {id: -1, name: "Control mode"};
 export const currentConfiguration = {id: -2, name: "Current configuration"};
 
@@ -528,6 +540,28 @@ export const headlightList = [
         [giantReconHl1800[3]],
         [giantReconHl1800[4]],
         [giantReconHl1800[5]]
+      ]
+    }
+  },
+  {
+    id: 11,
+    name: 'Magene AT1200/1600',
+    modes: mageneAt1200Modes,
+    individualNetworkOnly: false,
+    lightModes: [4194304, 90382865], // 18014398599864849
+    additionalLightModes: null,
+    defaultLightPanel: {
+      shortName: 'AT 1200',
+      buttonGroups: [
+        [controlMode, mageneAt1200Modes[0]],
+        [mageneAt1200Modes[1]],
+        [mageneAt1200Modes[2]],
+        [mageneAt1200Modes[3]],
+        [mageneAt1200Modes[4]],
+        [mageneAt1200Modes[5]],
+        [mageneAt1200Modes[6]],
+        [mageneAt1200Modes[7]],
+        [mageneAt1200Modes[8]]
       ]
     }
   },
