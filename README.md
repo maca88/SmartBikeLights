@@ -103,6 +103,8 @@ The initial control mode will be determined based on the configuration from the 
 - Garmin Varia RCT716
 - Garmin Varia HL500
 - Garmin Varia UT800
+- Garmin Varia Vue
+- Garmin Varia Vue Stvzo
 - Giant Recon HL1800
 - Magene AT1200/1600
 - Magene L508

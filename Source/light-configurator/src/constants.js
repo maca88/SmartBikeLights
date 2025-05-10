@@ -351,6 +351,12 @@ const garminVariaUt800 = [
   { id: 7, name: 'Day Flash' }
 ];
 
+const garminVariaVueStvzo = [
+  { id: 0, name: 'Off' },
+  { id: 2, name: 'High' },
+  { id: 4, name: 'Low' }
+];
+
 const cycliqFly12Ce = [
   { id: 0, name: 'Off' },
   { id: 1, name: 'Constant High' },
@@ -521,6 +527,41 @@ export const headlightList = [
         [garminVariaUt800[3]],
         [garminVariaUt800[4]],
         [garminVariaUt800[5]]
+      ]
+    }
+  },
+  {
+    id: 12,
+    name: 'Garmin Varia Vue',
+    modes: garminVariaUt800,
+    individualNetworkOnly: false,
+    lightModes: [0, 73413136], // 73413136
+    additionalLightModes: null,
+    defaultLightPanel: {
+      shortName: 'Varia Vue',
+      buttonGroups: [
+        [controlMode, garminVariaUt800[0]],
+        [garminVariaUt800[1]],
+        [garminVariaUt800[2]],
+        [garminVariaUt800[3]],
+        [garminVariaUt800[4]],
+        [garminVariaUt800[5]]
+      ]
+    }
+  },
+  {
+    id: 13,
+    name: 'Garmin Varia Vue Stvzo',
+    modes: garminVariaUt800,
+    individualNetworkOnly: false,
+    lightModes: [0, 73413136], // 73413136
+    additionalLightModes: null,
+    defaultLightPanel: {
+      shortName: 'Varia Vue',
+      buttonGroups: [
+        [controlMode, garminVariaVueStvzo[0]],
+        [garminVariaVueStvzo[1]],
+        [garminVariaVueStvzo[2]]
       ]
     }
   },
