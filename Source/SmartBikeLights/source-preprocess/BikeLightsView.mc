@@ -188,11 +188,13 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         var now = Time.now();
         var time = Gregorian.utcInfo(now, 0 /* FORMAT_SHORT */);
         _todayMoment = now.value() - ((time.hour * 3600) + (time.min * 60) + time.sec);
-
-        onSettingsChanged();
     }
 
 // #if dataField && highMemory
+
+    function usesIndividualNetwork() {
+        return _individualNetwork != null;
+    }
 
     function setupLightSensors() {
         releaseLightSensors();
@@ -367,7 +369,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 // #endif
 
     // Called from SmartBikeLightsApp.onSettingsChanged()
-    function onSettingsChanged() {
+    function onSettingsChanged(/* #if highMemory */setupSensors/* #endif */) {
         //System.println("onSettingsChanged" + " timer=" + System.getTimer());
         _invertLights = getPropertyValue("IL");
 // #if highMemory
@@ -397,7 +399,9 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
                 : separatorColor;
   // #if highMemory
             remoteControllers = configuration[17];
-            setupLightSensors();
+            if (setupSensors) {
+                setupLightSensors();
+            }
   // #endif
 // #endif
 
@@ -417,7 +421,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
             }
 
 // #if highMemory
-            setupLightButtons(configuration);
+            setupLightButtons(configuration, setupSensors);
 // #endif
             initializeLights(null);
         } catch (e) {
@@ -465,6 +469,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
 // #if highMemory
     function release(final) {
+        //System.println("release" + " timer=" + System.getTimer());
   // #if dataField
         if (final) {
             releaseLightSensors();
@@ -637,7 +642,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 // #if highMemory
         if (_updateSettings) {
             _updateSettings = false;
-            onSettingsChanged();
+            onSettingsChanged(true);
         }
 // #endif
 
@@ -1532,11 +1537,33 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         return true;
     }
 
-    protected function recreateLightNetwork() {
+    function recreateLightNetwork() {
         release(false);
-        _lightNetwork = _individualNetwork != null
-            ? new AntLightNetwork.IndividualLightNetwork(_individualNetwork[0], _individualNetwork[1], _lightNetworkListener)
-            : new /* #include ANT_NETWORK */(_lightNetworkListener);
+        if (_individualNetwork == null) {
+            _lightNetwork = new /* #include ANT_NETWORK */(_lightNetworkListener);
+            return;
+        }
+
+        // Icon color will be always set when a light is set in the configurator
+        var isHeadlightSet = headlightData[16] /* Icon color */ != null;
+        var headlightDeviceNumbers = isHeadlightSet ? _individualNetwork[0] as Lang.Array<Lang.Number> : [];
+        if (isHeadlightSet && headlightDeviceNumbers.size() == 0) {
+            var deviceNumbers = Application.Storage.getValue("HDN") as Lang.Array<Lang.Number> or Null;
+            if (deviceNumbers != null) {
+                headlightDeviceNumbers = deviceNumbers;
+            }
+        }
+
+        var isTaillightSet = taillightData[16] /* Icon color */ != null;
+        var taillightDeviceNumbers = isTaillightSet ? _individualNetwork[1] as Lang.Array<Lang.Number> : [];
+        if (isTaillightSet && taillightDeviceNumbers.size() == 0) {
+            var deviceNumbers = Application.Storage.getValue("TDN") as Lang.Array<Lang.Number> or Null;
+            if (deviceNumbers != null) {
+                taillightDeviceNumbers = deviceNumbers;
+            }
+        }
+
+        _lightNetwork = new AntLightNetwork.IndividualLightNetwork(headlightDeviceNumbers, taillightDeviceNumbers, _lightNetworkListener);
     }
 // #endif
 
@@ -1642,16 +1669,16 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
     }
 
     (:noLightButtons)
-    private function setupLightButtons(configuration) {
-        setupHighMemoryConfiguration(configuration);
+    private function setupLightButtons(configuration, setupSensors) {
+        setupHighMemoryConfiguration(configuration, setupSensors);
     }
 
   // #if touchScreen
-    private function setupLightButtons(configuration) {
+    private function setupLightButtons(configuration, setupSensors) {
         _panelInitialized = false;
         headlightPanelSettings = configuration[11];
         taillightPanelSettings = configuration[12];
-        setupHighMemoryConfiguration(configuration);
+        setupHighMemoryConfiguration(configuration, setupSensors);
     // #if dataField
         var lightsTapBehavior = configuration[15];
         if (lightsTapBehavior != null) {
@@ -1666,15 +1693,15 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
   // #endif
 
     (:settings)
-    private function setupLightButtons(configuration) {
+    private function setupLightButtons(configuration, setupSensors) {
         headlightSettings = configuration[11];
         taillightSettings = configuration[12];
-        setupHighMemoryConfiguration(configuration);
+        setupHighMemoryConfiguration(configuration, setupSensors);
     }
 
-    private function setupHighMemoryConfiguration(configuration) {
+    private function setupHighMemoryConfiguration(configuration, setupSensors) {
         _individualNetwork = configuration[13];
-        if (_individualNetwork != null /* Is enabled */ || _lightNetwork instanceof AntLightNetwork.IndividualLightNetwork) {
+        if (setupSensors && (_individualNetwork != null /* Is enabled */ || _lightNetwork instanceof AntLightNetwork.IndividualLightNetwork)) {
             recreateLightNetwork();
         }
 
@@ -2241,9 +2268,23 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         }
 
         return [
-            parse(1 /* NUMBER */, chars, null, filterResult), // Headlight device number
-            parse(1 /* NUMBER */, chars, null, filterResult)  // Taillight device number
+            parseNumberArray(chars, filterResult), // Headlight device numbers
+            parseNumberArray(chars, filterResult)  // Taillight device numbers
         ];
+    }
+
+    private function parseNumberArray(chars, filterResult) {
+        var array = [];
+        do {
+            var number = parse(1 /* NUMBER */, chars, null, filterResult);
+            if (number == null) {
+                break;
+            }
+
+            array.add(number);
+        } while (chars[filterResult[0]] == ',');
+
+        return array;
     }
 
     private function parseForceSmartMode(chars, i, filterResult) {

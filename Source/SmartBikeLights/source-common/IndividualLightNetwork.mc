@@ -31,22 +31,25 @@ module AntLightNetwork {
     class IndividualLightNetwork {
         var _lightControllers = null;
 
-        function initialize(headlightDeviceNumber, taillightDeviceNumber, listener) {
-            var deviceNumbers = headlightDeviceNumber != null && taillightDeviceNumber != null ? [headlightDeviceNumber, taillightDeviceNumber]
-                : headlightDeviceNumber != null ? [headlightDeviceNumber]
-                : taillightDeviceNumber != null ? [taillightDeviceNumber]
-                : [];
-            var totalLights = deviceNumbers.size();
+        function initialize(headlightDeviceNumbers, taillightDeviceNumbers, listener) {
+            //System.println("HDN=" + headlightDeviceNumbers);
+            //System.println("TDN=" + taillightDeviceNumbers);
+            var totalLights = headlightDeviceNumbers.size() + taillightDeviceNumbers.size();
             if (totalLights == 0) {
                 return;
             }
 
             _lightControllers = new [totalLights];
-            for (var i = 0; i < totalLights; i++) {
+            initializeLights(headlightDeviceNumbers, 0, 0 /*LIGHT_TYPE_HEADLIGHT */, listener);
+            initializeLights(taillightDeviceNumbers, headlightDeviceNumbers.size(), 2 /*LIGHT_TYPE_TAILLIGHT */, listener);
+        }
+
+        private function initializeLights(deviceNumbers, offset, lightType, listener) {
+            for (var i = 0; i < deviceNumbers.size(); i++) {
                 var deviceNumber = deviceNumbers[i];
-                _lightControllers[i] = new LightController(
+                _lightControllers[i + offset] = new LightController(
                     i,
-                    deviceNumber == headlightDeviceNumber ? 0 /*LIGHT_TYPE_HEADLIGHT */ : 2 /* LIGHT_TYPE_TAILLIGHT */,
+                    lightType,
                     deviceNumber,
                     listener
                 );

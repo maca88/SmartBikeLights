@@ -115,8 +115,6 @@ class BikeLightsView extends  WatchUi.DataField  {
         var now = Time.now();
         var time = Gregorian.utcInfo(now, 0 /* FORMAT_SHORT */);
         _todayMoment = now.value() - ((time.hour * 3600) + (time.min * 60) + time.sec);
-
-        onSettingsChanged();
     }
 
     // Called from SmartBikeLightsApp.onSettingsChanged()
