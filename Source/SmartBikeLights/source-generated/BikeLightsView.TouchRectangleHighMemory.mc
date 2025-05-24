@@ -171,10 +171,12 @@ class BikeLightsView extends  WatchUi.DataField  {
         var now = Time.now();
         var time = Gregorian.utcInfo(now, 0 /* FORMAT_SHORT */);
         _todayMoment = now.value() - ((time.hour * 3600) + (time.min * 60) + time.sec);
-
-        onSettingsChanged();
     }
 
+
+    function usesIndividualNetwork() {
+        return _individualNetwork != null;
+    }
 
     function setupLightSensors() {
         releaseLightSensors();
@@ -425,6 +427,7 @@ class BikeLightsView extends  WatchUi.DataField  {
     }
 
     function release(final) {
+        //System.println("release" + " timer=" + System.getTimer());
         if (final) {
             releaseLightSensors();
         }
@@ -1290,11 +1293,33 @@ class BikeLightsView extends  WatchUi.DataField  {
         return true;
     }
 
-    protected function recreateLightNetwork() {
+    function recreateLightNetwork() {
         release(false);
-        _lightNetwork = _individualNetwork != null
-            ? new AntLightNetwork.IndividualLightNetwork(_individualNetwork[0], _individualNetwork[1], _lightNetworkListener)
-            : new AntPlus.LightNetwork(_lightNetworkListener);
+        if (_individualNetwork == null) {
+            _lightNetwork = new AntPlus.LightNetwork(_lightNetworkListener);
+            return;
+        }
+
+        // Icon color will be always set when a light is set in the configurator
+        var isHeadlightSet = headlightData[16] /* Icon color */ != null;
+        var headlightDeviceNumbers = isHeadlightSet ? _individualNetwork[0] as Lang.Array<Lang.Number> : [];
+        if (isHeadlightSet && headlightDeviceNumbers.size() == 0) {
+            var deviceNumbers = Application.Storage.getValue("HDN") as Lang.Array<Lang.Number> or Null;
+            if (deviceNumbers != null) {
+                headlightDeviceNumbers = deviceNumbers;
+            }
+        }
+
+        var isTaillightSet = taillightData[16] /* Icon color */ != null;
+        var taillightDeviceNumbers = isTaillightSet ? _individualNetwork[1] as Lang.Array<Lang.Number> : [];
+        if (isTaillightSet && taillightDeviceNumbers.size() == 0) {
+            var deviceNumbers = Application.Storage.getValue("TDN") as Lang.Array<Lang.Number> or Null;
+            if (deviceNumbers != null) {
+                taillightDeviceNumbers = deviceNumbers;
+            }
+        }
+
+        _lightNetwork = new AntLightNetwork.IndividualLightNetwork(headlightDeviceNumbers, taillightDeviceNumbers, _lightNetworkListener);
     }
 
     // The below source code was ported from: https://www.esrl.noaa.gov/gmd/grad/solcalc/main.js
@@ -1957,9 +1982,23 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
 
         return [
-            parse(1 /* NUMBER */, chars, null, filterResult), // Headlight device number
-            parse(1 /* NUMBER */, chars, null, filterResult)  // Taillight device number
+            parseNumberArray(chars, filterResult), // Headlight device numbers
+            parseNumberArray(chars, filterResult)  // Taillight device numbers
         ];
+    }
+
+    private function parseNumberArray(chars, filterResult) {
+        var array = [];
+        do {
+            var number = parse(1 /* NUMBER */, chars, null, filterResult);
+            if (number == null) {
+                break;
+            }
+
+            array.add(number);
+        } while (chars[filterResult[0]] == ',');
+
+        return array;
     }
 
     private function parseForceSmartMode(chars, i, filterResult) {

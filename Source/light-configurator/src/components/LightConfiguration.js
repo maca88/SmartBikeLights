@@ -117,13 +117,16 @@ export default observer(({
             : useIndividualNetwork && device?.highMemory
             ?
             <Grid item xs={12} sm={4}>
-              <AppTextInput required label="Device number" type="number"
+              <AppTextInput label="Device number"
                 setter={setDeviceNumber}
+                required={(device == null || !device.nativePairing)}
                 value={deviceNumber}
                 help={
                   <React.Fragment>
                     <Typography>
-                      The light device number is a unique number that is required by the Individual Light Network. To obtain the device number:
+                      The light device number is a unique number that is required by the Individual Light Network.
+                      If your device is a System 8 device, you can pair the lights using the native Sensor menu and leave this field empty.
+                      For non-System 8 devices, you can obtain the device number by following these steps:
                     </Typography>
                     <ol>
                       <li><Typography>Put the ANT+ light near the Garmin device</Typography></li>

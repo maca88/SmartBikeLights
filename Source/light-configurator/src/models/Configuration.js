@@ -631,8 +631,8 @@ export default class Configuration {
     }
 
     configuration.useIndividualNetwork = useIndividualNetwork === 1;
-    configuration.headlightDeviceNumber = parseNumber(value, filterResult[0] + 1, filterResult);
-    configuration.taillightDeviceNumber = parseNumber(value, filterResult[0] + 1, filterResult);
+    configuration.headlightDeviceNumber = parseTitle(value, filterResult[0] + 1, filterResult);
+    configuration.taillightDeviceNumber = parseTitle(value, filterResult[0] + 1, filterResult);
 
     // Parse force smart mode
     const headlightForceSmartMode = parseNumber(value, filterResult[0] + 1, filterResult);
@@ -710,7 +710,7 @@ export default class Configuration {
   }
 
   isIndividualNetworkValid(device) {
-    if (!this.useIndividualNetwork || !device.highMemory) {
+    if (!this.useIndividualNetwork || !device.highMemory || device.nativePairing) {
       return true;
     }
 
@@ -1089,11 +1089,11 @@ export default class Configuration {
   }
 
   setHeadlightDeviceNumber = (value) => {
-    this.headlightDeviceNumber = Number.isNaN(value) ? null : value;
+    this.headlightDeviceNumber = value;
   }
 
   setTaillightDeviceNumber = (value) => {
-    this.taillightDeviceNumber = Number.isNaN(value) ? null : value;
+    this.taillightDeviceNumber = value;
   }
 
   setHeadlightSerialNumber = (value) => {
