@@ -1,0 +1,4 @@
+project.manifest = manifest.xml
+
+#base.excludeAnnotations=lowMemory
+base.excludeAnnotations=highMemory

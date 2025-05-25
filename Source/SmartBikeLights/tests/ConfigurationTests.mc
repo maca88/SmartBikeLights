@@ -1,18 +1,33 @@
-import Toybox.Test;
-import Toybox.System;
+using Toybox.Test;
+using Toybox.System;
+using Toybox.Time;
+using Toybox.Time.Gregorian;
 
 (:test)
 class TestBikeLightsView extends BikeLightsView {
 
     var configuration;
 
+    (:lowMemory)
     function initialize(configuration) {
         self.configuration = configuration;
         BikeLightsView.initialize();
+        onSettingsChanged();
+    }
+
+    (:highMemory)
+    function initialize(configuration) {
+        self.configuration = configuration;
+        BikeLightsView.initialize();
+        onSettingsChanged(false);
     }
 
     protected function getPropertyValue(key) {
         return key.equals("LC") ? configuration : BikeLightsView.getPropertyValue(key);
+    }
+
+    function getSunriseSunset(rise, time, position) {
+        return getSunriseSet(rise, time, position);
     }
 
     // Do not initialize virtual lights
@@ -22,6 +37,21 @@ class TestBikeLightsView extends BikeLightsView {
     function getErrorCode() {
         return _errorCode;
     }
+}
+
+(:test)
+function sunsetSunriseTest(logger) {
+    var view = new TestBikeLightsView(null);
+
+    var time = Gregorian.utcInfo(new Time.Moment(1740783600), 0 /* FORMAT_SHORT */);
+    var position = [48.574789, 10.3710937];
+    var sunriseTime = view.getSunriseSunset(true, time, position);
+    var sunsetTime = view.getSunriseSunset(false, time, position);
+
+    Test.assert(sunriseTime == 21741);
+    Test.assert(sunsetTime == 61186);
+
+    return true;
 }
 
 // Parse old config that has < and | characters
@@ -224,7 +254,7 @@ function parseValidConfigurationForNoSettings(logger) {
 (:test :lowMemory)
 function assertLowMemory(logger) {
     var view = new TestBikeLightsView("#4587520,196641::1:#2,2!TEST:1:1:0:0H]0!:1:0:0:0D=1#6291461,1409482753::1:##0#B3289#1#1#0#0");
-    var maxMemory = 29300; // This includes also the test code
+    var maxMemory = 30960; // This includes also the test code
     var memory = System.getSystemStats().usedMemory;
 
     Test.assertMessage(memory < maxMemory, "Memory is higher that expected (Expected: < " + maxMemory + ", Actual: " + memory + ")");
