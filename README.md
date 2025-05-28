@@ -115,6 +115,7 @@ The initial control mode will be determined based on the configuration from the 
 - See.Sense ACE Front/Rear (supported only by using Individual Light Network)
 - See.Sense BEAM/BEAM+ (supported only by using Individual Light Network)
 - See.Sense ICON2 (supported only by using Individual Light Network)
+- Wahoo TRACKR RADAR
 
 **NOTE:** In case your ANT+ light is not on the list, please check the following garmin thread: https://forums.garmin.com/developer/connect-iq/f/showcase/248492/data-field-smart-bike-lights
 

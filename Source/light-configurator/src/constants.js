@@ -409,6 +409,18 @@ const mageneAt1200Modes = [
   { id: 63, name: 'Fast Strobe' }
 ];
 
+const mageneAt1600Modes = [
+  { id: 0, name: 'Off' },
+  { id: 1, name: 'Very High' },
+  { id: 2, name: 'High' },
+  { id: 3, name: 'Medium' },
+  { id: 4, name: 'Medium-Low' },
+  { id: 5, name: 'Low' },
+  { id: 6, name: 'Slow Flash' },
+  { id: 7, name: 'Strobe' },
+  { id: 61, name: 'Fast Strobe' }
+];
+
 export const controlMode = {id: -1, name: "Control mode"};
 export const currentConfiguration = {id: -2, name: "Current configuration"};
 
@@ -586,7 +598,7 @@ export const headlightList = [
   },
   {
     id: 11,
-    name: 'Magene AT1200/1600',
+    name: 'Magene AT1200',
     modes: mageneAt1200Modes,
     individualNetworkOnly: false,
     lightModes: [4194304, 90382865], // 18014398599864849
@@ -603,6 +615,28 @@ export const headlightList = [
         [mageneAt1200Modes[6]],
         [mageneAt1200Modes[7]],
         [mageneAt1200Modes[8]]
+      ]
+    }
+  },
+  {
+    id: 14,
+    name: 'Magene AT1600',
+    modes: mageneAt1600Modes,
+    individualNetworkOnly: false,
+    lightModes: [16384, 90382865], // 70368834560529
+    additionalLightModes: null,
+    defaultLightPanel: {
+      shortName: 'AT 1600',
+      buttonGroups: [
+        [controlMode, mageneAt1600Modes[0]],
+        [mageneAt1600Modes[1]],
+        [mageneAt1600Modes[2]],
+        [mageneAt1600Modes[3]],
+        [mageneAt1600Modes[4]],
+        [mageneAt1600Modes[5]],
+        [mageneAt1600Modes[6]],
+        [mageneAt1600Modes[7]],
+        [mageneAt1600Modes[8]]
       ]
     }
   },
@@ -772,6 +806,14 @@ const trekCarBack = [
   { id: 5, name: 'Night Steady' },
   { id: 8, name: 'Day Flash' },
   { id: 63, name: 'Night Flash' }
+];
+
+const wahooTrackrRadar = [
+  { id: 0, name: 'Off' },
+  { id: 4, name: 'High Steady' },
+  { id: 5, name: 'Low Steady' },
+  { id: 6, name: 'Low Flash' },
+  { id: 7, name: 'High Flash' }
 ];
 
 export const taillightList = [
@@ -1092,6 +1134,24 @@ export const taillightList = [
         [trekCarBack[2]],
         [trekCarBack[3]],
         [trekCarBack[4]]
+      ]
+    }
+  },
+  {
+    id: 19,
+    name: 'Wahoo TRACKR RADAR',
+    modes: wahooTrackrRadar,
+    individualNetworkOnly: false,
+    lightModes: [0, 73601024], // 73601024
+    additionalLightModes: null,
+    defaultLightPanel: {
+      shortName: 'TRACKR',
+      buttonGroups: [
+        [controlMode, wahooTrackrRadar[0]],
+        [wahooTrackrRadar[1]],
+        [wahooTrackrRadar[2]],
+        [wahooTrackrRadar[3]],
+        [wahooTrackrRadar[4]],
       ]
     }
   },
