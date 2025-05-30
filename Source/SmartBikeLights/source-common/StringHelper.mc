@@ -1,7 +1,34 @@
 (:touchScreen)
 module StringHelper {
 
-    public function trimText(dc, text, maxFont, maxWidth, maxHeight, fontTopPaddings, fontResult) {
+    public function getTextStack(text, maxHeight) {
+        var stack = [];
+        var totalLines = 1;
+        var remainingText = null;
+        var newLineIndex = text.find("\\n");
+        while (newLineIndex != null) {
+            totalLines++;
+            stack.add([text.substring(0, newLineIndex), maxHeight]);
+            remainingText = text.substring(newLineIndex + 2, text.length() - 1);
+            newLineIndex = remainingText.find("\\n");
+        }
+
+        if (remainingText != null) {
+            stack.add([remainingText, maxHeight]);
+        }
+
+        if (stack.size() > 0) {
+            for (var i = 0; i < stack.size(); i++) {
+                stack[i][1] = stack[i][1] / totalLines; // update max height
+            }
+        } else {
+            stack.add([text, maxHeight]);
+        }
+
+        return stack;
+    }
+
+    public function trimText(dc, stack, maxFont, maxWidth, fontTopPaddings, fontResult) {
         // 1. Check whether the text width is lower that the max
         //  1.a if not, check whether text can be displayed in two rows
         //    1.a.0 if not, lower the font and goto 1.
@@ -9,40 +36,38 @@ module StringHelper {
         //  1.b if yes, check whether the text height is lower that the max
         //    1.b.0 if not, lower the font and goto 1.
         //    1.b.1 if yes, return the result
-        var stack = [[text, maxHeight]];
         var result = [];
         var fontTopPadding = getFontTopPadding(maxFont, fontTopPaddings);
         while (stack.size() > 0) {
             var item = stack[0];
-            stack = stack.slice(1, null);
-            text = item[0];
-            maxHeight = item[1];
-
+            var text = item[0];
+            var maxHeight = item[1];
             var dim = dc.getTextDimensions(text, maxFont);
             if (dim[0] <= maxWidth && (dim[1] - fontTopPadding) <= maxHeight) {
                 result.add(text);
+                stack = stack.slice(1, null);
+                continue;
             } else if (dim[0] > maxWidth) {
                 var splitIndex = getTextSplitIndex(text.toCharArray());
                 if (((dim[1] * 2) - fontTopPadding) <= maxHeight && splitIndex > 0) {
+                  stack = stack.slice(1, null);
                   stack.add([text.substring(0, splitIndex), maxHeight / 2]);
                   stack.add([text.substring(splitIndex + 1, text.length()), maxHeight / 2]);
-                } else if (maxFont == 0) {
-                    result.add(trimTextByWidth(dc, text, 0, maxWidth));
-                } else {
-                    maxFont--;
-                    fontTopPadding = getFontTopPadding(maxFont, fontTopPaddings);
-                    stack.add([text, maxHeight]);
+                  continue;
                 }
-            } else if (maxFont == 0) {
-                result.add(text);
+            }
+
+            if (maxFont == 0) {
+                result.add(trimTextByWidth(dc, text, 0, maxWidth));
+                stack = stack.slice(1, null);
             } else {
                 maxFont--;
                 fontTopPadding = getFontTopPadding(maxFont, fontTopPaddings);
-                stack.add([text, maxHeight]);
             }
         }
 
         fontResult[0] = maxFont;
+
         return result;
     }
 

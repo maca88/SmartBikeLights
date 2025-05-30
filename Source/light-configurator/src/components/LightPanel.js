@@ -7,7 +7,7 @@ import LightButton from '../models/LightButton';
 import ButtonGroup from './ButtonGroup';
 import AddButton from './AddButton';
 import { createMenuItemColorTemplateFunc } from './Templates';
-import { controlMode, currentConfiguration, getButtonColors, getButtonTextColors } from '../constants';
+import { controlMode, currentConfiguration, getButtonColors, getButtonTextColors, groupNameVisibility } from '../constants';
 import AppTextInput from '../inputs/AppTextInput';
 import AppSelect from '../inputs/AppSelect';
 
@@ -56,6 +56,9 @@ export default observer(({ lightPanel, lightModes }) => {
         </Grid>
         <Grid item xs={12} sm={4}>
           <AppSelect required items={getButtonTextColors()} label="Active button text color" setter={lightPanel.setButtonTextColor} value={lightPanel.buttonTextColor} itemTemplateFunc={buttonTextColorTemplate} />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <AppSelect required items={groupNameVisibility} label="Group name visiblity" setter={lightPanel.setGroupNameVisibility} value={lightPanel.groupNameVisibility} />
         </Grid>
       </Grid>
       <div>

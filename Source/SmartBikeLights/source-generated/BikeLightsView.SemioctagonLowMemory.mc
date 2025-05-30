@@ -473,7 +473,6 @@ class BikeLightsView extends  WatchUi.DataField  {
 
         var recordLightModes = getPropertyValue("RL");
         var initializedLights = 0;
-        var hasSerialNumber = headlightData[15] != null || taillightData[15] != null;
         for (var i = 0; i < lights.size(); i++) {
             var light = lights[i];
             var lightType = light != null ? light.type : 7;
@@ -484,8 +483,7 @@ class BikeLightsView extends  WatchUi.DataField  {
 
             var lightData = getLightData(lightType);
             var serial = lightData[15];
-            if ((hasSerialNumber && lightData[14] == null) ||
-                (hasSerialNumber && serial != null && serial != lightNetwork.getProductInfo(light.identifier).serial)) {
+            if (serial != null && serial != lightNetwork.getProductInfo(light.identifier).serial) {
                 continue;
             }
 

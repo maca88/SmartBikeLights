@@ -197,6 +197,21 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
     }
 
+    function checkLightSensors() {
+        var lightSensors = _lightSensors;
+        if (lightSensors == null || lightSensors.size() == 0) {
+            return;
+        }
+
+        for (var i = 0; i < lightSensors.size(); i++) {
+            var error = lightSensors[i].checkChannel();
+            if (error != null) {
+                _errorCode = error;
+                return;
+            }
+        }
+    }
+
     function releaseLightSensors() {
         var lightSensors = _lightSensors;
         if (lightSensors != null) {
@@ -453,6 +468,8 @@ class BikeLightsView extends  WatchUi.DataField  {
         if (initializedLights == 0 || _errorCode != null) {
             return null;
         }
+
+        checkLightSensors();
 
         // Update acceleration
         var lastSpeed = _lastSpeed;
@@ -953,7 +970,6 @@ class BikeLightsView extends  WatchUi.DataField  {
 
         var recordLightModes = getPropertyValue("RL");
         var initializedLights = 0;
-        var hasSerialNumber = headlightData[15] != null || taillightData[15] != null;
         for (var i = 0; i < lights.size(); i++) {
             var light = lights[i];
             var lightType = light != null ? light.type : 7;
@@ -964,8 +980,7 @@ class BikeLightsView extends  WatchUi.DataField  {
 
             var lightData = getLightData(lightType);
             var serial = lightData[15];
-            if ((hasSerialNumber && lightData[14] == null) ||
-                (hasSerialNumber && serial != null && serial != lightNetwork.getProductInfo(light.identifier).serial)) {
+            if (serial != null && serial != lightNetwork.getProductInfo(light.identifier).serial) {
                 continue;
             }
 
@@ -1044,7 +1059,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         var panelData = lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? _headlightPanel : _taillightPanel;
         var tapX = location[0];
         var tapY = location[1];
-        var groupIndex = 8;
+        var groupIndex = 9;
         while (groupIndex < panelData.size()) {
             var totalButtons = panelData[groupIndex];
             // All buttons in the group have the same y and height, take the first one
@@ -1491,6 +1506,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         data.add(lightType == 0 /* LIGHT_TYPE_HEADLIGHT */ ? "Headlight" : "Taillight"); // Light name
         data.add(0 /* Activity color */); // Button color
         data.add(0xFFFFFF /* White */); // Button text color
+        data.add(-1 /* Do not display */); // Display group name text size
         for (var i = 0; i < totalButtonGroups; i++) {
             var mode = capableModes[i];
             var totalGroupButtons = mode == 0 /* Off */ ? 2 : 1; // Number of buttons;
@@ -1521,32 +1537,36 @@ class BikeLightsView extends  WatchUi.DataField  {
     private function initializeLightPanel(dc, lightData, position, width, height) {
         var x = position < 3 ? 0 : (width / 2); // Left x
         var y = 0;
-        var margin = 2;
-        var buttonGroupWidth = (position != 2 ? width / 2 : width);
-        var light = lightData[0];
-        var capableModes = getLightModes(light, lightData[17]);
+        var buttonGroupWidth = (position != 2 /* Center */ ? width / 2 : width);
+        var capableModes = getLightModes(lightData[0], lightData[17]);
         var fontTopPaddings = WatchUi.loadResource(Rez.JsonData.FontTopPaddings)[0];
-        var panelSettings = light.type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? headlightPanelSettings : taillightPanelSettings;
+        var panelSettings = lightData[0].type == 0 /* LIGHT_TYPE_HEADLIGHT */ ? headlightPanelSettings : taillightPanelSettings;
         if (panelSettings == null) {
-            panelSettings = getDefaultLightPanelSettings(light.type, capableModes);
+            panelSettings = getDefaultLightPanelSettings(lightData[0].type, capableModes);
+        }
+
+        var groupName = null;
+        var groupNameTextSize = panelSettings[5];
+        if (groupNameTextSize >= 0) {
+            y += (dc.getFontHeight(groupNameTextSize) - StringHelper.getFontTopPadding(groupNameTextSize, fontTopPaddings) - dc.getFontDescent(groupNameTextSize)) + 2 * 2;
+            height -= y;
+            groupName = [x + buttonGroupWidth / 2, -StringHelper.getFontTopPadding(groupNameTextSize, fontTopPaddings) + 2, groupNameTextSize];
         }
 
         var i;
         var totalButtonGroups = panelSettings[1];
-        // [:TotalButtonGroups:, :LightName:, :ButtonColor:, :ButtonTextColor:, :LightNameX:, :LightNameY:, :BatteryX:, :BatteryY:, (<ButtonGroup>)+]
+        // [:TotalButtonGroups:, :LightName:, :ButtonColor:, :ButtonTextColor:, :LightNameX:, :LightNameY:, :BatteryX:, :BatteryY:, :GroupNameTextSize:, (<ButtonGroup>)+]
         // <ButtonGroup> := [:NumberOfButtons:, :Mode:, :TitleX:, :TitleFont:, (<TitlePart>)+, :ButtonLeftX:, :ButtonTopY:, :ButtonWidth:, :ButtonHeight:){:NumberOfButtons:} ]
         // <TitlePart> := [(:Title:, :TitleY:)+]
-        var panelData = new [8 + (8 * panelSettings[0]) + totalButtonGroups];
+        var panelData = new [9 + (8 * panelSettings[0]) + totalButtonGroups];
         panelData[0] = totalButtonGroups;
         var footerHeight = 20;
         var buttonHeight = (height - footerHeight).toFloat() / totalButtonGroups;
         var fontResult = [0];
-        var buttonPadding = margin * 2;
-        var textPadding = margin * 4;
-        var groupIndex = 8;
-        var settingsGroupIndex = 5;
-        var currentConfig = getPropertyValue("CC");
-        var currentConfigName = getPropertyValue("CN" + (currentConfig == null ? 1 : currentConfig));
+        var buttonPadding = 2 * 2;
+        var textPadding = 2 * 4;
+        var groupIndex = 9;
+        var settingsGroupIndex = 6;
         for (i = 0; i < totalButtonGroups; i++) {
             var totalButtons = panelSettings[settingsGroupIndex];
             var buttonWidth = buttonGroupWidth / totalButtons;
@@ -1562,14 +1582,24 @@ class BikeLightsView extends  WatchUi.DataField  {
                     return;
                 }
 
-                var modeTitle = mode == -2 ? (currentConfigName == null ? "" : currentConfigName)
-                    : mode < 0 ? "M"
-                    : panelSettings[modeIndex + 1];
-                var titleList = StringHelper.trimText(dc, modeTitle, 4, buttonWidth - textPadding, buttonHeight - textPadding, fontTopPaddings, fontResult);
+                var modeTitle;
+                if (mode == -2) {
+                    var currentConfig = getPropertyValue("CC");
+                    var currentConfigName = getPropertyValue("CN" + (currentConfig == null ? 1 : currentConfig));
+                    modeTitle = currentConfigName == null ? "" : currentConfigName;
+                } else if (mode < 0) {
+                    modeTitle = "M";
+                } else {
+                    modeTitle = panelSettings[modeIndex + 1];
+                }
+
+                var textStack = StringHelper.getTextStack(modeTitle, buttonHeight - textPadding);
+                var titleList = StringHelper.trimText(dc, textStack, 4, buttonWidth - textPadding, fontTopPaddings, fontResult);
                 var titleFont = fontResult[0];
+                //System.println("TF=" + titleFont + " TL=" + titleList);
                 var titleFontHeight = dc.getFontHeight(titleFont);
                 var titleFontTopPadding = StringHelper.getFontTopPadding(titleFont, fontTopPaddings);
-                var titleY = y + (buttonHeight - (titleList.size() * titleFontHeight) - titleFontTopPadding) / 2 + margin;
+                var titleY = y + (buttonHeight - (titleList.size() * titleFontHeight) - titleFontTopPadding) / 2 + 2;
                 titleParts = new [2 * titleList.size()];
                 for (var k = 0; k < titleList.size(); k++) {
                    var partIndex = k * 2;
@@ -1598,17 +1628,16 @@ class BikeLightsView extends  WatchUi.DataField  {
         x = Math.round(width * 0.25f * position);
         var lightName = StringHelper.trimTextByWidth(dc, panelSettings[2], 1, buttonGroupWidth - buttonPadding - _batteryWidth);
         var lightNameWidth = lightName != null ? dc.getTextWidthInPixels(lightName, 1) : 0;
-        var lightNameHeight = dc.getFontHeight(1);
-        var lightNameTopPadding = StringHelper.getFontTopPadding(1, fontTopPaddings);
         panelData[1] = lightName; // Light name
         panelData[2] = panelSettings[3] == 0 ? _activityColor : panelSettings[3]; // Button color
         panelData[3] = panelSettings[4]; // Button text color
-        panelData[4] = x - (_batteryWidth / 2) - (margin / 2); // Light name x
-        panelData[5] = y + ((footerHeight - lightNameHeight - lightNameTopPadding) / 2); // Light name y
-        panelData[6] = x + (lightNameWidth / 2) + (margin / 2); // Battery x
+        panelData[4] = x - (_batteryWidth / 2) - (2 / 2); // Light name x
+        panelData[5] = y + ((footerHeight - (dc.getFontHeight(1) - StringHelper.getFontTopPadding(1, fontTopPaddings))) / 2); // Light name y
+        panelData[6] = x + (lightNameWidth / 2) + (2 / 2); // Battery x
         panelData[7] = y - 1; // Battery y
+        panelData[8] = groupName;
 
-        if (light.type == 0 /* LIGHT_TYPE_HEADLIGHT */) {
+        if (lightData[0].type == 0 /* LIGHT_TYPE_HEADLIGHT */) {
             _headlightPanel = panelData;
         } else {
             _taillightPanel = panelData;
@@ -1626,11 +1655,17 @@ class BikeLightsView extends  WatchUi.DataField  {
             return;
         }
 
-        // [:TotalButtonGroups:, :LightName:, :ButtonColor:, :ButtonTextColor:, :LightNameX:, :LightNameY:, :BatteryX:, :BatteryY:, (<ButtonGroup>)+]
+        var groupName = panelData[8];
+        if (groupName != null) {
+            setTextColor(dc, fgColor);
+            dc.drawText(groupName[0], groupName[1], groupName[2], lightData[5] == null ? "" : lightData[5], 1 /* TEXT_JUSTIFY_CENTER */);
+        }
+
+        // [:TotalButtonGroups:, :LightName:, :ButtonColor:, :ButtonTextColor:, :LightNameX:, :LightNameY:, :BatteryX:, :BatteryY:, :GroupSizeText:, (<ButtonGroup>)+]
         // <ButtonGroup> := [:NumberOfButtons:, :Mode:, :TitleX:, :TitleFont:, (<TitlePart>)+, :ButtonLeftX:, :ButtonTopY:, :ButtonWidth:, :ButtonHeight:){:NumberOfButtons:} ]
         // <TitlePart> := [(:Title:, :TitleY:)+]
         var totalButtonGroups = panelData[0];
-        var groupIndex = 8;
+        var groupIndex = 9;
         for (var i = 0; i < totalButtonGroups; i++) {
             var totalButtons = panelData[groupIndex];
             for (var j = 0; j < totalButtons; j++) {
@@ -2063,10 +2098,10 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
 
         var totalButtonGroups = parse(1 /* NUMBER */, chars, null, filterResult);
-        // [:TotalButtons:, :TotalButtonGroups:, :LightName:, :ButtonColor:, :ButtonTextColor:, (<ButtonGroup>)+]
+        // [:TotalButtons:, :TotalButtonGroups:, :LightName:, :ButtonColor:, :ButtonTextColor:, :GroupNameTextSize:, (<ButtonGroup>)+]
         // <ButtonGroup> = :NumberOfButtons:, (<Button>){:NumberOfButtons:})
         // <Button> = :Mode:, :Title:
-        var data = new [5 + (2 * totalButtons) + totalButtonGroups];
+        var data = new [6 + (2 * totalButtons) + totalButtonGroups];
         data[0] = totalButtons;
         data[1] = totalButtonGroups;
         data[2] = parse(0 /* STRING */, chars, null, filterResult);
@@ -2076,8 +2111,11 @@ class BikeLightsView extends  WatchUi.DataField  {
         data[4] = chars[filterResult[0]] == ':'
             ? parse(1 /* NUMBER */, chars, null, filterResult)
             : 0xFFFFFF /* White */; // Old configuration
+        data[5] = chars[filterResult[0]] == ':' // Display group name text size
+            ? parse(1 /* NUMBER */, chars, null, filterResult)
+            : -1 /* Do not display */; // Old configuration
         i = filterResult[0];
-        var dataIndex = 5;
+        var dataIndex = 6;
 
         while (i < chars.size()) {
             var char = chars[i];

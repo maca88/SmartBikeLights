@@ -81,6 +81,15 @@ export const setList = [
   { id: 1, name: 'Is set' }
 ];
 
+export const groupNameVisibility = [
+  { id: -1, name: 'Not visible' },
+  { id: 0, name: 'Visible - Extra tiny font' },
+  { id: 1, name: 'Visible - Tiny font' },
+  { id: 2, name: 'Visible - Small font' },
+  { id: 3, name: 'Visible - Medium font' },
+  { id: 4, name: 'Visible - Large font' }
+];
+
 export const colors = [
   { id: 1, name: 'Black/White' },
 
@@ -418,7 +427,9 @@ const mageneAt1600Modes = [
   { id: 5, name: 'Low' },
   { id: 6, name: 'Slow Flash' },
   { id: 7, name: 'Strobe' },
-  { id: 61, name: 'Fast Strobe' }
+  { id: 61, name: 'Fast Strobe' },
+  { id: 59, name: 'Preset 9' },
+  { id: 60, name: 'Preset 10' }
 ];
 
 export const controlMode = {id: -1, name: "Control mode"};
@@ -636,7 +647,9 @@ export const headlightList = [
         [mageneAt1600Modes[5]],
         [mageneAt1600Modes[6]],
         [mageneAt1600Modes[7]],
-        [mageneAt1600Modes[8]]
+        [mageneAt1600Modes[8]],
+        [mageneAt1600Modes[9]],
+        [mageneAt1600Modes[10]]
       ]
     }
   },

@@ -7,6 +7,7 @@ export default class LightPanel {
   lightName = null;
   buttonColor = 0; /* Activity color */
   buttonTextColor = 0xFFFFFF; /* White */
+  groupNameVisibility = -1; /* Not visible */
 
   constructor(data) {
     makeAutoObservable(this, {});
@@ -41,5 +42,9 @@ export default class LightPanel {
 
   setButtonTextColor = (value) => {
     this.buttonTextColor = value;
+  }
+
+  setGroupNameVisibility = (value) => {
+    this.groupNameVisibility = value;
   }
 }

@@ -82,14 +82,14 @@ class BikeLightSensor {
             _supportedStandardModes |= (0x01 << supportedMode);
         }
 
-        openMasterChannel(false);
+        openMasterChannel();
     }
 
     function getLightMode() {
         return _lightMode;
     }
 
-    function openMasterChannel(ignoreOpenError) {
+    function openMasterChannel() {
         //System.println("open DN=" + _deviceNumber);
         try {
             if (_channel == null) {
@@ -104,7 +104,7 @@ class BikeLightSensor {
                 }));
             }
 
-            if (!_channel.open() && !ignoreOpenError) {
+            if (!_channel.open()) {
                 _errorCode = 8;
             }
         } catch (e instanceof Ant.UnableToAcquireChannelException) {
@@ -129,10 +129,6 @@ class BikeLightSensor {
     }
 
     function checkChannel() {
-        if (_errorCode != null) {
-            return _errorCode;
-        }
-
         // In case the device goes to sleep for a longer period of time the channel will be closed by the system
         // and onMasterMessage function won't be called anymore. In such case release the current channel and open
         // a new one. To detect a sleep we check whether the last message was received in last 5 seconds. We should get
@@ -140,7 +136,7 @@ class BikeLightSensor {
         if (_lastMessageTime > 0 && System.getTimer() - _lastMessageTime > 5000) {
             // Reset the channel and data
             closeMasterChannel();
-            openMasterChannel(false);
+            openMasterChannel();
         }
 
         return _errorCode;
