@@ -902,6 +902,7 @@ class BikeLightsView extends  WatchUi.DataField  {
 
         var recordLightModes = getPropertyValue("RL");
         var initializedLights = 0;
+        var isConfigSet = headlightData[16] != null || taillightData[16] != null;
         for (var i = 0; i < lights.size(); i++) {
             var light = lights[i];
             var lightType = light != null ? light.type : 7;
@@ -912,7 +913,10 @@ class BikeLightsView extends  WatchUi.DataField  {
 
             var lightData = getLightData(lightType);
             var serial = lightData[15];
-            if (serial != null && serial != lightNetwork.getProductInfo(light.identifier).serial) {
+            // In case only one light type is configured, ignore other light types (e.g. when only headlight is set, ignore taillights).
+            // But if no light is configured, initialize all of them
+            if ((isConfigSet && lightData[16] /* Icon color */ == null) ||
+                (serial != null && serial != lightNetwork.getProductInfo(light.identifier).serial)) {
                 continue;
             }
 
