@@ -4,17 +4,15 @@ module StringHelper {
     public function getTextStack(text, maxHeight) {
         var stack = [];
         var totalLines = 1;
-        var remainingText = null;
         var newLineIndex = text.find("\\n");
         while (newLineIndex != null) {
             totalLines++;
             stack.add([text.substring(0, newLineIndex), maxHeight]);
-            remainingText = text.substring(newLineIndex + 2, text.length() - 1);
-            newLineIndex = remainingText.find("\\n");
-        }
-
-        if (remainingText != null) {
-            stack.add([remainingText, maxHeight]);
+            text = text.substring(newLineIndex + 2, text.length());
+            newLineIndex = text.find("\\n");
+            if (newLineIndex == null) {
+                stack.add([text, maxHeight]);
+            }
         }
 
         if (stack.size() > 0) {
