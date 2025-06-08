@@ -1,0 +1,12 @@
+<resources>
+    <fitContributions>
+        <fitField id="0"
+                  sortOrder="0"
+                  precision="1"
+                  displayInChart="true"
+                  chartTitle="@Strings.Temperature"
+                  dataLabel="@Strings.Temperature"
+                  unitLabel="@Strings.Celsius"
+                  fillColor="#9a9a9a" />
+    </fitContributions>
+</resources>

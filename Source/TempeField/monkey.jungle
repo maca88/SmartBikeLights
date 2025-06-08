@@ -1,0 +1,6 @@
+project.manifest = manifest.xml
+
+base.sourcePath = source
+
+project.optimization = 2
+project.typecheck = 0
