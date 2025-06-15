@@ -775,9 +775,10 @@ const mageneL508 = [
   { id: 0, name: 'Off' },
   { id: 4, name: 'Solid' },
   { id: 5, name: 'Peloton' },
-  { id: 7, name: 'Flash' },
-  { id: 6, name: 'Pulse' },
-  { id: 63, name: 'Rotate' }
+  { id: 6, name: 'Flashing' },
+  { id: 7, name: 'Quickly Flash' },
+  { id: 62, name: 'Pulse' },
+  { id: 63, name: 'Rotation' }
 ];
 
 const seeSenseIcon2 = [
@@ -1076,7 +1077,7 @@ export const taillightList = [
     name: 'Magene L508',
     modes: mageneL508,
     individualNetworkOnly: false,
-    lightModes: [0, 73535488], // 73535488
+    lightModes: [3538944, 88215552], // 15199648830590976
     additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'Magene 508',
@@ -1087,6 +1088,7 @@ export const taillightList = [
         [mageneL508[3]],
         [mageneL508[4]],
         [mageneL508[5]],
+        [mageneL508[6]]
       ]
     }
   },
