@@ -74,6 +74,31 @@
         }
       },
     {
+      "name": "RectangleHighResolution",
+      "files": ["source-preprocess/BikeLightsView.mc"],
+      "definedSymbols": ["highMemory", "rectangle", "nonTouchScreen", "highResolution"],
+      "includeSymbols": {
+        "TARGET": ":highMemory :rectangle :nonTouchScreen :highResolution",
+        "T_LIGHT_FONT_OFFSET_X": "4",
+        "LIGHT_OFFSET_X": "36",
+        "TITLE_OFFSET_X": "32",
+        "CTRL_MODE_OFFSET_X": "10",
+        "CTRL_MODE_OFFSET_Y": "14",
+        "H_BATTERY_WIDTH": "68",
+
+        "H_BATTERY_HEIGHT": "26",
+        "LIGHT_HEIGHT": "48",
+
+        "T_LIGHT_L_FONT_OFFSET_X": "2",
+        "LIGHT_L_HEIGHT": "85",
+        "LIGHT_L_WIDTH": "116",
+        "V_BATTERY_L_WIDTH": "36",
+        "CTRL_MODE_L_OFFSET_X": "21",
+        "CTRL_MODE_L_OFFSET_Y": "26",
+        "LIGHT_L_V_BATTERY_OFFSET_X": "102"
+      }
+    },
+    {
       "name": "RectangleHighMemory",
       "files": ["source-preprocess/BikeLightsView.mc"],
       "definedSymbols": ["highMemory", "rectangle", "nonTouchScreen", "mediumResolution"],

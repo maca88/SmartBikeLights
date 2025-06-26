@@ -19,6 +19,7 @@ rectangleMonochromeLowMemory = $(lowMemory);round;semioctagon;colorScreen
 rectangleNoSettings = $(excludeBase);touchScreen;lowMemory;settings;lightButtons;round;semioctagon;monochromeScreen;highResolution
 rectangleNonTouchScreen = $(excludeBase);touchScreen;lowMemory;noLightButtons;round;semioctagon;monochromeScreen;highResolution
 rectangleHighResolution = $(excludeBase);nonTouchScreen;lowMemory;noLightButtons;round;semioctagon;settings;monochromeScreen;mediumResolution
+rectangleNonTouchScreenHighResolution = $(excludeBase);touchScreen;lowMemory;noLightButtons;round;semioctagon;monochromeScreen;mediumResolution
 
 # maps default
 rectangle.excludeAnnotations = $(excludeBase);nonTouchScreen;lowMemory;noLightButtons;round;semioctagon;settings;monochromeScreen;highResolution
@@ -77,6 +78,8 @@ edge530.excludeAnnotations = $(rectangleNonTouchScreen)
 edge530.resourcePath = $(edge530.resourcePath);resources-highmemory
 edge540.excludeAnnotations = $(rectangleNonTouchScreen)
 edge540.resourcePath = $(edge540.resourcePath);resources-highmemory
+edgemtb.excludeAnnotations = $(rectangleNonTouchScreen)
+edgemtb.resourcePath = $(edgemtb.resourcePath);resources-highmemory
 
 # Rectangle touch screen devices
 edge1030.resourcePath = $(edge1030.resourcePath);resources-highmemory;resources-touchscreen
@@ -93,6 +96,10 @@ edgeexplore2.resourcePath = $(edgeexplore2.resourcePath);resources-highmemory;re
 # Rectangle touch screen devices with high resolution
 edge1050.resourcePath = resources-highmemory;$(edge1050.resourcePath)
 edge1050.excludeAnnotations = $(rectangleHighResolution)
+
+# Rectangle non touch screen devices with high resolution
+venux1.resourcePath = resources-highmemory;$(venux1.resourcePath)
+venux1.excludeAnnotations = $(rectangleNonTouchScreenHighResolution)
 
 # Round non touch screen devices with more than 32KB memory but do not have CIQ 3.2
 d2charlie.excludeAnnotations = $(roundNoSettings)
@@ -174,6 +181,8 @@ fr265s.excludeAnnotations = $(roundHighResolution)
 fr265s.resourcePath = $(fr265s.resourcePath);resources-highmemory
 fr965.excludeAnnotations = $(roundHighResolution)
 fr965.resourcePath = $(fr965.resourcePath);resources-highmemory
+fr970.excludeAnnotations = $(roundHighResolution)
+fr970.resourcePath = $(fr970.resourcePath);resources-highmemory
 marq2.excludeAnnotations = $(roundHighResolution)
 marq2.resourcePath = $(marq2.resourcePath);resources-highmemory
 marq2aviator.excludeAnnotations = $(roundHighResolution)

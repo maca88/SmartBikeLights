@@ -1,0 +1,8 @@
+<resources>
+    <font id="lightsFont" filename="../resources/fonts/Lights48.fnt" antialias="true" />
+    <font id="batteryFont" filename="../resources/fonts/Battery24.fnt" antialias="true" />
+    <font id="controlModeFont" filename="../resources/fonts/ControlMode32.fnt" antialias="true" />
+    <font id="lightsLargeFont" filename="../resources/fonts/Lights82.fnt" antialias="true" />
+    <font id="batteryLargeFont" filename="../resources/fonts/BatteryV82.fnt" antialias="true" />
+    <font id="controlModeLargeFont" filename="../resources/fonts/ControlMode54.fnt" antialias="true" />
+</resources>
