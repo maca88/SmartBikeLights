@@ -406,18 +406,6 @@ const trekCommuterProRtModes = [
   { id: 63, name: 'Day Flash' }
 ];
 
-const mageneAt1200Modes = [
-  { id: 0, name: 'Off' },
-  { id: 1, name: 'Very High' },
-  { id: 2, name: 'High' },
-  { id: 3, name: 'Medium' },
-  { id: 4, name: 'Medium-Low' },
-  { id: 5, name: 'Low' },
-  { id: 6, name: 'Slow Flash' },
-  { id: 7, name: 'Strobe' },
-  { id: 63, name: 'Fast Strobe' }
-];
-
 const mageneAt1600Modes = [
   { id: 0, name: 'Off' },
   { id: 1, name: 'Very High' },
@@ -610,22 +598,24 @@ export const headlightList = [
   {
     id: 11,
     name: 'Magene AT1200',
-    modes: mageneAt1200Modes,
+    modes: mageneAt1600Modes,
     individualNetworkOnly: false,
-    lightModes: [4194304, 90382865], // 18014398599864849
+    lightModes: [16384, 90382865], // 70368834560529
     additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'AT 1200',
       buttonGroups: [
-        [controlMode, mageneAt1200Modes[0]],
-        [mageneAt1200Modes[1]],
-        [mageneAt1200Modes[2]],
-        [mageneAt1200Modes[3]],
-        [mageneAt1200Modes[4]],
-        [mageneAt1200Modes[5]],
-        [mageneAt1200Modes[6]],
-        [mageneAt1200Modes[7]],
-        [mageneAt1200Modes[8]]
+        [controlMode, mageneAt1600Modes[0]],
+        [mageneAt1600Modes[1]],
+        [mageneAt1600Modes[2]],
+        [mageneAt1600Modes[3]],
+        [mageneAt1600Modes[4]],
+        [mageneAt1600Modes[5]],
+        [mageneAt1600Modes[6]],
+        [mageneAt1600Modes[7]],
+        [mageneAt1600Modes[8]],
+        [mageneAt1600Modes[9]],
+        [mageneAt1600Modes[10]]
       ]
     }
   },
@@ -828,6 +818,15 @@ const wahooTrackrRadar = [
   { id: 5, name: 'Low Steady' },
   { id: 6, name: 'Low Flash' },
   { id: 7, name: 'High Flash' }
+];
+
+const giantReconTl150 = [
+  { id: 0, name: 'Off' },
+  { id: 1, name: 'High Steady' },
+  { id: 5, name: 'Low Steady' },
+  { id: 7, name: 'High Flash' },
+  { id: 6, name: 'Low Flash' },
+  { id: 8, name: 'Random Flash' }
 ];
 
 export const taillightList = [
@@ -1069,6 +1068,25 @@ export const taillightList = [
       buttonGroups: [
         [controlMode, garminVariaRtl511[0]],
         [garminVariaRtl511[1]]
+      ]
+    }
+  },
+  {
+    id: 20,
+    name: 'Giant Recon+ TL150',
+    modes: giantReconTl150,
+    individualNetworkOnly: false,
+    lightModes: [0, 1415774209], // 1415774209
+    additionalLightModes: null,
+    defaultLightPanel: {
+      shortName: 'TL 150',
+      buttonGroups: [
+        [controlMode, giantReconTl150[0]],
+        [giantReconTl150[1]],
+        [giantReconTl150[2]],
+        [giantReconTl150[3]],
+        [giantReconTl150[4]],
+        [giantReconTl150[5]],
       ]
     }
   },

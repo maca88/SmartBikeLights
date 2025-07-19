@@ -65,6 +65,8 @@
       <iq:product id="fr245m"/>
       <iq:product id="fr255"/>
       <iq:product id="fr255m"/>
+      <iq:product id="fr255s"/>
+      <iq:product id="fr255sm"/>
       <iq:product id="fr265"/>
       <iq:product id="fr265s"/>
       <iq:product id="fr645"/>
@@ -94,6 +96,8 @@
       <iq:product id="venu2"/>
       <iq:product id="venu2plus"/>
       <iq:product id="venu2s"/>
+      <iq:product id="venu3"/>
+      <iq:product id="venu3s"/>
       <iq:product id="venux1"/>
       <iq:product id="vivoactive3"/>
       <iq:product id="vivoactive3d"/>
