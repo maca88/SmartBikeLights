@@ -722,6 +722,14 @@ const bontragerFlareRtModes = [
   { id: 63, name: 'Night Flash' }
 ];
 
+const cycplusL7 = [
+  { id: 0, name: 'Off' },
+  { id: 4, name: 'High Steady' },
+  { id: 5, name: 'Low Steady' },
+  { id: 7, name: 'Flash' },
+  { id: 6, name: 'Breathing' }
+];
+
 const garminVariaRtl500 = [
   { id: 0, name: 'Off' },
   { id: 1, name: 'Solid' },
@@ -888,6 +896,24 @@ export const taillightList = [
         [cycliqFly6Ce[4]],
         [cycliqFly6Ce[6]],
         [cycliqFly6Ce[7]]
+      ]
+    }
+  },
+  {
+    id: 21,
+    name: 'Cycplus L7',
+    modes: cycplusL7,
+    individualNetworkOnly: false,
+    lightModes: [0, 73535488], // 73535488
+    additionalLightModes: null,
+    defaultLightPanel: {
+      shortName: 'Cycplus L7',
+      buttonGroups: [
+        [controlMode, cycplusL7[0]],
+        [cycplusL7[1]],
+        [cycplusL7[2]],
+        [cycplusL7[3]],
+        [cycplusL7[4]],
       ]
     }
   },
