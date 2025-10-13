@@ -74,9 +74,9 @@ class LightTesterView extends WatchUi.DataField {
             var lightText = "L" + i + ": " + getLightInfo(lights[i], true);
             dc.drawText(width / 2, height, 0, lightText, 1 /* TEXT_JUSTIFY_CENTER */ | 4 /* TEXT_JUSTIFY_VCENTER */);
             height += dc.getFontHeight(0);
-            //lightText = "L" + i + ": CM= " + lights[i].getCapableModes();
-            //dc.drawText(width / 2, height, 0, lightText, 1 /* TEXT_JUSTIFY_CENTER */ | 4 /* TEXT_JUSTIFY_VCENTER */);
-            //height += dc.getFontHeight(0);
+            lightText = "L" + i + ": CM= " + lights[i].getCapableModes();
+            dc.drawText(width / 2, height, 0, lightText, 1 /* TEXT_JUSTIFY_CENTER */ | 4 /* TEXT_JUSTIFY_VCENTER */);
+            height += dc.getFontHeight(0);
         }
     }
 
