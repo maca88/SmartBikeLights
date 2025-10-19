@@ -96,8 +96,12 @@ edgeexplore2.resourcePath = $(edgeexplore2.resourcePath);resources-highmemory;re
 # Rectangle touch screen devices with high resolution
 edge1050.resourcePath = resources-highmemory;$(edge1050.resourcePath)
 edge1050.excludeAnnotations = $(rectangleHighResolution)
+edge850.resourcePath = resources-highmemory;$(edge850.resourcePath)
+edge850.excludeAnnotations = $(rectangleHighResolution)
 
 # Rectangle non touch screen devices with high resolution
+edge550.resourcePath = resources-highmemory;$(edge550.resourcePath)
+edge550.excludeAnnotations = $(rectangleNonTouchScreenHighResolution)
 venux1.resourcePath = resources-highmemory;$(venux1.resourcePath)
 venux1.excludeAnnotations = $(rectangleNonTouchScreenHighResolution)
 

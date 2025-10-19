@@ -22,9 +22,11 @@
       <iq:product id="edge520plus"/>
       <iq:product id="edge530"/>
       <iq:product id="edge540"/>
+      <iq:product id="edge550"/>
       <iq:product id="edge820"/>
       <iq:product id="edge830"/>
       <iq:product id="edge840"/>
+      <iq:product id="edge850"/>
       <iq:product id="edge_1000"/>
       <iq:product id="edge_520"/>
       <iq:product id="edgeexplore"/>

@@ -1,0 +1,10 @@
+<resources>
+    <!-- Format [[:separatorWidth:, :titleFont:, :titleFontTopPadding:, :displayOffsetX:]
+        :separatorWidth: = Number
+        :titleFont: = 0-8
+        :titleFontTopPadding: = Number
+        :displayOffsetX: = Number
+    -->
+    <jsonData id="Settings">[2, 2, 5, 0]</jsonData>
+    <jsonData id="FontTopPaddings">[1668082697223798784]</jsonData>
+</resources>
