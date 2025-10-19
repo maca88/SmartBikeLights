@@ -408,16 +408,16 @@ const trekCommuterProRtModes = [
 
 const mageneAt1600Modes = [
   { id: 0, name: 'Off' },
-  { id: 1, name: 'Very High' },
-  { id: 2, name: 'High' },
-  { id: 3, name: 'Medium' },
-  { id: 4, name: 'Medium-Low' },
-  { id: 5, name: 'Low' },
-  { id: 6, name: 'Slow Flash' },
-  { id: 7, name: 'Strobe' },
-  { id: 61, name: 'Fast Strobe' },
-  { id: 59, name: 'Preset 9' },
-  { id: 60, name: 'Preset 10' }
+  { id: 60, name: 'Custom 4' },
+  { id: 59, name: 'Custom 3' },
+  { id: 58, name: 'Custom 2' },
+  { id: 57, name: 'Custom 1' },
+  { id: 56, name: 'Breathing' },
+  { id: 55, name: 'Nighttime Flash' },
+  { id: 54, name: 'Daytime Flash' },
+  { id: 53, name: 'High' },
+  { id: 52, name: 'Medium' },
+  { id: 51, name: 'Low' },
 ];
 
 export const controlMode = {id: -1, name: "Control mode"};
@@ -600,22 +600,22 @@ export const headlightList = [
     name: 'Magene AT1200',
     modes: mageneAt1600Modes,
     individualNetworkOnly: false,
-    lightModes: [16384, 90382865], // 70368834560529
-    additionalLightModes: null,
+    lightModes: [1074, 358879792], // 4613153755696
+    additionalLightModes: [133693440, 0],
     defaultLightPanel: {
       shortName: 'AT 1200',
       buttonGroups: [
         [controlMode, mageneAt1600Modes[0]],
-        [mageneAt1600Modes[1]],
-        [mageneAt1600Modes[2]],
-        [mageneAt1600Modes[3]],
-        [mageneAt1600Modes[4]],
-        [mageneAt1600Modes[5]],
-        [mageneAt1600Modes[6]],
-        [mageneAt1600Modes[7]],
-        [mageneAt1600Modes[8]],
+        [mageneAt1600Modes[10]],
         [mageneAt1600Modes[9]],
-        [mageneAt1600Modes[10]]
+        [mageneAt1600Modes[8]],
+        [mageneAt1600Modes[7]],
+        [mageneAt1600Modes[6]],
+        [mageneAt1600Modes[5]],
+        [mageneAt1600Modes[4]],
+        [mageneAt1600Modes[3]],
+        [mageneAt1600Modes[2]],
+        [mageneAt1600Modes[1]]
       ]
     }
   },
@@ -624,22 +624,22 @@ export const headlightList = [
     name: 'Magene AT1600',
     modes: mageneAt1600Modes,
     individualNetworkOnly: false,
-    lightModes: [16384, 90382865], // 70368834560529
-    additionalLightModes: null,
+    lightModes: [1074, 358879792], // 4613153755696
+    additionalLightModes: [133693440, 0],
     defaultLightPanel: {
       shortName: 'AT 1600',
       buttonGroups: [
         [controlMode, mageneAt1600Modes[0]],
-        [mageneAt1600Modes[1]],
-        [mageneAt1600Modes[2]],
-        [mageneAt1600Modes[3]],
-        [mageneAt1600Modes[4]],
-        [mageneAt1600Modes[5]],
-        [mageneAt1600Modes[6]],
-        [mageneAt1600Modes[7]],
-        [mageneAt1600Modes[8]],
+        [mageneAt1600Modes[10]],
         [mageneAt1600Modes[9]],
-        [mageneAt1600Modes[10]]
+        [mageneAt1600Modes[8]],
+        [mageneAt1600Modes[7]],
+        [mageneAt1600Modes[6]],
+        [mageneAt1600Modes[5]],
+        [mageneAt1600Modes[4]],
+        [mageneAt1600Modes[3]],
+        [mageneAt1600Modes[2]],
+        [mageneAt1600Modes[1]]
       ]
     }
   },
