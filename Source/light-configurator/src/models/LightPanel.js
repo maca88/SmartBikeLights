@@ -21,7 +21,7 @@ export default class LightPanel {
       modeList.forEach(mode => {
         const button = new LightButton();
         button.mode = mode.id;
-        button.name = mode.name;
+        button.name = mode.buttonName ?? mode.name;
         group.buttons.push(button);
       });
       this.buttonGroups.push(group);

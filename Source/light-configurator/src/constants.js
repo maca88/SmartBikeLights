@@ -408,16 +408,23 @@ const trekCommuterProRtModes = [
 
 const mageneAt1600Modes = [
   { id: 0, name: 'Off' },
-  { id: 60, name: 'Custom 4' },
-  { id: 59, name: 'Custom 3' },
-  { id: 58, name: 'Custom 2' },
-  { id: 57, name: 'Custom 1' },
-  { id: 56, name: 'Breathing' },
-  { id: 55, name: 'Nighttime Flash' },
-  { id: 54, name: 'Daytime Flash' },
-  { id: 53, name: 'High' },
-  { id: 52, name: 'Medium' },
-  { id: 51, name: 'Low' },
+  { id: 60, name: 'Preset 10', buttonName: 'Custom 4' },
+  { id: 59, name: 'Preset 9', buttonName: 'Custom 3' },
+  { id: 58, name: 'Preset 8', buttonName: 'Custom 2' },
+  { id: 57, name: 'Preset 7', buttonName: 'Custom 1' },
+  { id: 56, name: 'Preset 6', buttonName: 'Breathing' },
+  { id: 55, name: 'Preset 5', buttonName: 'Night Flash' },
+  { id: 54, name: 'Preset 4', buttonName: 'Day Flash' },
+  { id: 53, name: 'Preset 3', buttonName: 'High' },
+  { id: 52, name: 'Preset 2', buttonName: 'Medium' },
+  { id: 51, name: 'Preset 1', buttonName: 'Low' },
+  { id: 1, name: 'Very High' },
+  { id: 2, name: 'High' },
+  { id: 3, name: 'Medium' },
+  { id: 4, name: 'Medium-Low' },
+  { id: 5, name: 'Low' },
+  { id: 6, name: 'Slow Flash' },
+  { id: 7, name: 'Strobe' }
 ];
 
 export const controlMode = {id: -1, name: "Control mode"};
@@ -601,7 +608,7 @@ export const headlightList = [
     modes: mageneAt1600Modes,
     individualNetworkOnly: false,
     lightModes: [1074, 358879792], // 4613153755696
-    additionalLightModes: [133693440, 0],
+    additionalLightModes: [267911168, 0], // 1150669704793161728
     defaultLightPanel: {
       shortName: 'AT 1200',
       buttonGroups: [
@@ -625,7 +632,7 @@ export const headlightList = [
     modes: mageneAt1600Modes,
     individualNetworkOnly: false,
     lightModes: [1074, 358879792], // 4613153755696
-    additionalLightModes: [133693440, 0],
+    additionalLightModes: [267911168, 0], // 1150669704793161728
     defaultLightPanel: {
       shortName: 'AT 1600',
       buttonGroups: [
