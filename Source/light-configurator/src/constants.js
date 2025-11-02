@@ -326,11 +326,22 @@ const lightModes = [
   { id: 7, name: 'Fast flash mode - 7' },
   { id: 8, name: 'Randomly timed flash mode - 8' },
   { id: 9, name: 'Auto - 9' },
-  { id: 59, name: 'Custom mode 1 (manufacturer-defined) - 59' },
-  { id: 60, name: 'Custom mode 2 (manufacturer-defined) - 60' },
-  { id: 61, name: 'Custom mode 3 (manufacturer-defined) - 61' },
-  { id: 62, name: 'Custom mode 4 (manufacturer-defined) - 62' },
-  { id: 63, name: 'Custom mode 5 (manufacturer-defined) - 63' }
+  { id: 48, name: 'Custom mode (manufacturer-defined) - 48' },
+  { id: 49, name: 'Custom mode (manufacturer-defined) - 49' },
+  { id: 50, name: 'Custom mode (manufacturer-defined) - 50' },
+  { id: 51, name: 'Custom mode (manufacturer-defined) - 51' },
+  { id: 52, name: 'Custom mode (manufacturer-defined) - 52' },
+  { id: 53, name: 'Custom mode (manufacturer-defined) - 53' },
+  { id: 54, name: 'Custom mode (manufacturer-defined) - 54' },
+  { id: 55, name: 'Custom mode (manufacturer-defined) - 55' },
+  { id: 56, name: 'Custom mode (manufacturer-defined) - 56' },
+  { id: 57, name: 'Custom mode (manufacturer-defined) - 57' },
+  { id: 58, name: 'Custom mode (manufacturer-defined) - 58' },
+  { id: 59, name: 'Custom mode (manufacturer-defined) - 59' },
+  { id: 60, name: 'Custom mode (manufacturer-defined) - 60' },
+  { id: 61, name: 'Custom mode (manufacturer-defined) - 61' },
+  { id: 62, name: 'Custom mode (manufacturer-defined) - 62' },
+  { id: 63, name: 'Custom mode (manufacturer-defined) - 63' }
 ];
 
 const bontragerIonProRtModes = [
@@ -715,7 +726,7 @@ export const headlightList = [
     modes: lightModes,
     individualNetworkOnly: false,
     lightModes: null,
-    additionalLightModes: null,
+    additionalLightModes: [-65536, 1022], // -281474976709634
     defaultLightPanel: null
   }
 ];
@@ -774,6 +785,16 @@ const garminVariaTl300 = [
   { id: 3, name: 'Medium' },
   { id: 4, name: 'Low' },
   { id: 7, name: 'Day Flash' }
+];
+
+const lezyneRadarDrive = [
+  { id: 0, name: 'Off' },
+  { id: 2, name: 'High' },
+  { id: 3, name: 'Medium' },
+  { id: 4, name: 'Low' },
+  { id: 6, name: 'Night Flash' },
+  { id: 7, name: 'Day Flash' },
+  { id: 8, name: 'Flash' }
 ];
 
 const mageneL508 = [
@@ -1120,6 +1141,26 @@ export const taillightList = [
         [giantReconTl150[3]],
         [giantReconTl150[4]],
         [giantReconTl150[5]],
+      ]
+    }
+  },
+  {
+    id: 22,
+    name: 'Lezyne Radar Drive',
+    modes: lezyneRadarDrive,
+    individualNetworkOnly: false,
+    lightModes: [0, 1415590416], // 1415590416
+    additionalLightModes: null,
+    defaultLightPanel: {
+      shortName: 'Radar Drive',
+      buttonGroups: [
+        [controlMode, lezyneRadarDrive[0]],
+        [lezyneRadarDrive[1]],
+        [lezyneRadarDrive[2]],
+        [lezyneRadarDrive[3]],
+        [lezyneRadarDrive[4]],
+        [lezyneRadarDrive[5]],
+        [lezyneRadarDrive[6]],
       ]
     }
   },
