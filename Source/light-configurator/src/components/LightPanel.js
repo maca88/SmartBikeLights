@@ -7,12 +7,12 @@ import LightButton from '../models/LightButton';
 import ButtonGroup from './ButtonGroup';
 import AddButton from './AddButton';
 import { createMenuItemColorTemplateFunc } from './Templates';
-import { controlMode, currentConfiguration, getButtonColors, getButtonTextColors, groupNameVisibility } from '../constants';
+import { controlMode, currentConfiguration, battery, getButtonColors, getButtonTextColors, groupNameVisibility } from '../constants';
 import AppTextInput from '../inputs/AppTextInput';
 import AppSelect from '../inputs/AppSelect';
 
 const getModes = (lightModes) => {
-  return [controlMode, currentConfiguration].concat(lightModes);
+  return [controlMode, currentConfiguration, battery].concat(lightModes);
 };
 const buttonColorTemplate = createMenuItemColorTemplateFunc();
 const buttonTextColorTemplate = createMenuItemColorTemplateFunc(true);

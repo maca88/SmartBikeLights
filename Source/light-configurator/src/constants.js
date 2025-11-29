@@ -440,6 +440,7 @@ const mageneAt1600Modes = [
 
 export const controlMode = {id: -1, name: "Control mode"};
 export const currentConfiguration = {id: -2, name: "Current configuration"};
+export const battery = {id: -3, name: "Battery"};
 
 export const headlightList = [
   {

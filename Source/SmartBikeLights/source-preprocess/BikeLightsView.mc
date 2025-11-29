@@ -1944,7 +1944,9 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
                 setTextColor(dc, isNext ? bgColor : fgColor);
                 dc.drawRoundedRectangle(buttonX, buttonY, buttonWidth, buttonHeight, 8);
                 setTextColor(dc, isSelected ? panelData[3] : isNext ? bgColor : fgColor);
-                if (mode == -1) {
+                if (mode == -3) {
+                    drawButtonBattery(dc, fgColor, bgColor, buttonX, buttonY, buttonWidth, buttonHeight, batteryStatus);
+                } else if (mode == -1) {
                     dc.drawText(titleX, titleParts[1], titleFont, $.controlModes[controlMode], 1 /* TEXT_JUSTIFY_CENTER */);
                 } else {
                     for (var k = 0; k < titleParts.size(); k += 2) {
@@ -1962,6 +1964,38 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         }
 
         drawBattery(dc, fgColor, panelData[6], panelData[7], batteryStatus);
+    }
+
+    private function drawButtonBattery(dc, fgColor, bgColor, buttonX, buttonY, buttonWidth, buttonHeight, batteryStatus) {
+        var maxBatteryWidth = buttonWidth > buttonHeight * 2
+            ? ((buttonHeight * 0.8) * 2).toNumber()
+            : (((buttonWidth / 2 - buttonWidth / 8 /* battery top */) * 0.8) * 2).toNumber();
+        var padding =  maxBatteryWidth > 180 ? 5
+            : maxBatteryWidth > 90 ? 4
+            : maxBatteryWidth > 45 ? 3
+            : 2;
+        var totalPadding = padding * 6;
+        var diff = (maxBatteryWidth - totalPadding) % 5;
+        var batteryWidth = maxBatteryWidth - diff;
+        var batteryHeight = batteryWidth / 2;
+        var x = buttonX + buttonWidth / 2 - (batteryWidth / 2) - (batteryHeight / 8) /* battery top */;
+        var y = buttonY + buttonHeight / 2 - (batteryHeight / 2);
+        var barWidth = (batteryWidth - totalPadding) / 5;
+        var barHeight = batteryHeight - ((padding + 1) * 2) - 1;
+        var topHeight = batteryHeight - batteryHeight / 3;
+        var color = batteryStatus == 6 /* BATT_STATUS_CHARGE */ ? fgColor
+            : batteryStatus == 5 /* BATT_STATUS_CRITICAL */ ? 0xFF0000 /* COLOR_RED */
+            : batteryStatus > 2 /* BATT_STATUS_GOOD */ ? 0xFF5500 /* COLOR_ORANGE */
+            : 0x00AA00; /* COLOR_DK_GREEN */
+        //System.println("h=" + batteryHeight + " bw=" + barWidth + " bh" + barHeight + " th=" + topHeight);
+        dc.setPenWidth(2);
+        dc.drawRectangle(x, y, batteryWidth + 3, batteryHeight);
+        dc.drawRectangle(x + batteryWidth + 2, y + batteryHeight / 6, batteryHeight / 4, topHeight);
+        dc.setColor(color, bgColor);
+
+        for (var i = 0; i < (6 - batteryStatus); i++) {
+            dc.fillRectangle(x + (1 + padding) + (barWidth + padding) * i, y + (1 + padding), barWidth, barHeight);
+        }
     }
 // #endif
 
