@@ -53,6 +53,7 @@ export const deviceList = [
   { id: 'B3907', name: 'fēnix 7X / tactix 7 / quatix 7X Solar / Enduro 2', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, nativePairing: true, profileName: true, barometer: true, solar: true, bitsPerPixel: 8 },
   { id: 'B4376', name: 'fēnix 7X Pro', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, nativePairing: true, profileName: true, barometer: true, solar: true, bitsPerPixel: 8 },
   { id: 'B4534', name: 'fēnix 8', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, nativePairing: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 },
+  { id: 'B4631', name: 'fēnix 8 Pro', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, nativePairing: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 },
   { id: 'B4532', name: 'fēnix 8 Solar', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, nativePairing: true, profileName: true, barometer: true, solar: true, bitsPerPixel: 8 },
   { id: 'B4666', name: 'fēnix E', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, nativePairing: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 },
   { id: 'B3501', name: 'First Avenger', highMemory: false, bikeRadar: true, touchScreen: false, settings: false, nativePairing: false, profileName: true, barometer: true, solar: false, bitsPerPixel: 8 },
