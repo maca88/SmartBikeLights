@@ -97,7 +97,9 @@ export const deviceList = [
   { id: 'B3473', name: 'vívoactive 3 Mercedes-Benz Collection', highMemory: false, bikeRadar: true, touchScreen: false, settings: false, nativePairing: false, profileName: false, barometer: true, solar: false, bitsPerPixel: 8 },
   { id: 'B2988', name: 'vívoactive 3 Music', highMemory: false, bikeRadar: true, touchScreen: false, settings: false, nativePairing: false, profileName: true, barometer: true, solar: false, bitsPerPixel: 8 },
   { id: 'B3066', name: 'vívoactive 3 Music LTE', highMemory: false, bikeRadar: true, touchScreen: false, settings: false, nativePairing: false, profileName: true, barometer: true, solar: false, bitsPerPixel: 8 },
-  { id: 'B3225', name: 'vívoactive 4', highMemory: false, bikeRadar: true, touchScreen: false, settings: false, nativePairing: false, profileName: true, barometer: true, solar: false, bitsPerPixel: 8 }
+  { id: 'B3225', name: 'vívoactive 4', highMemory: false, bikeRadar: true, touchScreen: false, settings: false, nativePairing: false, profileName: true, barometer: true, solar: false, bitsPerPixel: 8 },
+  { id: 'B4426', name: 'vívoactive 5', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, nativePairing: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 },
+  { id: 'B4625', name: 'vívoactive 6', highMemory: true, bikeRadar: true, touchScreen: false, settings: true, nativePairing: true, profileName: true, barometer: true, solar: false, bitsPerPixel: 16 }
 ];
 
 let map = {};

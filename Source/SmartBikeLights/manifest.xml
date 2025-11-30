@@ -107,6 +107,8 @@
       <iq:product id="vivoactive3m"/>
       <iq:product id="vivoactive3mlte"/>
       <iq:product id="vivoactive4"/>
+      <iq:product id="vivoactive5"/>
+      <iq:product id="vivoactive6"/>
     </iq:products>
     <iq:permissions>
       <iq:uses-permission id="Ant"/>
