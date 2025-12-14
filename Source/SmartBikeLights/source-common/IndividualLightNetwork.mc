@@ -13,6 +13,7 @@ module AntLightNetwork {
 
         public var identifier;
         public var mode = 0;
+        public var newMode = 0;
         public var type;
 
         function initialize(controller) {
@@ -24,6 +25,7 @@ module AntLightNetwork {
         }
 
         function setMode(mode) {
+            newMode = mode;
             _controller.setMode(mode);
         }
     }
@@ -443,7 +445,7 @@ module AntLightNetwork {
             light.type = (payload[2] >> 2) & 0x07;
             batteryStatus.batteryStatus = (payload[2] >> 5) & 0x07;
             var oldMode = light.mode;
-            var newMode = (payload[6] >> 2) & 0x3F;
+            var newMode = light.newMode; //(payload[6] >> 2) & 0x3F;
             if (_connectionState == 2 /* CONNECT_COMMAND_SENT */) {
                 // Check whether we were the one to establish the connection
                 _connectionState = payload[4] /* Last command number */ == controllerId
