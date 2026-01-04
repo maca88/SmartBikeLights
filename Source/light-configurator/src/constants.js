@@ -377,6 +377,16 @@ const garminVariaVueStvzo = [
   { id: 4, name: 'Low' }
 ];
 
+const lezyneReactDrive = [
+  { id: 0, name: 'Off' },
+  { id: 1, name: 'Overdrive' },
+  { id: 2, name: 'High' },
+  { id: 3, name: 'Medium' },
+  { id: 4, name: 'Low' },
+  { id: 6, name: 'Night Flash' },
+  { id: 7, name: 'Day Flash' }
+];
+
 const cycliqFly12Ce = [
   { id: 0, name: 'Off' },
   { id: 1, name: 'Constant High' },
@@ -611,6 +621,26 @@ export const headlightList = [
         [giantReconHl1800[3]],
         [giantReconHl1800[4]],
         [giantReconHl1800[5]]
+      ]
+    }
+  },
+  {
+    id: 15,
+    name: 'Lezyne React Drive',
+    modes: lezyneReactDrive,
+    individualNetworkOnly: false,
+    lightModes: [0, 73413153], // 73413153
+    additionalLightModes: null,
+    defaultLightPanel: {
+      shortName: 'React Drive',
+      buttonGroups: [
+        [controlMode, lezyneReactDrive[0]],
+        [lezyneReactDrive[1]],
+        [lezyneReactDrive[2]],
+        [lezyneReactDrive[3]],
+        [lezyneReactDrive[4]],
+        [lezyneReactDrive[5]],
+        [lezyneReactDrive[6]]
       ]
     }
   },
