@@ -13,6 +13,7 @@ module AntLightNetwork {
 
         public var identifier;
         public var mode = 0;
+        public var newMode = 0;
         public var type;
 
         function initialize(controller) {
@@ -24,6 +25,7 @@ module AntLightNetwork {
         }
 
         function setMode(mode) {
+            newMode = mode;
             _controller.setMode(mode);
         }
     }
@@ -31,27 +33,27 @@ module AntLightNetwork {
     class IndividualLightNetwork {
         var _lightControllers = null;
 
-        function initialize(headlightDeviceNumbers, taillightDeviceNumbers, listener) {
-            //System.println("HDN=" + headlightDeviceNumbers);
-            //System.println("TDN=" + taillightDeviceNumbers);
+        function initialize(headlightDeviceNumbers, headlightManualModeTracking, taillightDeviceNumbers, taillightManualModeTracking, listener) {
+            //System.println("HDN=" + headlightDeviceNumbers.toString() + " HMMT=" + headlightManualModeTracking + " TDN=" + taillightDeviceNumbers.toString() + " TMMT=" + taillightManualModeTracking);
             var totalLights = headlightDeviceNumbers.size() + taillightDeviceNumbers.size();
             if (totalLights == 0) {
                 return;
             }
 
             _lightControllers = new [totalLights];
-            initializeLights(headlightDeviceNumbers, 0, 0 /*LIGHT_TYPE_HEADLIGHT */, listener);
-            initializeLights(taillightDeviceNumbers, headlightDeviceNumbers.size(), 2 /*LIGHT_TYPE_TAILLIGHT */, listener);
+            initializeLights(headlightDeviceNumbers, 0, 0 /*LIGHT_TYPE_HEADLIGHT */, listener, headlightManualModeTracking);
+            initializeLights(taillightDeviceNumbers, headlightDeviceNumbers.size(), 2 /*LIGHT_TYPE_TAILLIGHT */, listener, taillightManualModeTracking);
         }
 
-        private function initializeLights(deviceNumbers, offset, lightType, listener) {
+        private function initializeLights(deviceNumbers, offset, lightType, listener, manualModeTracking) {
             for (var i = 0; i < deviceNumbers.size(); i++) {
                 var deviceNumber = deviceNumbers[i];
                 _lightControllers[i + offset] = new LightController(
                     i,
                     lightType,
                     deviceNumber,
-                    listener
+                    listener,
+                    manualModeTracking
                 );
             }
         }
@@ -156,6 +158,7 @@ module AntLightNetwork {
         private var _lightType;
         private var _deviceNumber;
         private var _transmissionType;
+        private var _manualModeTracking;
 
         public var productInfo;
         public var state = 0 /* LIGHT_NETWORK_STATE_NOT_FORMED */;
@@ -165,11 +168,12 @@ module AntLightNetwork {
         public var batteryStatus;
         public var capableModes;
 
-        function initialize(identifier, lightType, deviceNumber, listener) {
+        function initialize(identifier, lightType, deviceNumber, listener, manualModeTracking) {
             _lightType = lightType;
             _deviceNumber = 0xFFFF & deviceNumber;
             _transmissionType = (((deviceNumber >> 16) & 0x0F) << 4) | 0x05;
             _listener = listener;
+            _manualModeTracking = manualModeTracking;
             light = new BikeLight(self);
             light.identifier = identifier;
             batteryStatus = new AntPlus.BatteryStatus();
@@ -443,7 +447,7 @@ module AntLightNetwork {
             light.type = (payload[2] >> 2) & 0x07;
             batteryStatus.batteryStatus = (payload[2] >> 5) & 0x07;
             var oldMode = light.mode;
-            var newMode = (payload[6] >> 2) & 0x3F;
+            var newMode = _manualModeTracking ? light.newMode : (payload[6] >> 2) & 0x3F;
             if (_connectionState == 2 /* CONNECT_COMMAND_SENT */) {
                 // Check whether we were the one to establish the connection
                 _connectionState = payload[4] /* Last command number */ == controllerId
@@ -457,7 +461,7 @@ module AntLightNetwork {
                 //System.println("LT=" + _lightType + " connectionState=" + _connectionState);
                 // Some lights can turn off after a connect command, restore to the initial light mode
                 if (newMode != _initialMode) {
-                    //System.println("LT=" + _lightType + " initialMode=" + _initialMode + " mode=" + newMode);
+                    //System.println("LT=" + _lightType + " initialMode=" + _initialMode + " mode=" + newMode + " MMT=" + _manualModeTracking);
                     setMode(_initialMode);
                     return;
                 }
@@ -465,7 +469,7 @@ module AntLightNetwork {
 
             light.mode = newMode;
             if (state == 2 && oldMode != newMode && _listener != null) {
-                //System.println("LT=" + _lightType + " oldMode=" + oldMode + " newMode=" + newMode);
+                //System.println("LT=" + _lightType + " oldMode=" + oldMode + " newMode=" + newMode + " MMT=" + _manualModeTracking);
                 _listener.onBikeLightUpdate(light);
             }
         }

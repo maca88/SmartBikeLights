@@ -400,6 +400,14 @@ const cycliqFly12Ce = [
   { id: 62, name: 'Flash Low' }
 ];
 
+const ravemenFr300 = [
+  { id: 0, name: 'Off' },
+  { id: 2, name: 'High' },
+  { id: 4, name: 'Low' },
+  { id: 6, name: 'Flashing' },
+  { id: 7, name: 'Rapid Flashing' }
+];
+
 const seeSenseBeam = [
   { id: 0, name: 'Off' },
   { id: 1, name: 'Steady 100%' },
@@ -689,6 +697,25 @@ export const headlightList = [
         [mageneAt1600Modes[3]],
         [mageneAt1600Modes[2]],
         [mageneAt1600Modes[1]]
+      ]
+    }
+  },
+  {
+    id: 16,
+    name: 'Ravemen FR300',
+    modes: ravemenFr300,
+    individualNetworkOnly: true,
+    manualModeTracking: true,
+    lightModes: [0, 88092688], // 88092688
+    additionalLightModes: null,
+    defaultLightPanel: {
+      shortName: 'FR300',
+      buttonGroups: [
+        [controlMode, ravemenFr300[0]],
+        [ravemenFr300[1]],
+        [ravemenFr300[2]],
+        [ravemenFr300[3]],
+        [ravemenFr300[4]]
       ]
     }
   },

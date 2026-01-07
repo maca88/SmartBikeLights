@@ -109,6 +109,25 @@ const parsePolygons = (chars, index, filterResult) => {
   return data;
 };
 
+const parseIndividualLightSettings = (chars, filterResult) => {
+  const deviceNumbers = [];
+  do {
+    const number = parseNumber(chars, filterResult[0] + 1, filterResult);
+    if (number == null) {
+      break;
+    }
+
+    deviceNumbers.push(number);
+  } while (chars[filterResult[0]] === ',');
+
+  let manualModeTracking = false;
+  if (chars[filterResult[0]] === '!') {
+      manualModeTracking = parseNumber(chars, filterResult[0] + 1, filterResult) === 1;
+  }
+
+  return [deviceNumbers.join(','), manualModeTracking];
+};
+
 const parseBikeRadar = (chars, index, filterResult) => {
   filterResult[1] = chars[index]; // Filter operator
   const data = new Array(3);
@@ -634,8 +653,8 @@ export default class Configuration {
     }
 
     configuration.useIndividualNetwork = useIndividualNetwork === 1;
-    configuration.headlightDeviceNumber = parseTitle(value, filterResult[0] + 1, filterResult);
-    configuration.taillightDeviceNumber = parseTitle(value, filterResult[0] + 1, filterResult);
+    configuration.headlightDeviceNumber = parseIndividualLightSettings(value, filterResult)[0];
+    configuration.taillightDeviceNumber = parseIndividualLightSettings(value, filterResult)[0];
 
     // Parse force smart mode
     const headlightForceSmartMode = parseNumber(value, filterResult[0] + 1, filterResult);
@@ -747,6 +766,8 @@ export default class Configuration {
     }
 
     const device = deviceList.find(l => l.id === this.device);
+    const headlightData = getLight(false, this.headlight);
+    const taillightData = getLight(true, this.taillight);
     let config = this.getFilterGroupsConfigurationValue(this.globalFilterGroups, null);
     config += `#${this.getLightInfo(this.headlight, this.headlightModes, this.headlightSerialNumber, this.headlightIconColor, this.headlightAdditionalModes)}`;
     config += `#${this.headlight === null ? '' : this.getFilterGroupsConfigurationValue(this.headlightFilterGroups, this.headlightDefaultMode)}`;
@@ -754,7 +775,7 @@ export default class Configuration {
     config += `#${this.taillight === null ? '' : this.getFilterGroupsConfigurationValue(this.taillightFilterGroups, this.taillightDefaultMode)}`;
     config += this.getLightPanelOrSettingsConfigurationValue(this.headlightPanel, this.headlightSettings, device);
     config += this.getLightPanelOrSettingsConfigurationValue(this.taillightPanel, this.taillightSettings, device);
-    config += this.getIndividualNetworkConfigurationValue(device);
+    config += this.getIndividualNetworkConfigurationValue(device, headlightData, taillightData);
     config += this.getForceSmartModeConfigurationValue(device);
     config += this.getLightsTapBehaviorConfigurationValue(device);
     config += this.getSeparatorColor(device);
@@ -793,7 +814,7 @@ export default class Configuration {
     return `${value[0]},${value[1]}`;
   }
 
-  getIndividualNetworkConfigurationValue(device) {
+  getIndividualNetworkConfigurationValue(device, headlightData, taillightData) {
     if (!device || !device.highMemory) {
       return '';
     }
@@ -801,9 +822,9 @@ export default class Configuration {
     let config = '#';
     config += this.useIndividualNetwork ? '1' : '0';
     config += ':';
-    config += this.headlight === null || this.headlightDeviceNumber === null || !this.useIndividualNetwork ? '' : this.headlightDeviceNumber;
+    config += this.headlight === null || this.headlightDeviceNumber === null || !this.useIndividualNetwork ? '' : `${this.headlightDeviceNumber}!${headlightData.manualModeTracking ? 1 : 0}`;
     config += ':';
-    config += this.taillight === null || this.taillightDeviceNumber === null || !this.useIndividualNetwork ? '' : this.taillightDeviceNumber;
+    config += this.taillight === null || this.taillightDeviceNumber === null || !this.useIndividualNetwork ? '' : `${this.taillightDeviceNumber}!${taillightData.manualModeTracking ? 1 : 0}`;
 
     return config;
   }

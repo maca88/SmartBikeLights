@@ -116,6 +116,7 @@ The initial control mode will be determined based on the configuration from the 
 - Trek Commuter Pro RT
 - Cycliq Fly12 CE (supported only by using Individual Light Network)
 - Cycliq Fly6 CE (supported only by using Individual Light Network)
+- Ravemen FR300 (supported only by using Individual Light Network)
 - See.Sense ACE Front/Rear (supported only by using Individual Light Network)
 - See.Sense BEAM/BEAM+ (supported only by using Individual Light Network)
 - See.Sense ICON2 (supported only by using Individual Light Network)

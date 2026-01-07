@@ -1576,7 +1576,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
         }
 
         var isTaillightSet = taillightData[16] /* Icon color */ != null;
-        var taillightDeviceNumbers = isTaillightSet ? _individualNetwork[1] as Lang.Array<Lang.Number> : [];
+        var taillightDeviceNumbers = isTaillightSet ? _individualNetwork[2] as Lang.Array<Lang.Number> : [];
         if (isTaillightSet && taillightDeviceNumbers.size() == 0) {
             var deviceNumbers = Application.Storage.getValue("TDN") as Lang.Array<Lang.Number> or Null;
             if (deviceNumbers != null) {
@@ -1584,7 +1584,10 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
             }
         }
 
-        _lightNetwork = new AntLightNetwork.IndividualLightNetwork(headlightDeviceNumbers, taillightDeviceNumbers, _lightNetworkListener);
+        _lightNetwork = new AntLightNetwork.IndividualLightNetwork(
+            headlightDeviceNumbers, _individualNetwork[1], // Manual mode tracking
+            taillightDeviceNumbers, _individualNetwork[3], // Manual mode tracking
+            _lightNetworkListener);
     }
 // #endif
 
@@ -2342,24 +2345,34 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
             return null;
         }
 
+        var headlightSettings = parseIndividualLightSettings(chars, filterResult);
+        var taillightSettings = parseIndividualLightSettings(chars, filterResult);
+
         return [
-            parseNumberArray(chars, filterResult), // Headlight device numbers
-            parseNumberArray(chars, filterResult)  // Taillight device numbers
+            headlightSettings[0], // Headlight device numbers
+            headlightSettings[1], // Headlight manual mode tracking
+            taillightSettings[0], // Taillight device numbers
+            taillightSettings[1]  // Taillight manual mode tracking
         ];
     }
 
-    private function parseNumberArray(chars, filterResult) {
-        var array = [];
+    private function parseIndividualLightSettings(chars, filterResult) {
+        var deviceNumbers = [];
         do {
             var number = parse(1 /* NUMBER */, chars, null, filterResult);
             if (number == null) {
                 break;
             }
 
-            array.add(number);
+            deviceNumbers.add(number);
         } while (chars[filterResult[0]] == ',');
 
-        return array;
+        var manualModeTracking = false;
+        if (chars[filterResult[0]] == '!') {
+            manualModeTracking = parse(1 /* NUMBER */, chars, null, filterResult) == 1;
+        }
+
+        return [deviceNumbers, manualModeTracking];
     }
 
     private function parseForceSmartMode(chars, i, filterResult) {
