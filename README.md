@@ -109,6 +109,7 @@ The initial control mode will be determined based on the configuration from the 
 - Giant Recon HL1800
 - Giant Recon+ TL150
 - Lezyne Radar Drive
+- Lezyne Radar StVZO
 - Lezyne React Drive
 - Magene AT1200/1600
 - Magene L508

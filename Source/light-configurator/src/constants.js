@@ -855,6 +855,12 @@ const lezyneRadarDrive = [
   { id: 8, name: 'Flash' }
 ];
 
+const lezyneRadarStVzo = [
+  { id: 0, name: 'Off' },
+  { id: 2, name: 'High' },
+  { id: 3, name: 'Low' }
+];
+
 const mageneL508 = [
   { id: 0, name: 'Off' },
   { id: 4, name: 'Solid' },
@@ -1219,6 +1225,22 @@ export const taillightList = [
         [lezyneRadarDrive[4]],
         [lezyneRadarDrive[5]],
         [lezyneRadarDrive[6]],
+      ]
+    }
+  },
+  {
+    id: 23,
+    name: 'Lezyne Radar StVZO',
+    modes: lezyneRadarStVzo,
+    individualNetworkOnly: false,
+    lightModes: [0, 784], // 784
+    additionalLightModes: null,
+    defaultLightPanel: {
+      shortName: 'Radar StVZO',
+      buttonGroups: [
+        [controlMode, lezyneRadarStVzo[0]],
+        [lezyneRadarStVzo[1]],
+        [lezyneRadarStVzo[2]]
       ]
     }
   },
