@@ -20,7 +20,7 @@ export default class LightSettings {
 
         const button = new LightButton();
         button.mode = mode.id;
-        button.name = mode.name;
+        button.name = mode.buttonName ?? mode.name;
         this.buttons.push(button);
       });
     });

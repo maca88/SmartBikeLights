@@ -657,7 +657,7 @@ export const headlightList = [
     name: 'Magene AT1200',
     modes: mageneAt1600Modes,
     individualNetworkOnly: false,
-    lightModes: [1074, 358879792], // 4613153755696
+    lightModes: [1074, 358879793], // 4613153755697
     additionalLightModes: [267911168, 0], // 1150669704793161728
     defaultLightPanel: {
       shortName: 'AT 1200',
