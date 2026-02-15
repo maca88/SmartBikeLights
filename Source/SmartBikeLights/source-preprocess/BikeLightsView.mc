@@ -2400,7 +2400,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
     (:settings)
     private function parseLightButtons(chars, i, filterResult) {
         var totalButtons = parse(1 /* NUMBER */, chars, i, filterResult);
-        if (totalButtons == null || totalButtons > 10) {
+        if (totalButtons == null || totalButtons > 20) {
             return null;
         }
 
