@@ -1028,6 +1028,24 @@ export const taillightList = [
     }
   },
   {
+    id: 24,
+    name: 'Garmin Varia RearVue 820',
+    modes: garminVariaRtl515,
+    individualNetworkOnly: false,
+    lightModes: [0, 73535488], // 73535488
+    additionalLightModes: null,
+    defaultLightPanel: {
+      shortName: 'Varia 820',
+      buttonGroups: [
+        [controlMode, garminVariaRtl515[0]],
+        [garminVariaRtl515[1]],
+        [garminVariaRtl515[2]],
+        [garminVariaRtl515[3]],
+        [garminVariaRtl515[4]],
+      ]
+    }
+  },
+  {
     id: 4,
     name: 'Garmin Varia RTL500',
     modes: garminVariaRtl500,

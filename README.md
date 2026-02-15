@@ -92,6 +92,7 @@ The initial control mode will be determined based on the configuration from the 
 - Bryton Gardia R300
 - Cycplus L7
 - Garmin Varia TL300
+- Garmin Varia RearVue 820
 - Garmin Varia RTL500
 - Garmin Varia RTL501
 - Garmin Varia RTL510
