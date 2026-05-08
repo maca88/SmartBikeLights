@@ -419,6 +419,14 @@ const seeSenseBeam = [
   { id: 7, name: 'Day Flash' }
 ];
 
+const giantReconHl1400 = [
+  { id: 0, name: 'Off' },
+  { id: 2, name: 'Anti-Glare' },
+  { id: 3, name: 'Low' },
+  { id: 4, name: 'ECO' },
+  { id: 6, name: 'Day Flash' }
+];
+
 const giantReconHl1800 = [
   { id: 0, name: 'Off' },
   { id: 2, name: 'High' },
@@ -610,6 +618,24 @@ export const headlightList = [
         [controlMode, garminVariaVueStvzo[0]],
         [garminVariaVueStvzo[1]],
         [garminVariaVueStvzo[2]]
+      ]
+    }
+  },
+  {
+    id: 17,
+    name: 'Giant Recon+ HL1400',
+    modes: giantReconHl1400,
+    individualNetworkOnly: false,
+    lightModes: [5, 4207121], // 4207121
+    additionalLightModes: null,
+    defaultLightPanel: {
+      shortName: 'HL 1400',
+      buttonGroups: [
+        [controlMode, giantReconHl1400[0]],
+        [giantReconHl1400[1]],
+        [giantReconHl1400[2]],
+        [giantReconHl1400[3]],
+        [giantReconHl1400[4]]
       ]
     }
   },
