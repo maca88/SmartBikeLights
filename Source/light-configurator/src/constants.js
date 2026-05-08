@@ -421,7 +421,6 @@ const seeSenseBeam = [
 
 const giantReconHl1400 = [
   { id: 0, name: 'Off' },
-  { id: 1, name: 'High' },
   { id: 2, name: 'Anti-Glare' },
   { id: 3, name: 'Low' },
   { id: 4, name: 'ECO' },
@@ -628,7 +627,7 @@ export const headlightList = [
     modes: giantReconHl1400,
     individualNetworkOnly: false,
     lightModes: [5, 4207121], // 4207121
-    additionalLightModes: [0, 2],
+    additionalLightModes: null,
     defaultLightPanel: {
       shortName: 'HL 1400',
       buttonGroups: [
@@ -636,8 +635,7 @@ export const headlightList = [
         [giantReconHl1400[1]],
         [giantReconHl1400[2]],
         [giantReconHl1400[3]],
-        [giantReconHl1400[4]],
-        [giantReconHl1400[5]]
+        [giantReconHl1400[4]]
       ]
     }
   },
