@@ -95,6 +95,7 @@ class BikeLightsView extends  WatchUi.DataField  {
     (:settings) var taillightSettings;
     private var _individualNetwork;
     private var _updateSettings = false;
+    private var _bikeRadarNumber = null;
 
     // Fields used to evaluate filters
     protected var _todayMoment;
@@ -152,8 +153,11 @@ class BikeLightsView extends  WatchUi.DataField  {
         return _individualNetwork != null;
     }
 
+    function requiresBikeRadarConnection() {
+        return _bikeRadarNumber != null;
+    }
+
     function setupLightSensors() {
-        releaseLightSensors();
         if (remoteControllers == null) {
             return;
         }
@@ -171,14 +175,36 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
     }
 
-    function checkLightSensors() {
-        var lightSensors = _lightSensors;
-        if (lightSensors == null || lightSensors.size() == 0) {
+    function setupBikeRadarSensor() {
+        // Only setup the ANT channel if the radar filter is used (set in parseBikeRadar)
+        if (_bikeRadar == null || _bikeRadarNumber == null) {
             return;
         }
 
-        for (var i = 0; i < lightSensors.size(); i++) {
-            var error = lightSensors[i].checkChannel();
+        _bikeRadar = new BikeRadar(_bikeRadarNumber);
+    }
+
+    function updateBikeRadar() {
+        //System.println("updateBikeRadar");
+        if (_bikeRadar != null && _bikeRadar has :updateDeviceNumber) {
+            _bikeRadar.updateDeviceNumber(_bikeRadarNumber);
+        }
+    }
+
+    function checkSensors() {
+        var lightSensors = _lightSensors;
+        if (lightSensors != null && lightSensors.size() > 0) {
+            for (var i = 0; i < lightSensors.size(); i++) {
+                var error = lightSensors[i].checkChannel();
+                if (error != null) {
+                    _errorCode = error;
+                    return;
+                }
+            }
+        }
+
+        if (_bikeRadar != null && _bikeRadar has :checkChannel) {
+            var error = _bikeRadar.checkChannel();
             if (error != null) {
                 _errorCode = error;
                 return;
@@ -195,6 +221,14 @@ class BikeLightsView extends  WatchUi.DataField  {
         }
 
         _lightSensors = [];
+    }
+
+    function releaseBikeRadar() {
+        if (_bikeRadar != null && _bikeRadar has :close) {
+            _bikeRadar.close();
+        }
+
+        _bikeRadar = null;
     }
 
     function startLightSensor(controllerIndex, buttonIndex, firstSensorIndex, onConnectedCallback) {
@@ -351,8 +385,9 @@ class BikeLightsView extends  WatchUi.DataField  {
             _globalFilters = null;
             hlData[18] = null; // Headlight filters
             tlData[18] = null; // Taillight filters
-            _bikeRadar = null;
+            releaseBikeRadar();
             remoteControllers = null;
+            _bikeRadarNumber = null;
             releaseLightSensors();
             var configuration = parseConfiguration();
             _globalFilters = configuration[0];
@@ -361,8 +396,10 @@ class BikeLightsView extends  WatchUi.DataField  {
                 ?  _activityColor 
                 : separatorColor;
             remoteControllers = configuration[17];
+            _bikeRadarNumber = configuration[18];
             if (setupSensors) {
                 setupLightSensors();
+                setupBikeRadarSensor();
             }
 
             // configuration[1];  // Headlight modes
@@ -421,6 +458,7 @@ class BikeLightsView extends  WatchUi.DataField  {
         //System.println("release" + " timer=" + System.getTimer());
         if (final) {
             releaseLightSensors();
+            releaseBikeRadar();
         }
         releaseLights();
         if (_lightNetwork != null && _lightNetwork has :release) {
@@ -443,7 +481,7 @@ class BikeLightsView extends  WatchUi.DataField  {
             return null;
         }
 
-        checkLightSensors();
+        checkSensors();
 
         // Update acceleration
         var lastSpeed = _lastSpeed;
@@ -610,6 +648,7 @@ class BikeLightsView extends  WatchUi.DataField  {
 
         if (_initializedLights == 1) {
             drawLight(getLightData(null), 2, dc, width, fgColor, bgColor);
+            drawSensorStatus(width, height, dc);
             return;
         }
 
@@ -623,6 +662,7 @@ class BikeLightsView extends  WatchUi.DataField  {
 
         drawLight(headlightData, 1, dc, width, fgColor, bgColor);
         drawLight(taillightData, 3, dc, width, fgColor, bgColor);
+        drawSensorStatus(width, height, dc);
     }
 
     function onNetworkStateUpdate(networkState) {
@@ -1228,6 +1268,14 @@ class BikeLightsView extends  WatchUi.DataField  {
         return getSecondsOfDay((720 - (4.0 * (position[1].toFloat() /* longitude */ + (180.0 * hourAngle / 3.141593))) - eqTime) * 60); // timeUTC in seconds
     }
 
+    private function drawSensorStatus(width, height, dc) {
+        if (_bikeRadar has :isConnected && !_bikeRadar.isConnected()) {
+            setTextColor(dc, 0xFF0000 /* COLOR_RED */);
+            var size = width > height ? height / 14 : width / 14;
+            dc.fillCircle(size + 2, size + 2, size);
+        }
+    }
+
     private function updateLightTextAndMode(lightData, mode) {
         var light = lightData[0];
         if (light == null || lightData[2] == mode) {
@@ -1574,7 +1622,7 @@ class BikeLightsView extends  WatchUi.DataField  {
             : "LC";
         var value = getPropertyValue(configKey);
         if (value == null || value.length() == 0) {
-            return new [18];
+            return new [19];
         }
 
         var filterResult = [0 /* next index */, 0 /* operator type */];
@@ -1606,7 +1654,8 @@ class BikeLightsView extends  WatchUi.DataField  {
             parseForceSmartMode(chars, null, filterResult),    // Force smart mode
             null,
             parseSeparatorColor(chars, null, filterResult),    // Separator color
-            parseRemoteControllers(chars, null, filterResult)  // Remote controllers
+            parseRemoteControllers(chars, null, filterResult), // Remote controllers
+            parseBikeRadarNumber(chars, null, filterResult)    // Bike radar number
         ]);
     }
 
@@ -1661,6 +1710,16 @@ class BikeLightsView extends  WatchUi.DataField  {
             headlightForceSmartMode, // Headlight force smart mode
             parse(1 /* NUMBER */, chars, null, filterResult)  // Taillight force smart mode
         ];
+    }
+
+    private function parseBikeRadarNumber(chars, i, filterResult) {
+        var deviceNumber = parse(1 /* NUMBER */, chars, i, filterResult);
+        if (deviceNumber == null) {
+            filterResult[0] = filterResult[0] - 1; // Old configuration
+            return null;
+        }
+
+        return deviceNumber;
     }
 
     (:noLightButtons)

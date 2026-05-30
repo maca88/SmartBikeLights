@@ -107,6 +107,10 @@ export default observer(({ configuration, device, deviceList }) => {
         setLightIconTapBehavior={configuration.setHeadlightIconTapBehavior}
         lightIconColor={configuration.headlightIconColor}
         setLightIconColor={configuration.setHeadlightIconColor}
+        bikeRadarNumber={configuration.bikeRadarNumber}
+        setBikeRadarNumber={configuration.setBikeRadarNumber}
+        createBikeRadarConnection={configuration.createBikeRadarConnection}
+        setCreateBikeRadarConnection={configuration.setCreateBikeRadarConnection}
       />
       <LightConfiguration
         globalFilterGroups={configuration.globalFilterGroups}
@@ -136,6 +140,10 @@ export default observer(({ configuration, device, deviceList }) => {
         setLightIconTapBehavior={configuration.setTaillightIconTapBehavior}
         lightIconColor={configuration.taillightIconColor}
         setLightIconColor={configuration.setTaillightIconColor}
+        bikeRadarNumber={configuration.bikeRadarNumber}
+        setBikeRadarNumber={configuration.setBikeRadarNumber}
+        createBikeRadarConnection={configuration.createBikeRadarConnection}
+        setCreateBikeRadarConnection={configuration.setCreateBikeRadarConnection}
       />
       {
         areRemoteControllersSupported(device) ? <RemoteControllers configuration={configuration} device={device} /> : null

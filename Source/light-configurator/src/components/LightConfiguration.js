@@ -45,7 +45,8 @@ const itemTemplate = createMenuItemColorTemplateFunc();
 export default observer(({
   device, totalLights, useIndividualNetwork, globalFilterGroups, lightType, lightList, lightFilterGroups, setLight, light,
   setLightModes, setAdditionalLightModes, setDefaultMode, defaultMode, lightPanel, setLightPanel, lightSettings, setLightSettings, deviceNumber, setDeviceNumber,
-  serialNumber, setSerialNumber, forceSmartMode, setForceSmartMode, lightIconTapBehavior, setLightIconTapBehavior, lightIconColor, setLightIconColor }) => {
+  serialNumber, setSerialNumber, forceSmartMode, setForceSmartMode, lightIconTapBehavior, setLightIconTapBehavior, lightIconColor, setLightIconColor,
+  bikeRadarNumber, setBikeRadarNumber, createBikeRadarConnection, setCreateBikeRadarConnection }) => {
   const [lightData, setLightData] = React.useState(getLightData(light, lightList));
   const setValue = (value) => {
     setLight(value);
@@ -121,6 +122,7 @@ export default observer(({
                 setter={setDeviceNumber}
                 required={(device == null || !device.nativePairing)}
                 value={deviceNumber}
+                type="number"
                 help={
                   <React.Fragment>
                     <Typography>
@@ -165,6 +167,43 @@ export default observer(({
               <AppSelect required items={getLightIconColors(device)} label="Icon color" setter={setLightIconColor} value={lightIconColor} itemTemplateFunc={itemTemplate} />
             </Grid>
             : null
+          }
+          {
+            setBikeRadarNumber && lightData && lightData.allowRadarSensor && device && device.highMemory && device.nativePairing !== true
+              ?
+            <Grid item xs={12} sm={4}>
+              <AppTextInput label="Radar device number"
+                type="number"
+                setter={setBikeRadarNumber}
+                required={false}
+                value={bikeRadarNumber}
+                help={
+                  <Typography>
+                    If the light is paired via Bluetooth and the radar filter is enabled, the radar device number must be configured.
+                  </Typography>
+                }
+              />
+            </Grid>
+            : null
+          }
+          {
+            setCreateBikeRadarConnection && lightData && lightData.allowRadarSensor && device && device.highMemory && device.nativePairing === true
+              ?
+              <Grid item xs={12} sm={4}>
+                <ElementWithHelp
+                  element={
+                    <AppCheckbox label="Connect Radar" value={createBikeRadarConnection} setter={setCreateBikeRadarConnection} />
+                  }
+                  help={
+                    <Typography>
+                      If the light is paired via Bluetooth and the radar filter is enabled, this option must be enabled for the radar filter to work.
+                      When enabled, the radar must be paired in the Garmin Sensors menu. After pairing, an ANT connection will be created for the radar 
+                      to receive vehicle data.
+                    </Typography>
+                  }
+                />
+              </Grid>
+              : null
           }
           {
             setForceSmartMode && light && device?.highMemory

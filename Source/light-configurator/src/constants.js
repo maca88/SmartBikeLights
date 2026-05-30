@@ -476,6 +476,7 @@ export const headlightList = [
     individualNetworkOnly: false,
     lightModes: [4587520, 196641], // 19703248369942561
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Ion Pro RT',
       buttonGroups: [
@@ -495,6 +496,7 @@ export const headlightList = [
     individualNetworkOnly: false,
     lightModes: [4587520, 196641], // 19703248369942561
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Ion 200 RT',
       buttonGroups: [
@@ -514,6 +516,7 @@ export const headlightList = [
     individualNetworkOnly: false,
     lightModes: [4587520, 196641], // 19703248369942561
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Ion 800 RT',
       buttonGroups: [
@@ -532,6 +535,8 @@ export const headlightList = [
     modes: cycliqFly12Ce,
     individualNetworkOnly: true,
     lightModes: [415312, 71303969], // 1783751528940321
+    additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Fly12 CE',
       buttonGroups: [
@@ -555,6 +560,7 @@ export const headlightList = [
     individualNetworkOnly: false,
     lightModes: [0, 67121681], // 67121681
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia 500',
       buttonGroups: [
@@ -574,6 +580,7 @@ export const headlightList = [
     individualNetworkOnly: false,
     lightModes: [0, 73413136], // 73413136
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia 800',
       buttonGroups: [
@@ -593,6 +600,7 @@ export const headlightList = [
     individualNetworkOnly: false,
     lightModes: [0, 73413136], // 73413136
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia Vue',
       buttonGroups: [
@@ -612,6 +620,7 @@ export const headlightList = [
     individualNetworkOnly: false,
     lightModes: [0, 73413136], // 73413136
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia Vue',
       buttonGroups: [
@@ -628,6 +637,7 @@ export const headlightList = [
     individualNetworkOnly: false,
     lightModes: [5, 4207121], // 4207121
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'HL 1400',
       buttonGroups: [
@@ -646,6 +656,7 @@ export const headlightList = [
     individualNetworkOnly: false,
     lightModes: [5, 1073754640], // 22548591120
     additionalLightModes: [0, 512],
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'HL 1800',
       buttonGroups: [
@@ -665,6 +676,7 @@ export const headlightList = [
     individualNetworkOnly: false,
     lightModes: [0, 73413153], // 73413153
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'React Drive',
       buttonGroups: [
@@ -685,6 +697,7 @@ export const headlightList = [
     individualNetworkOnly: false,
     lightModes: [1074, 358879793], // 4613153755697
     additionalLightModes: [267911168, 0], // 1150669704793161728
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'AT 1200',
       buttonGroups: [
@@ -709,6 +722,7 @@ export const headlightList = [
     individualNetworkOnly: false,
     lightModes: [1074, 358879792], // 4613153755696
     additionalLightModes: [267911168, 0], // 1150669704793161728
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'AT 1600',
       buttonGroups: [
@@ -734,6 +748,7 @@ export const headlightList = [
     manualModeTracking: true,
     lightModes: [0, 88092688], // 88092688
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'FR300',
       buttonGroups: [
@@ -752,6 +767,7 @@ export const headlightList = [
     individualNetworkOnly: true,
     lightModes: [0, 73605649], // 73605649
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'ACE F',
       buttonGroups: [
@@ -773,6 +789,7 @@ export const headlightList = [
     individualNetworkOnly: true,
     lightModes: [0, 73605649], // 73605649
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'BEAM',
       buttonGroups: [
@@ -794,6 +811,7 @@ export const headlightList = [
     individualNetworkOnly: false,
     lightModes: [4587520, 196641], // 19703248369942561
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Pro RT',
       buttonGroups: [
@@ -811,6 +829,7 @@ export const headlightList = [
     individualNetworkOnly: false,
     lightModes: null,
     additionalLightModes: [-65536, 1022], // -281474976709634
+    allowRadarSensor: false,
     defaultLightPanel: null
   }
 ];
@@ -963,6 +982,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [6291461, 1409482753], // 27021620648542209
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Flare RT',
       buttonGroups: [
@@ -982,6 +1002,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 610283536], // 610283536
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Gardia 300',
       buttonGroups: [
@@ -1001,6 +1022,7 @@ export const taillightList = [
     individualNetworkOnly: true,
     lightModes: [415312, 71303969], // 1783751528940321
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Fly6 CE',
       buttonGroups: [
@@ -1024,6 +1046,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 73535488], // 73535488
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Cycplus L7',
       buttonGroups: [
@@ -1042,6 +1065,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 67121680], // 67121680
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia 300',
       buttonGroups: [
@@ -1060,6 +1084,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 73535488], // 73535488
     additionalLightModes: null,
+    allowRadarSensor: true,
     defaultLightPanel: {
       shortName: 'Varia 820',
       buttonGroups: [
@@ -1078,6 +1103,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 67108865], // 67108865
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia 500',
       buttonGroups: [
@@ -1094,6 +1120,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 1], // 1
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia 501',
       buttonGroups: [
@@ -1109,6 +1136,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 73404416], // 73404416
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia 510',
       buttonGroups: [
@@ -1126,6 +1154,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 4096], // 4096
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia 511',
       buttonGroups: [
@@ -1141,6 +1170,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 73535488], // 73535488
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia 515',
       buttonGroups: [
@@ -1159,6 +1189,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 4096], // 4096
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia 516',
       buttonGroups: [
@@ -1174,6 +1205,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 73535488], // 73535488
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia 615',
       buttonGroups: [
@@ -1192,6 +1224,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 4096], // 4096
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia 616',
       buttonGroups: [
@@ -1207,6 +1240,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 73535488], // 73535488
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia 715',
       buttonGroups: [
@@ -1225,6 +1259,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 4096], // 4096
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Varia 716',
       buttonGroups: [
@@ -1240,6 +1275,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 1415774209], // 1415774209
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'TL 150',
       buttonGroups: [
@@ -1259,6 +1295,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 1415590416], // 1415590416
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Radar Drive',
       buttonGroups: [
@@ -1279,6 +1316,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 784], // 784
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Radar StVZO',
       buttonGroups: [
@@ -1295,6 +1333,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [3538944, 88215552], // 15199648830590976
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'Magene 508',
       buttonGroups: [
@@ -1315,6 +1354,7 @@ export const taillightList = [
     individualNetworkOnly: true,
     lightModes: [0, 73605649], // 73605649
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'ACE R',
       buttonGroups: [
@@ -1336,6 +1376,7 @@ export const taillightList = [
     individualNetworkOnly: true,
     lightModes: [0, 73605649], // 73605649
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'ICON2',
       buttonGroups: [
@@ -1357,6 +1398,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [6291461, 1073938433], // 27021620312997889
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'CarBack',
       buttonGroups: [
@@ -1375,6 +1417,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: [0, 73601024], // 73601024
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: {
       shortName: 'TRACKR',
       buttonGroups: [
@@ -1393,6 +1436,7 @@ export const taillightList = [
     individualNetworkOnly: false,
     lightModes: null,
     additionalLightModes: null,
+    allowRadarSensor: false,
     defaultLightPanel: null
   }
 ];
