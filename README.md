@@ -56,7 +56,7 @@ For watches with CIQ 3.2 and more than 32KB memory (Fenix 5 Plus/5S Plus/5X Plus
 
 For other devices:
 
-The initial control mode will be determined based on the configuration from the [Lights Configurator](https://maca88.github.io/SmartBikeLights/). When using a configuration where only the lights were selected (without any filters), the initial control mode will be set to Network (N) otherwise it will be set to Smart (S). When in Smart mode the following can be done to switch control modes: 
+The initial control mode will be determined based on the configuration from the [Lights Configurator](https://maca88.github.io/SmartBikeLights/). When using a configuration where only the lights were selected (without any filters), the initial control mode will be set to Network (N) otherwise it will be set to Smart (S). When in Smart mode the following can be done to switch control modes:
 - To go into Manual control mode, use the physical button on the light to switch the light mode. For restoring back to the Smart mode, switch to a different data screen and then back to the original one.
 - To go into Network control mode, change the Garmin [Light mode](https://www8.garmin.com/manuals/webhelp/variabikelights/EN-US/GUID-73B08487-BA57-4EF0-A253-D226E229BC68.html) to a different one by using the Garmin menu (e.g. from Auto to Individual). For restoring back to the Smart mode, switch to a different data screen and then back to the original one.
 
@@ -129,8 +129,8 @@ The initial control mode will be determined based on the configuration from the 
 
 ## Individual Light Network
 
-Individal Light Network is an alternative light network implementation for connecting and controlling ANT+ lights. In comparison to the Garmin built-in light network, 
-this network does not form a light network when two lights are connected, but instead it establish a separate connection for every light. This mode needs 
+Individal Light Network is an alternative light network implementation for connecting and controlling ANT+ lights. In comparison to the Garmin built-in light network,
+this network does not form a light network when two lights are connected, but instead it establish a separate connection for every light. This mode needs
 to be used for lights that have issues with the built-in light network (See Sense and Cycliq lights).
 
 **NOTE:** Lights in Garmin Sensors menu need to be disabled or removed in order to use this feature!
@@ -233,3 +233,6 @@ The following errors can be displayed:
 - **Error 7:** The light with the provided device number does not support the configured light type (headlight/taillight). Make sure that the "Device number" setting on the configured light is not of another light.
 - **Error 8:** One of the ANT channels used for connection to a remote controller could not be opened. Try to disable some sensors from the Garmin Sensors menu.
 - **Error 9:** The device does not have enough free ANT channels to be used for connection to the remote controllers. Try to disable some sensors from the Garmin Sensors menu.
+- **Error 10:** `Connect Radar` option was enabled and the bike radar is not paired. Use the Garmin Sensors menu "Search All" option to pair the radar. The sensor name should be: `SBL RD <DEVICE_NUMBER>`
+- **Error 11:** One of the ANT channels used for connection to the bike radar could not be opened. Try to disable some sensors from the Garmin Sensors menu.
+- **Error 12:** The device does not have enough free ANT channels to be used for connection to the bike radar. Try to disable some sensors from the Garmin Sensors menu.

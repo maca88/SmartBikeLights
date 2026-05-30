@@ -45,8 +45,8 @@ module TestNetwork {
             _listener = listener;
             _lights = [
                 new TestBikeLight(0, 0 /* LIGHT_TYPE_HEADLIGHT */, [0, 1, 2, 5, 63, 62], 81 /* Bontrager */, 6 /* ION PRO RT */, 3288461872l),
-                new TestBikeLight(1, 2 /* LIGHT_TYPE_TAILLIGHT */, [0, 1, 5, 7, 8, 63], 81 /* Bontrager */, 1 /* Flare RT */, 2368328293l)
-                //new TestBikeLight(2, 2 /* LIGHT_TYPE_TAILLIGHT */, [0, 4, 5, 7, 6], 1 /* Garmin */, 1 /* Varia 515 */, 2368328294)
+                //new TestBikeLight(1, 2 /* LIGHT_TYPE_TAILLIGHT */, [0, 1, 5, 7, 8, 63], 81 /* Bontrager */, 1 /* Flare RT */, 2368328293l)
+                new TestBikeLight(1, 2 /* LIGHT_TYPE_TAILLIGHT */, [0, 4, 5, 7, 6], 1 /* Garmin */, 1 /* Varia 515 */, 2368328294L)
                 //new TestBikeLight(0, 0 /* LIGHT_TYPE_HEADLIGHT */, [0, 2, 3, 4, 8], 108 /* Giant */, 6 /* Recon HL1800 */, 1234554)
             ];
             lastUpdate = System.getTimer();

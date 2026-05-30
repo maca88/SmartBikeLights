@@ -361,6 +361,14 @@ const parseRemoteControllers = (chars, i, filterResult) => {
   return remoteControllers;
 };
 
+const parseBikeRadarNumber = (chars, i, filterResult) => {
+  const deviceNumber = parseNumber(chars, i, filterResult);
+  if (deviceNumber === null) {
+    return null; // Old configuration
+  }
+
+  return deviceNumber;
+};
 
 const parseLightSettings = (totalButtons, chars, filterResult) => {
   const settings = new LightSettings();
@@ -570,6 +578,8 @@ export default class Configuration {
   headlightAdditionalModes = null;
   taillightAdditionalModes = null;
   remoteControllers = [];
+  bikeRadarNumber = null;
+  createBikeRadarConnection = false;
 
   constructor() {
     makeAutoObservable(this, {
@@ -691,6 +701,12 @@ export default class Configuration {
       }
 
       configuration.remoteControllers = remoteControllers;
+      const bikeRadarNumber = parseBikeRadarNumber(value, filterResult[0] + 1, filterResult);
+      if (bikeRadarNumber === 0) {
+        configuration.createBikeRadarConnection = true;
+      } else if (bikeRadarNumber !== null) {
+        configuration.bikeRadarNumber = bikeRadarNumber;
+      }
     }
 
     return this.parseMetadataConfiguration(configuration, value, deviceList, deviceIndex, filterResult);
@@ -780,6 +796,7 @@ export default class Configuration {
     config += this.getLightsTapBehaviorConfigurationValue(device);
     config += this.getSeparatorColor(device);
     config += this.getRemoteControllersConfigrationValue(device);
+    config += this.getBikeRadarNumberValue(device, headlightData, taillightData);
     config += `#${(this.device)}`;
     config += `#${(this.headlight === null ? '' : this.headlight)}`;
     config += `#${(this.taillight === null ? '' : this.taillight)}`;
@@ -940,6 +957,19 @@ export default class Configuration {
     }
 
     return config;
+  }
+
+  getBikeRadarNumberValue(device, headlightData, taillightData) {
+    if (!device || !device.highMemory) {
+      return '';
+    }
+
+    var allowRadarSensor = (this.headlight != null && headlightData.allowRadarSensor) || (this.taillight != null && taillightData.allowRadarSensor);
+    if (!allowRadarSensor || (device.nativePairing && !this.createBikeRadarConnection)) {
+      return '#';
+    }
+
+    return `#${(device.nativePairing ? '0' : (this.bikeRadarNumber || ''))}`;
   }
 
   getLightTapBehaviorConfigurationValue(light, lightIconTapBehavior) {
@@ -1147,5 +1177,13 @@ export default class Configuration {
 
   setTaillightIconColor = (value) => {
     this.taillightIconColor = value;
+  }
+
+  setBikeRadarNumber = (value) => {
+    this.bikeRadarNumber = value;
+  }
+
+  setCreateBikeRadarConnection = (value) => {
+    this.createBikeRadarConnection = value;
   }
 }

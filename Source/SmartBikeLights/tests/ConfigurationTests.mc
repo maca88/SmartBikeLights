@@ -132,8 +132,19 @@ function parseValidConfigurationWithoutAdditionalLightModesForTouchScreen(logger
 }
 
 (:test :touchScreen)
-function parseValidConfigurationForTouchScreen(logger) {
+function parseValidConfigurationWithoutRadarNumberForTouchScreen(logger) {
     var view = new TestBikeLightsView("1,1!NIGHT:1Es1800,r0###0,73404416::1:#2,2!BREAK:1:7:1:0A[-30!:1:6:0:0D=1##5,4:Varia 510:0:16777215!2,:-1,Off:0!1,Steady Beam:4!1,Day Flash:7!1,Night Flash:6#0::#0:0#123!:123!#0#0#B2713##2#0#0");
+    Test.assert(view.headlightPanelSettings == null);
+    Test.assert(view.taillightPanelSettings != null);
+    Test.assert(view.headlightIconTapBehavior != null);
+    Test.assert(view.taillightIconTapBehavior != null);
+
+    return view.getErrorCode() == null;
+}
+
+(:test :touchScreen)
+function parseValidConfigurationForTouchScreen(logger) {
+    var view = new TestBikeLightsView("1,1!NIGHT:1Es1800,r0###0,73404416::1:#2,2!BREAK:1:7:1:0A[-30!:1:6:0:0D=1##5,4:Varia 510:0:16777215:-1!2,:-1,Off:0!1,Steady Beam:4!1,Day Flash:7!1,Night Flash:6#0::#0:0#123!:123!#0#0##B2713##2#0#0");
     Test.assert(view.headlightPanelSettings == null);
     Test.assert(view.taillightPanelSettings != null);
     Test.assert(view.headlightIconTapBehavior != null);
@@ -203,8 +214,17 @@ function parseValidConfigurationWithoutAdditionalLightModesForSettings(logger) {
 }
 
 (:test :settings)
-function parseValidConfigurationForSettings(logger) {
+function parseValidConfigurationWithoutRadarNumberForSettings(logger) {
     var view = new TestBikeLightsView("1,1!NIGHT:1Es1800,r0###0,73404416::1:#1,1!:1:6:0:0D=1##4:Varia 510!Off:0!Solid:4!Day Flash:7!Night Flash:6#0::#0:0#0#0#B3121##2#0#0");
+    Test.assert(view.headlightSettings == null);
+    Test.assert(view.taillightSettings != null);
+
+    return view.getErrorCode() == null;
+}
+
+(:test :settings)
+function parseValidConfigurationForSettings(logger) {
+    var view = new TestBikeLightsView("1,1!NIGHT:1Es1800,r0###0,73404416::1:#1,1!:1:6:0:0D=1##4:Varia 510!Off:0!Solid:4!Day Flash:7!Night Flash:6#0::#0:0#0#0##B3121##2#0#0");
     Test.assert(view.headlightSettings == null);
     Test.assert(view.taillightSettings != null);
 

@@ -67,10 +67,20 @@ class SmartBikeLightsApp extends Application.AppBase {
     (:highMemory)
     function onStorageChanged() as Void {
         //System.println("onStorageChanged timer=" + System.getTimer() + " pairing=" + _pairing + " RN=" + Application.Storage.getValue("RN"));
+        if (_pairing) {
+            return;
+        }
+
         // RN key is set by BikeLightSensorDelegate
-        if (!_pairing && Application.Storage.getValue("RN") != null) {
+        if (Application.Storage.getValue("RN") != null) {
             Application.Storage.deleteValue("RN");
             _view.recreateLightNetwork();
+        }
+
+        // RR key is set by BikeLightSensorDelegate
+        if (Application.Storage.getValue("RR") != null) {
+            Application.Storage.deleteValue("RR");
+            _view.updateBikeRadar();
         }
     }
 
