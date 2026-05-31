@@ -1682,7 +1682,7 @@ class BikeLightsView extends /* #if dataField */ WatchUi.DataField /* #else */ W
 
 // #if highMemory
     private function drawSensorStatus(width, height, dc) {
-        if (_bikeRadar has :isConnected && !_bikeRadar.isConnected()) {
+        if (_bikeRadar != null && _bikeRadar has :isConnected && !_bikeRadar.isConnected()) {
             setTextColor(dc, 0xFF0000 /* COLOR_RED */);
             var size = width > height ? height / 14 : width / 14;
             dc.fillCircle(size + 2, size + 2, size);
