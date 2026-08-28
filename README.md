@@ -90,6 +90,7 @@ The initial control mode will be determined based on the configuration from the 
 - Bontrager Ion 800 RT
 - Bontrager Flare RT
 - Bryton Gardia R300
+- Coospo TR70
 - Cycplus L7
 - Garmin Varia TL300
 - Garmin Varia RearVue 820
