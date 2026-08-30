@@ -843,6 +843,16 @@ const bontragerFlareRtModes = [
   { id: 63, name: 'Night Flash' }
 ];
 
+const coospoTr70 = [
+  { id: 0, name: 'Off' },
+  { id: 1, name: 'High Brightness' },
+  { id: 5, name: 'Low Brightness' },
+  { id: 63, name: 'Group Ride' },
+  { id: 8, name: 'Breathing' },
+  { id: 6, name: 'Night Flash' },
+  { id: 7, name: 'Day Flash' }
+];
+
 const cycplusL7 = [
   { id: 0, name: 'Off' },
   { id: 4, name: 'High Steady' },
@@ -1012,6 +1022,27 @@ export const taillightList = [
         [brytonGardia300[3]],
         [brytonGardia300[4]],
         [brytonGardia300[5]],
+      ]
+    }
+  },
+  {
+    id: 25,
+    name: 'Coospo TR70',
+    modes: coospoTr70,
+    individualNetworkOnly: false,
+    lightModes: [2097152, 1415774209], // 9007200670515201
+    additionalLightModes: null,
+    allowRadarSensor: false,
+    defaultLightPanel: {
+      shortName: 'TR70',
+      buttonGroups: [
+        [controlMode, coospoTr70[0]],
+        [coospoTr70[1]],
+        [coospoTr70[2]],
+        [coospoTr70[3]],
+        [coospoTr70[4]],
+        [coospoTr70[5]],
+        [coospoTr70[6]],
       ]
     }
   },
