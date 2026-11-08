@@ -17,6 +17,7 @@
       <iq:product id="edge1030plus"/>
       <iq:product id="edge1040"/>
       <iq:product id="edge1050"/>
+      <iq:product id="edge1060"/>
       <iq:product id="edge130"/>
       <iq:product id="edge130plus"/>
       <iq:product id="edge520plus"/>
@@ -31,6 +32,8 @@
       <iq:product id="edge_520"/>
       <iq:product id="edgeexplore"/>
       <iq:product id="edgeexplore2"/>
+      <iq:product id="edgeexplore3"/>
+      <iq:product id="edgeexplore3plus"/>
       <iq:product id="edgemtb"/>
       <iq:product id="enduro"/>
       <iq:product id="enduro3"/>
@@ -61,6 +64,13 @@
       <iq:product id="fenix8pro47mm"/>
       <iq:product id="fenix8solar47mm"/>
       <iq:product id="fenix8solar51mm"/>
+      <iq:product id="fenix943mm"/>
+      <iq:product id="fenix947mm"/>
+      <iq:product id="fenix9pro43mm"/>
+      <iq:product id="fenix9pro47mm"/>
+      <iq:product id="fenix9pro51mm"/>
+      <iq:product id="fenix9prosolar47mm"/>
+      <iq:product id="fenix9prosolar51mm"/>
       <iq:product id="fenixe"/>
       <iq:product id="fr165"/>
       <iq:product id="fr165m"/>

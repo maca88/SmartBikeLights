@@ -94,10 +94,18 @@ edgeexplore.resourcePath = $(edgeexplore.resourcePath);resources-highmemory;reso
 edgeexplore2.resourcePath = $(edgeexplore2.resourcePath);resources-highmemory;resources-touchscreen
 
 # Rectangle touch screen devices with high resolution
+edge1060.resourcePath = resources-highmemory;$(edge1060.resourcePath)
+edge1060.excludeAnnotations = $(rectangleHighResolution)
 edge1050.resourcePath = resources-highmemory;$(edge1050.resourcePath)
 edge1050.excludeAnnotations = $(rectangleHighResolution)
 edge850.resourcePath = resources-highmemory;$(edge850.resourcePath)
 edge850.excludeAnnotations = $(rectangleHighResolution)
+edgeexplore2.resourcePath = resources-highmemory;$(edgeexplore2.resourcePath)
+edgeexplore2.excludeAnnotations = $(rectangleHighResolution)
+edgeexplore3.resourcePath = resources-highmemory;$(edgeexplore3.resourcePath)
+edgeexplore3.excludeAnnotations = $(rectangleHighResolution)
+edgeexplore3plus.resourcePath = resources-highmemory;$(edgeexplore3plus.resourcePath)
+edgeexplore3plus.excludeAnnotations = $(rectangleHighResolution)
 
 # Rectangle non touch screen devices with high resolution
 edge550.resourcePath = resources-highmemory;$(edge550.resourcePath)
@@ -139,6 +147,8 @@ fenix7xpro.resourcePath = $(fenix7xpro.resourcePath);resources-highmemory
 fenix7xpronowifi.resourcePath = $(fenix7xpronowifi.resourcePath);resources-highmemory
 fenix8solar47mm.resourcePath = $(fenix8solar47mm.resourcePath);resources-highmemory
 fenix8solar51mm.resourcePath = $(fenix8solar51mm.resourcePath);resources-highmemory
+fenix9prosolar47mm.resourcePath = $(fenix9prosolar47mm.resourcePath);resources-highmemory
+fenix9prosolar51mm.resourcePath = $(fenix9prosolar51mm.resourcePath);resources-highmemory
 fr245m.resourcePath = $(fr245m.resourcePath);resources-highmemory
 fr255.resourcePath = $(fr255.resourcePath);resources-highmemory
 fr255m.resourcePath = $(fr255m.resourcePath);resources-highmemory
@@ -177,6 +187,16 @@ fenix847mm.excludeAnnotations = $(roundHighResolution)
 fenix847mm.resourcePath = $(fenix847mm.resourcePath);resources-highmemory
 fenix8pro47mm.excludeAnnotations = $(roundHighResolution)
 fenix8pro47mm.resourcePath = $(fenix8pro47mm.resourcePath);resources-highmemory
+fenix943mm.excludeAnnotations = $(roundHighResolution)
+fenix943mm.resourcePath = $(fenix943mm.resourcePath);resources-highmemory
+fenix947mm.excludeAnnotations = $(roundHighResolution)
+fenix947mm.resourcePath = $(fenix947mm.resourcePath);resources-highmemory
+fenix9pro43mm.excludeAnnotations = $(roundHighResolution)
+fenix9pro43mm.resourcePath = $(fenix9pro43mm.resourcePath);resources-highmemory
+fenix9pro47mm.excludeAnnotations = $(roundHighResolution)
+fenix9pro47mm.resourcePath = $(fenix9pro47mm.resourcePath);resources-highmemory
+fenix9pro51mm.excludeAnnotations = $(roundHighResolution)
+fenix9pro51mm.resourcePath = $(fenix9pro51mm.resourcePath);resources-highmemory
 fenixe.excludeAnnotations = $(roundHighResolution)
 fenixe.resourcePath = $(fenixe.resourcePath);resources-highmemory
 fr165.excludeAnnotations = $(roundHighResolution)
